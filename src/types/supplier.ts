@@ -13,10 +13,12 @@ export interface Supplier {
   supplierCount?: number
   categoryPercentage?: number
   subcategoryPercentage?: number
-  spendAllocation?: number
+  spendAllocation?: string
   spend?: number
   subcategorySize?: "one" | "few" | "many"
   replacementEase?: "low" | "medium" | "high"
   utilization?: "low" | "moderate" | "high"
   riskLevel?: "low" | "medium" | "high"
+  subcategoryCount?: number
+  spendCategory?: string
 } 

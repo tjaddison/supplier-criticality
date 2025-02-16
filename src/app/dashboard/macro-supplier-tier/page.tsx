@@ -159,7 +159,6 @@ export default function MacroSupplierTierPage() {
       <SupplierModal 
         open={modalOpen}
         supplier={selectedSupplier}
-        weights={weights}
         onClose={() => {
           setModalOpen(false)
           setSelectedSupplier(null)

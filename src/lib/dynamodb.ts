@@ -5,7 +5,8 @@ import {
   PutCommand, 
   QueryCommand,
   DeleteCommand,
-  UpdateCommand
+  UpdateCommand,
+  ScanCommand
 } from "@aws-sdk/lib-dynamodb"
 import { Supplier } from "@/types/supplier"
 
@@ -128,4 +129,43 @@ export async function updateCriteriaWeights(userId: string, weights: CriteriaWei
   })
 
   return docClient.send(command)
+}
+
+// Add this function to get unique subcategories
+export async function getUniqueSubcategories(userId: string): Promise<{ [category: string]: string[] }> {
+  try {
+    const command = new ScanCommand({
+      TableName: "suppliers",
+      FilterExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId
+      }
+    });
+
+    const response = await docClient.send(command);
+    const items = response.Items || [];
+
+    // Create a map to store unique subcategories for each category
+    const subcategoriesMap: { [category: string]: Set<string> } = {};
+
+    items.forEach(item => {
+      const category = item.category || '';
+      const subcategory = item.subcategory || '';
+      
+      if (!subcategoriesMap[category]) {
+        subcategoriesMap[category] = new Set();
+      }
+      subcategoriesMap[category].add(subcategory);
+    });
+
+    // Convert Sets to arrays
+    return Object.entries(subcategoriesMap).reduce((acc, [category, subcategories]) => {
+      acc[category] = Array.from(subcategories);
+      return acc;
+    }, {} as { [category: string]: string[] });
+
+  } catch (error) {
+    console.error('Error getting unique subcategories:', error);
+    throw error;
+  }
 } 

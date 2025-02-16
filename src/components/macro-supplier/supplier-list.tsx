@@ -22,6 +22,7 @@ import { PlusCircle, Trash2, ChevronLeft, ChevronRight, ChevronDown, ChevronUp }
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
 import { getSuppliers } from "@/lib/dynamodb"
+import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
   weights: {
@@ -163,7 +164,18 @@ export function SupplierList({
   }
 
   const handleRowClick = (supplier: Supplier) => {
-    onEdit(supplier)  // Fix: Now onEdit is properly typed as a function
+    // Calculate values before passing to modal
+    const subcategoryPercentage = calculateSubcategoryPercentage(supplier, suppliers)
+    const subcategoryCount = calculateSubcategoryCount(supplier, suppliers)
+    onEdit({
+      ...supplier,
+      categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
+      subcategoryCount,
+      subcategoryPercentage,
+      spendAllocation: getSpendAllocationCategory(subcategoryPercentage),
+      spendCategory: getSpendCategory(supplier.threeYearSpend),
+      subcategorySize: getSubcategorySize(subcategoryCount)
+    })
   }
 
   const SortIndicator = ({ field }: { field: SortField }) => {
