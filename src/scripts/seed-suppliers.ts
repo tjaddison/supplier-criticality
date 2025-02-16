@@ -52,10 +52,9 @@ async function seedSuppliers() {
       contractNumber: `CTR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
       threeYearSpend: getRandomSpend(),
       contractDescription: `Provider of ${category.toLowerCase()} solutions and services.`,
-      criticalityScore: 0
+      criticalityScore: calculateCriticalityScore()
     }
     
-    supplier.criticalityScore = calculateCriticalityScore(supplier)
     suppliers.push(supplier)
   }
 

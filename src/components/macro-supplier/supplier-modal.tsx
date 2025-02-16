@@ -49,7 +49,6 @@ interface SupplierModalProps {
 export function SupplierModal({ 
   open, 
   supplier, 
-  weights, 
   onClose,
   onSave,
   onDelete 

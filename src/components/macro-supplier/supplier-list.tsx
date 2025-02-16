@@ -40,7 +40,11 @@ interface SupplierListProps {
 type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend'
 type SortDirection = 'asc' | 'desc'
 
-export function SupplierList({ weights: _, onEdit, onDelete, refreshTrigger = 0 }: SupplierListProps) {
+export function SupplierList({ 
+  onEdit,   // Fix: Keep onEdit separate
+  onDelete, 
+  refreshTrigger = 0 
+}: SupplierListProps) {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
@@ -159,19 +163,7 @@ export function SupplierList({ weights: _, onEdit, onDelete, refreshTrigger = 0 
   }
 
   const handleRowClick = (supplier: Supplier) => {
-    onEdit({
-      ...supplier,
-      // Ensure all required fields are present
-      id: supplier.id,
-      name: supplier.name,
-      category: supplier.category,
-      subcategory: supplier.subcategory,
-      expirationDate: supplier.expirationDate,
-      contractNumber: supplier.contractNumber,
-      threeYearSpend: Number(supplier.threeYearSpend),
-      criticalityScore: Number(supplier.criticalityScore),
-      contractDescription: supplier.contractDescription || ""
-    })
+    onEdit(supplier)  // Fix: Now onEdit is properly typed as a function
   }
 
   const SortIndicator = ({ field }: { field: SortField }) => {
@@ -189,7 +181,7 @@ export function SupplierList({ weights: _, onEdit, onDelete, refreshTrigger = 0 
     <div className="space-y-8">
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <Button onClick={() => onEdit({
+          <Button onClick={() => onEdit({  // Fix: Now onEdit is properly typed as a function
             id: "",
             name: "",
             category: "",

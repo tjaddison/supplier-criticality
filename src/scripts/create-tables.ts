@@ -1,5 +1,18 @@
-import { DynamoDBClient, CreateTableCommand } from "@aws-sdk/client-dynamodb"
+import { 
+  DynamoDBClient, 
+  CreateTableCommand, 
+  ScalarAttributeType,
+  KeyType
+} from "@aws-sdk/client-dynamodb"
 import dotenv from 'dotenv'
+
+// Add proper error type
+type DynamoDBError = {
+  name: string
+  message: string
+  code?: string
+  statusCode?: number
+}
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })
@@ -15,39 +28,49 @@ const client = new DynamoDBClient({
 async function createTables() {
   try {
     // Create suppliers table
-    await client.send(new CreateTableCommand({
+    const suppliersTableParams = {
       TableName: "suppliers",
-      AttributeDefinitions: [
-        { AttributeName: "userId", AttributeType: "S" },
-        { AttributeName: "id", AttributeType: "S" }
-      ],
       KeySchema: [
-        { AttributeName: "userId", KeyType: "HASH" },
-        { AttributeName: "id", KeyType: "RANGE" }
+        { AttributeName: "userId", KeyType: KeyType.HASH },
+        { AttributeName: "id", KeyType: KeyType.RANGE }
       ],
-      BillingMode: "PAY_PER_REQUEST"
-    }))
-    console.log("Suppliers table created successfully")
+      AttributeDefinitions: [
+        { AttributeName: "userId", AttributeType: ScalarAttributeType.S },
+        { AttributeName: "id", AttributeType: ScalarAttributeType.S }
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+      }
+    }
 
-    // Create criteriaweights table
-    await client.send(new CreateTableCommand({
+    await client.send(new CreateTableCommand(suppliersTableParams))
+    console.log("Created suppliers table")
+
+    // Create criteria weights table
+    const weightsTableParams = {
       TableName: "criteriaweights",
-      AttributeDefinitions: [
-        { AttributeName: "userId", AttributeType: "S" }
-      ],
       KeySchema: [
-        { AttributeName: "userId", KeyType: "HASH" }
+        { AttributeName: "userId", KeyType: KeyType.HASH }
       ],
-      BillingMode: "PAY_PER_REQUEST"
-    }))
-    console.log("Criteria weights table created successfully")
+      AttributeDefinitions: [
+        { AttributeName: "userId", AttributeType: ScalarAttributeType.S }
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5
+      }
+    }
 
-  } catch (error: any) {
-    // Ignore if tables already exist
-    if (error.name === 'ResourceInUseException') {
-      console.log("Tables already exist")
+    await client.send(new CreateTableCommand(weightsTableParams))
+    console.log("Created criteria weights table")
+
+  } catch (error) {
+    const dbError = error as DynamoDBError
+    if (dbError.code === 'ResourceInUseException') {
+      console.log('Tables already exist')
     } else {
-      console.error("Error creating tables:", error)
+      console.error('Error creating tables:', dbError.message)
       throw error
     }
   }

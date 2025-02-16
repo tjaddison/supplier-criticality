@@ -9,8 +9,6 @@ import {
 } from "@aws-sdk/lib-dynamodb"
 import { Supplier } from "@/types/supplier"
 
-// Check if we're in a browser environment
-const isBrowser = typeof window !== 'undefined'
 
 const client = new DynamoDBClient({
   region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',

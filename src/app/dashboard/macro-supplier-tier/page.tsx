@@ -6,8 +6,7 @@ import { SupplierList } from "@/components/macro-supplier/supplier-list"
 import { SupplierModal } from "@/components/macro-supplier/supplier-modal"
 import { DeleteConfirmationDialog } from "@/components/macro-supplier/delete-confirmation-dialog"
 import { Supplier } from "@/types/supplier"
-import { 
-  getSuppliers, 
+import {  
   createSupplier, 
   updateSupplier, 
   deleteSupplier,
@@ -129,7 +128,11 @@ export default function MacroSupplierTierPage() {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    )
   }
 
   return (

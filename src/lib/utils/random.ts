@@ -1,5 +1,3 @@
-import { Supplier } from "@/types/supplier"
-
 export function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -18,7 +16,7 @@ export function getRandomSpend(): number {
   return Math.floor(Math.random() * (10000000 - 10000 + 1)) + 10000
 }
 
-export function calculateCriticalityScore(supplier: Supplier): number {
+export function calculateCriticalityScore(): number {
   // TODO: Implement actual criticality calculation based on weights and supplier data
   // For now, return a random score between 0 and 100
   return Math.floor(Math.random() * 100)
