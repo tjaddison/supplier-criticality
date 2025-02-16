@@ -1,0 +1,46 @@
+npm install recharts
+npx shadcn@latest add card
+npx shadcn@latest add avatar
+npm install clsx tailwind-merge @radix-ui/react-avatar 
+npm run dev 
+mkdir -p app/login app/dashboard
+mkdir -p components/ui components/dashboard
+mkdir -p public/avatars 
+npx shadcn@latest add button
+npm install class-variance-authority @radix-ui/react-slot lucide-react 
+npm install next-themes 
+npm install next-themes @radix-ui/react-slot class-variance-authority clsx tailwind-merge lucide-react 
+mkdir -p components/providers
+mv components/theme-provider.tsx components/providers/theme-provider.tsx 
+npx shadcn@latest add input
+npx shadcn@latest add label 
+mkdir -p src/app/login 
+mkdir -p src/app/dashboard
+
+# Ensure proper directory structure
+mkdir -p src/components/ui
+mkdir -p src/components/providers
+mkdir -p src/lib
+mkdir -p src/lib/utils
+
+# Move any existing components
+mv components/ui/* src/components/ui/ 2>/dev/null || true
+mv components/providers/* src/components/providers/ 2>/dev/null || true
+mv lib/* src/lib/ 2>/dev/null || true
+
+# Clean up old directories
+rm -rf app components lib 
+
+npx shadcn@latest add table
+npx shadcn@latest add select
+npx shadcn@latest add dialog 
+npx shadcn@latest add textarea 
+npx shadcn@latest add alert-dialog 
+npx shadcn@latest add calendar
+npx shadcn@latest add popover 
+npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb uuid
+npm install -D @types/uuid 
+npm install -D ts-node dotenv 
+npm run create-tables 
+npm run seed-suppliers 
+npm install -D tsconfig-paths 

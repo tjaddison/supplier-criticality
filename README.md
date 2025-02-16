@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# ProcureSci - Modern SaaS Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A cutting-edge SaaS application built with Next.js 14, featuring a modern design system and enterprise-grade architecture.
 
-## Available Scripts
+## ✨ Features
 
-In the project directory, you can run:
+- 🎨 Award-winning UI/UX design
+- 🚀 Lightning-fast performance
+- 📱 Fully responsive design
+- 🌙 Dark mode support
+- 📊 Interactive dashboard
+- 🔄 Real-time updates
+- 🔐 Mock authentication system
+- 📈 Analytics integration
+- 🎯 AWS DynamoDB integration
 
-### `npm start`
+## 🛠 Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Framework:** Next.js 14
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui
+- **Database:** AWS DynamoDB
+- **Icons:** Lucide Icons
+- **Charts:** Recharts
+- **Deployment:** Vercel
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Quick Start
 
-### `npm test`
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/ProcureSci.git
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies:
+```bash
+cd ProcureSci
+npm install
+```
 
-### `npm run build`
+3. Create `.env.local`:
+```bash
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+AWS_REGION=your_region
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📁 Project Structure
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+ProcureSci/
+├── app/                 # Next.js app directory
+│   ├── api/            # API routes
+│   ├── dashboard/      # Dashboard pages
+│   ├── login/         # Authentication
+│   └── page.tsx       # Landing page
+├── components/        # React components
+│   ├── ui/           # Reusable UI components
+│   └── dashboard/    # Dashboard-specific components
+├── lib/              # Utilities
+└── public/           # Static assets
+```
 
-### `npm run eject`
+## 🎯 Core Features
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Modern Landing Page:** Award-winning design with smooth animations
+- **Mock Authentication:** Pre-filled credentials for easy demo access
+- **Interactive Dashboard:** Real-time data visualization
+- **DynamoDB Integration:** Scalable database operations
+- **Responsive Design:** Works perfectly on all devices
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📝 License
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+MIT License - feel free to use this project for your own purposes.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🤝 Contributing
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Contributions are welcome! Please feel free to submit a Pull Request.
