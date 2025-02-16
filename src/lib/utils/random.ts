@@ -1,3 +1,5 @@
+import { Supplier } from "@/types/supplier"
+
 export function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
@@ -13,10 +15,11 @@ export function getRandomDate(start: Date, end: Date): string {
 
 export function getRandomSpend(): number {
   // Generate spend between $10,000 and $10,000,000
-  return getRandomInt(10000, 10000000)
+  return Math.floor(Math.random() * (10000000 - 10000 + 1)) + 10000
 }
 
-export function calculateCriticalityScore(supplier: any): number {
-  // Mock calculation - in reality this would use the weights and actual data
-  return getRandomInt(1, 100)
+export function calculateCriticalityScore(supplier: Supplier): number {
+  // TODO: Implement actual criticality calculation based on weights and supplier data
+  // For now, return a random score between 0 and 100
+  return Math.floor(Math.random() * 100)
 } 

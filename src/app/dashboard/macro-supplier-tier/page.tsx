@@ -36,7 +36,6 @@ const DEFAULT_WEIGHTS: CriteriaWeights = {
 
 export default function MacroSupplierTierPage() {
   const [weights, setWeights] = useState<CriteriaWeights>(DEFAULT_WEIGHTS)
-  const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -66,25 +65,6 @@ export default function MacroSupplierTierPage() {
           riskLevel: Number(savedWeights.riskLevel) || DEFAULT_WEIGHTS.riskLevel,
         }
         setWeights(typedWeights)
-      }
-
-      // Load suppliers
-      const savedSuppliers = await getSuppliers(userId)
-      if (savedSuppliers) {
-        // Ensure all required fields are present with proper types
-        const typedSuppliers: Supplier[] = savedSuppliers.map(supplier => ({
-          id: supplier.id,
-          name: supplier.name,
-          category: supplier.category,
-          subcategory: supplier.subcategory,
-          expirationDate: supplier.expirationDate,
-          contractNumber: supplier.contractNumber,
-          threeYearSpend: Number(supplier.threeYearSpend),
-          contractDescription: supplier.contractDescription,
-          criticalityScore: Number(supplier.criticalityScore),
-          // Add any other required fields with proper type conversion
-        }))
-        setSuppliers(typedSuppliers)
       }
     } catch (error) {
       console.error('Error loading data:', error)

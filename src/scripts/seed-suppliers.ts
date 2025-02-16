@@ -3,7 +3,6 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb"
 import { v4 as uuidv4 } from 'uuid'
 import dotenv from 'dotenv'
 import { 
-  getRandomInt, 
   getRandomElement, 
   getRandomDate, 
   getRandomSpend, 

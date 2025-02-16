@@ -110,7 +110,17 @@ export async function getCriteriaWeights(userId: string) {
   return response.Item
 }
 
-export async function updateCriteriaWeights(userId: string, weights: any) {
+// Add proper type for weights
+interface CriteriaWeights {
+  spendPercentage: number
+  threeYearAverage: number
+  marketSize: number
+  replacementComplexity: number
+  utilization: number
+  riskLevel: number
+}
+
+export async function updateCriteriaWeights(userId: string, weights: CriteriaWeights) {
   const command = new PutCommand({
     TableName: "criteriaweights",
     Item: {

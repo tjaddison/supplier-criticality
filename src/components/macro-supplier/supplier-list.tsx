@@ -40,7 +40,7 @@ interface SupplierListProps {
 type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend'
 type SortDirection = 'asc' | 'desc'
 
-export function SupplierList({ weights, onEdit, onDelete, refreshTrigger = 0 }: SupplierListProps) {
+export function SupplierList({ weights: _, onEdit, onDelete, refreshTrigger = 0 }: SupplierListProps) {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
@@ -50,11 +50,9 @@ export function SupplierList({ weights, onEdit, onDelete, refreshTrigger = 0 }: 
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
-  // Calculate pagination values
   const totalPages = Math.ceil(suppliers.length / pageSize)
   const startIndex = (currentPage - 1) * pageSize
   const endIndex = startIndex + pageSize
-  const currentSuppliers = suppliers.slice(startIndex, endIndex)
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
