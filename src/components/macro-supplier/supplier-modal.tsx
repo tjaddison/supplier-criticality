@@ -328,6 +328,36 @@ export function SupplierModal({
                   </p>
                 </div>
               </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>Ease of Replacement</Label>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {supplier.easeOfReplacement}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Based on spend, utilization, and market size
+                  </p>
+                </div>
+                <div>
+                  <Label>Utilization</Label>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {supplier.utilization}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Based on spend allocation and spend value
+                  </p>
+                </div>
+                <div>
+                  <Label>Risk</Label>
+                  <div className="mt-1 text-2xl font-semibold">
+                    {supplier.risk}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Based on ease of replacement and utilization
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </div>

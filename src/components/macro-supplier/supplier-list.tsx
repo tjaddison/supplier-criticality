@@ -22,7 +22,7 @@ import { PlusCircle, Trash2, ChevronLeft, ChevronRight, ChevronDown, ChevronUp }
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
 import { getSuppliers } from "@/lib/dynamodb"
-import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize } from "@/lib/utils/calculations"
+import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
   weights: {
@@ -167,14 +167,37 @@ export function SupplierList({
     // Calculate values before passing to modal
     const subcategoryPercentage = calculateSubcategoryPercentage(supplier, suppliers)
     const subcategoryCount = calculateSubcategoryCount(supplier, suppliers)
+    const spendAllocation = getSpendAllocationCategory(subcategoryPercentage)
+    const spendCategory = getSpendCategory(supplier.threeYearSpend)
+    const subcategorySize = getSubcategorySize(subcategoryCount)
+    const hiddenSpendAllocation = getHiddenSpendAllocation(spendAllocation)
+    const hiddenSpendValue = getHiddenSpendValue(spendCategory)
+    const hiddenSubcategorySize = getHiddenSubcategorySize(subcategorySize)
+    const hiddenUtilization = calculateHiddenUtilization(hiddenSpendAllocation, hiddenSpendValue)
+    const hiddenEaseOfReplacement = calculateHiddenEaseOfReplacement(
+      hiddenSpendValue,
+      hiddenUtilization,
+      hiddenSubcategorySize
+    )
+    const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
+    
     onEdit({
       ...supplier,
       categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
       subcategoryCount,
       subcategoryPercentage,
-      spendAllocation: getSpendAllocationCategory(subcategoryPercentage),
-      spendCategory: getSpendCategory(supplier.threeYearSpend),
-      subcategorySize: getSubcategorySize(subcategoryCount)
+      spendAllocation,
+      spendCategory,
+      subcategorySize,
+      hiddenSpendAllocation,
+      hiddenSpendValue,
+      hiddenSubcategorySize,
+      hiddenUtilization,
+      hiddenEaseOfReplacement,
+      hiddenRisk,
+      easeOfReplacement: getEaseOfReplacement(hiddenEaseOfReplacement),
+      utilization: getUtilizationLevel(hiddenUtilization),
+      risk: getRiskLevel(hiddenRisk)
     })
   }
 

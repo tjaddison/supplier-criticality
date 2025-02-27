@@ -17,8 +17,16 @@ export interface Supplier {
   spend?: number
   subcategorySize?: "one" | "few" | "many"
   replacementEase?: "low" | "medium" | "high"
-  utilization?: "low" | "moderate" | "high"
+  utilization?: string
   riskLevel?: "low" | "medium" | "high"
   subcategoryCount?: number
   spendCategory?: string
+  hiddenSpendAllocation?: number
+  hiddenSpendValue?: number
+  hiddenSubcategorySize?: number
+  hiddenUtilization?: number
+  hiddenEaseOfReplacement?: number
+  hiddenRisk?: number
+  easeOfReplacement?: string
+  risk?: string
 } 

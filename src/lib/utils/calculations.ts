@@ -47,11 +47,10 @@ export function getSpendAllocationCategory(subcategoryPercentage: number): strin
 }
 
 export function getSpendCategory(threeYearSpend: number): string {
-  const spendInThousands = threeYearSpend / 1000;
-  
-  if (spendInThousands >= 10000) return "$10M+"
-  if (spendInThousands >= 1000) return "$250k-$1M"
-  if (spendInThousands >= 250) return "$250k-$1M"
+  if (threeYearSpend >= 10000000) return "$10M+"
+  if (threeYearSpend >= 5000000) return "$5-$10M"
+  if (threeYearSpend >= 1000000) return "$1M-$5M"
+  if (threeYearSpend >= 250000) return "$250k-$1M"
   return "Less than $250k"
 }
 
@@ -59,4 +58,83 @@ export function getSubcategorySize(supplierCount: number): "one" | "few" | "many
   if (supplierCount >= 6) return "many"
   if (supplierCount >= 2) return "few"
   return "one"
+}
+
+export function getHiddenSpendAllocation(spendAllocation: string): number {
+  switch (spendAllocation) {
+    case "71+%":
+      return 100;
+    case "36-70%":
+      return 66;
+    case "10-35%":
+      return 33;
+    case "Less than 10%":
+    default:
+      return 1;
+  }
+}
+
+export function getHiddenSpendValue(spendCategory: string): number {
+  switch (spendCategory) {
+    case "$10M+":
+      return 100;
+    case "$5-$10M":
+      return 75;
+    case "$1M-$5M":
+      return 50;
+    case "$250k-$1M":
+      return 25;
+    case "Less than $250k":
+    default:
+      return 1;
+  }
+}
+
+export function getHiddenSubcategorySize(subcategorySize: "one" | "few" | "many"): number {
+  switch (subcategorySize) {
+    case "one":
+      return 100;
+    case "few":
+      return 50;
+    case "many":
+    default:
+      return 1;
+  }
+}
+
+export function calculateHiddenUtilization(hiddenSpendAllocation: number, hiddenSpendValue: number): number {
+  return Math.round((hiddenSpendAllocation + hiddenSpendValue) / 2);
+}
+
+export function calculateHiddenEaseOfReplacement(
+  hiddenSpendValue: number, 
+  hiddenUtilization: number, 
+  hiddenSubcategorySize: number
+): number {
+  return Math.round((hiddenSpendValue + hiddenUtilization + hiddenSubcategorySize) / 3);
+}
+
+export function calculateHiddenRisk(
+  hiddenEaseOfReplacement: number,
+  hiddenUtilization: number
+): number {
+  return Math.round((hiddenEaseOfReplacement + hiddenUtilization) / 2);
+}
+
+export function getEaseOfReplacement(hiddenEaseOfReplacement: number): string {
+  if (hiddenEaseOfReplacement > 60) return "Challenging";
+  if (hiddenEaseOfReplacement >= 21) return "Moderate Difficulty";
+  return "Easy";
+}
+
+export function getUtilizationLevel(hiddenUtilization: number): string {
+  if (hiddenUtilization > 60) return "High";
+  if (hiddenUtilization >= 21) return "Moderate";
+  return "Low";
+}
+
+export function getRiskLevel(hiddenRisk: number): string {
+  if (hiddenRisk >= 51) return "High";
+  if (hiddenRisk >= 20) return "Moderate";
+  return "Low";
 }
