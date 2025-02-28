@@ -204,3 +204,17 @@ export function calculateHiddenWeightsRisk(
   // Multiply hidden value by weight
   return Math.round(hiddenRisk * weightDecimal);
 }
+
+export function calculateSupplierCriticalityValue(supplier: Supplier): number {
+  // Sum all the weighted values
+  const sum = (
+    (supplier.hiddenWeightsSpendAllocation || 0) +
+    (supplier.hiddenWeightsSpendValue || 0) +
+    (supplier.hiddenWeightsSubcategorySize || 0) +
+    (supplier.hiddenWeightsEaseOfReplacement || 0) +
+    (supplier.hiddenWeightsUtilization || 0) +
+    (supplier.hiddenWeightsRisk || 0)
+  );
+  
+  return sum;
+}

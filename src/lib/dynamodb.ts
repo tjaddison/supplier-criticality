@@ -9,8 +9,9 @@ import {
   ScanCommand
 } from "@aws-sdk/lib-dynamodb"
 import { Supplier } from "@/types/supplier"
+import { v4 as uuidv4 } from 'uuid'
 
-
+// Initialize the DynamoDB client
 const client = new DynamoDBClient({
   region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
   credentials: {
@@ -27,86 +28,115 @@ export const docClient = DynamoDBDocumentClient.from(client, {
 
 // Supplier CRUD operations
 export async function getSuppliers(userId: string) {
-  const command = new QueryCommand({
-    TableName: "suppliers",
-    KeyConditionExpression: "userId = :userId",
-    ExpressionAttributeValues: {
-      ":userId": userId
-    }
-  })
-
-  const response = await docClient.send(command)
-  return response.Items as Supplier[]
-}
-
-export async function createSupplier(userId: string, supplier: Supplier) {
-  const command = new PutCommand({
-    TableName: "suppliers",
-    Item: {
-      userId,
-      ...supplier
-    }
-  })
-
-  return docClient.send(command)
-}
-
-export async function updateSupplier(userId: string, supplier: Supplier) {
-  const command = new UpdateCommand({
-    TableName: "suppliers",
-    Key: {
-      userId,
-      id: supplier.id
-    },
-    UpdateExpression: "set #name = :name, category = :category, subcategory = :subcategory, expirationDate = :expirationDate, contractNumber = :contractNumber, threeYearSpend = :threeYearSpend, contractDescription = :contractDescription, criticalityScore = :criticalityScore",
-    ExpressionAttributeNames: {
-      "#name": "name" // name is a reserved word in DynamoDB
-    },
-    ExpressionAttributeValues: {
-      ":name": supplier.name,
-      ":category": supplier.category,
-      ":subcategory": supplier.subcategory,
-      ":expirationDate": supplier.expirationDate,
-      ":contractNumber": supplier.contractNumber,
-      ":threeYearSpend": supplier.threeYearSpend,
-      ":contractDescription": supplier.contractDescription,
-      ":criticalityScore": supplier.criticalityScore
-    }
-  })
-
   try {
+    const command = new QueryCommand({
+      TableName: "suppliers",
+      KeyConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId
+      }
+    })
+
     const response = await docClient.send(command)
-    console.log('Update successful:', response)
-    return response
+    return response.Items as Supplier[]
   } catch (error) {
-    console.error('Error updating supplier:', error)
+    console.error("Error fetching suppliers:", error)
+    // Return empty array on error
+    return []
+  }
+}
+
+export async function createSupplier(supplier: Supplier, userId: string = "user123") {
+  try {
+    const newSupplier = {
+      ...supplier,
+      userId,
+      id: supplier.id || uuidv4(),
+      createdAt: new Date().toISOString()
+    }
+
+    const command = new PutCommand({
+      TableName: "suppliers",
+      Item: newSupplier
+    })
+
+    await docClient.send(command)
+    return newSupplier
+  } catch (error) {
+    console.error("Error creating supplier:", error)
     throw error
   }
 }
 
-export async function deleteSupplier(userId: string, supplierId: string) {
-  const command = new DeleteCommand({
-    TableName: "suppliers",
-    Key: {
-      userId,
-      id: supplierId
-    }
-  })
+export async function updateSupplier(supplier: Supplier, userId: string = "user123") {
+  try {
+    const command = new UpdateCommand({
+      TableName: "suppliers",
+      Key: {
+        userId,
+        id: supplier.id
+      },
+      UpdateExpression: "set #name = :name, category = :category, subcategory = :subcategory, expirationDate = :expirationDate, contractNumber = :contractNumber, threeYearSpend = :threeYearSpend, contractDescription = :contractDescription, criticalityScore = :criticalityScore, updatedAt = :updatedAt",
+      ExpressionAttributeNames: {
+        "#name": "name" // name is a reserved word in DynamoDB
+      },
+      ExpressionAttributeValues: {
+        ":name": supplier.name,
+        ":category": supplier.category,
+        ":subcategory": supplier.subcategory,
+        ":expirationDate": supplier.expirationDate,
+        ":contractNumber": supplier.contractNumber,
+        ":threeYearSpend": supplier.threeYearSpend,
+        ":contractDescription": supplier.contractDescription || "",
+        ":criticalityScore": supplier.criticalityScore,
+        ":updatedAt": new Date().toISOString()
+      },
+      ReturnValues: "ALL_NEW"
+    })
 
-  return docClient.send(command)
+    const response = await docClient.send(command)
+    return response.Attributes as Supplier
+  } catch (error) {
+    console.error("Error updating supplier:", error)
+    throw error
+  }
+}
+
+export async function deleteSupplier(id: string, userId: string = "user123") {
+  try {
+    const command = new DeleteCommand({
+      TableName: "suppliers",
+      Key: {
+        userId,
+        id
+      }
+    })
+
+    await docClient.send(command)
+    return { id, deleted: true }
+  } catch (error) {
+    console.error("Error deleting supplier:", error)
+    throw error
+  }
 }
 
 // Criteria Weights operations
 export async function getCriteriaWeights(userId: string) {
-  const command = new GetCommand({
-    TableName: "criteriaweights",
-    Key: {
-      userId
-    }
-  })
+  try {
+    const command = new GetCommand({
+      TableName: "criteriaweights",
+      Key: {
+        userId
+      }
+    })
 
-  const response = await docClient.send(command)
-  return response.Item
+    const response = await docClient.send(command)
+    return response.Item
+  } catch (error) {
+    console.error("Error fetching criteria weights:", error)
+    // Return null on error
+    return null
+  }
 }
 
 // Add proper type for weights
@@ -120,15 +150,21 @@ interface CriteriaWeights {
 }
 
 export async function updateCriteriaWeights(userId: string, weights: CriteriaWeights) {
-  const command = new PutCommand({
-    TableName: "criteriaweights",
-    Item: {
-      userId,
-      ...weights
-    }
-  })
+  try {
+    const command = new PutCommand({
+      TableName: "criteriaweights",
+      Item: {
+        userId,
+        ...weights
+      }
+    })
 
-  return docClient.send(command)
+    await docClient.send(command)
+    return { success: true }
+  } catch (error) {
+    console.error("Error updating criteria weights:", error)
+    throw error
+  }
 }
 
 // Add this function to get unique subcategories
@@ -166,6 +202,6 @@ export async function getUniqueSubcategories(userId: string): Promise<{ [categor
 
   } catch (error) {
     console.error('Error getting unique subcategories:', error);
-    throw error;
+    return {};
   }
 } 
