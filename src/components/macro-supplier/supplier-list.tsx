@@ -128,27 +128,79 @@ export function SupplierList({
 
   useEffect(() => {
     loadSuppliers()
-  }, [refreshTrigger])
+  }, [weights, refreshTrigger])
 
   const loadSuppliers = async () => {
     try {
       const userId = "user123" // Demo user ID
       const data = await getSuppliers(userId)
       if (data) {
-        // Type assertion to ensure data matches Supplier interface
-        const typedSuppliers = data.map(item => ({
-          id: item.id,
-          name: item.name,
-          category: item.category,
-          subcategory: item.subcategory,
-          expirationDate: item.expirationDate,
-          contractNumber: item.contractNumber,
-          threeYearSpend: Number(item.threeYearSpend),
-          contractDescription: item.contractDescription,
-          criticalityScore: Number(item.criticalityScore)
-        })) as Supplier[]
+        // Calculate criticality scores for all suppliers
+        const suppliersWithCriticalityScores = data.map(supplier => {
+          // Calculate all the hidden values and weights
+          const subcategoryPercentage = calculateSubcategoryPercentage(supplier, data)
+          const subcategoryCount = calculateSubcategoryCount(supplier, data)
+          const spendAllocation = getSpendAllocationCategory(subcategoryPercentage)
+          const spendCategory = getSpendCategory(supplier.threeYearSpend)
+          const subcategorySize = getSubcategorySize(subcategoryCount)
+          const hiddenSpendAllocation = getHiddenSpendAllocation(spendAllocation)
+          const hiddenSpendValue = getHiddenSpendValue(spendCategory)
+          const hiddenSubcategorySize = getHiddenSubcategorySize(subcategorySize)
+          const hiddenUtilization = calculateHiddenUtilization(hiddenSpendAllocation, hiddenSpendValue)
+          const hiddenEaseOfReplacement = calculateHiddenEaseOfReplacement(
+            hiddenSpendValue,
+            hiddenUtilization,
+            hiddenSubcategorySize
+          )
+          const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
+          
+          // Calculate weighted values
+          const hiddenWeightsSpendAllocation = calculateHiddenWeightsSpendAllocation(
+            hiddenSpendAllocation,
+            { spendPercentage: weights.spendPercentage }
+          )
+          
+          const hiddenWeightsSpendValue = calculateHiddenWeightsSpendValue(
+            hiddenSpendValue,
+            { threeYearAverage: weights.threeYearAverage }
+          )
+          
+          const hiddenWeightsSubcategorySize = calculateHiddenWeightsSubcategorySize(
+            hiddenSubcategorySize,
+            { marketSize: weights.marketSize }
+          )
+          
+          const hiddenWeightsEaseOfReplacement = calculateHiddenWeightsEaseOfReplacement(
+            hiddenEaseOfReplacement,
+            { replacementComplexity: weights.replacementComplexity }
+          )
+          
+          const hiddenWeightsUtilization = calculateHiddenWeightsUtilization(
+            hiddenUtilization,
+            { utilization: weights.utilization }
+          )
+          
+          const hiddenWeightsRisk = calculateHiddenWeightsRisk(
+            hiddenRisk,
+            { riskLevel: weights.riskLevel }
+          )
+          
+          // Calculate the overall criticality value
+          const criticalityScore = 
+            hiddenWeightsSpendAllocation +
+            hiddenWeightsSpendValue +
+            hiddenWeightsSubcategorySize +
+            hiddenWeightsEaseOfReplacement +
+            hiddenWeightsUtilization +
+            hiddenWeightsRisk;
+          
+          return {
+            ...supplier,
+            criticalityScore
+          }
+        })
         
-        setSuppliers(typedSuppliers)
+        setSuppliers(suppliersWithCriticalityScores)
       }
     } catch (error) {
       console.error('Error loading suppliers:', error)
@@ -220,6 +272,15 @@ export function SupplierList({
       { riskLevel: weights.riskLevel }
     )
     
+    // Calculate the overall criticality value
+    const supplierCriticalityValue = 
+      hiddenWeightsSpendAllocation +
+      hiddenWeightsSpendValue +
+      hiddenWeightsSubcategorySize +
+      hiddenWeightsEaseOfReplacement +
+      hiddenWeightsUtilization +
+      hiddenWeightsRisk;
+    
     onEdit({
       ...supplier,
       categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
@@ -242,7 +303,8 @@ export function SupplierList({
       hiddenWeightsSubcategorySize,
       hiddenWeightsEaseOfReplacement,
       hiddenWeightsUtilization,
-      hiddenWeightsRisk
+      hiddenWeightsRisk,
+      criticalityScore: supplierCriticalityValue // Set the criticality score
     })
   }
 
