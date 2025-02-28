@@ -275,87 +275,111 @@ export function SupplierModal({
           )}
 
           {activeTab === 'calculated' && supplier?.id && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Contract % of Category</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.categoryPercentage?.toFixed(2)}%
+            <div className="space-y-8">
+              {/* Contract Percentages Section */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Contract Percentages</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <Label>Contract % of Category</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.categoryPercentage?.toFixed(2)}%
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Percentage of total spend in {supplier.category} category
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Percentage of total spend in {supplier.category} category
-                  </p>
-                </div>
-                <div>
-                  <Label>Contract % of Subcategory</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.subcategoryPercentage?.toFixed(2)}%
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <Label>Contract % of Subcategory</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.subcategoryPercentage?.toFixed(2)}%
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Percentage of total spend in {supplier.subcategory} subcategory
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Percentage of total spend in {supplier.subcategory} subcategory
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Spend (000s)</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.spendCategory}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on 3-year average spend
-                  </p>
-                </div>
-                <div>
-                  <Label>Subcategory Size</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.subcategorySize === "many" ? "Many (6 or more)" :
-                     supplier.subcategorySize === "few" ? "Few (2-5)" :
-                     "One"}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on number of suppliers ({supplier.subcategoryCount})
-                  </p>
-                </div>
-                <div>
-                  <Label>Spend Allocation</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.spendAllocation}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on subcategory spend percentage
-                  </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Ease of Replacement</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.easeOfReplacement}
+              {/* Spend & Market Information */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Spend & Market Information</h3>
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <Label>Spend (000s)</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.spendCategory}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on 3-year average spend
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on spend, utilization, and market size
-                  </p>
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <Label>Subcategory Size</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.subcategorySize === "many" ? "Many (6 or more)" :
+                       supplier.subcategorySize === "few" ? "Few (2-5)" :
+                       "One"}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on number of suppliers ({supplier.subcategoryCount})
+                    </p>
+                  </div>
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <Label>Spend Allocation</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.spendAllocation}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on subcategory spend percentage
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <Label>Utilization</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.utilization}
+              </div>
+
+              {/* Risk Assessment */}
+              <div>
+                <h3 className="text-lg font-medium mb-3">Risk Assessment</h3>
+                <div className="grid grid-cols-3 gap-6">
+                  <div className={`p-4 rounded-lg ${
+                    supplier.easeOfReplacement === "Challenging" ? "bg-red-50 dark:bg-red-950/20" :
+                    supplier.easeOfReplacement === "Moderate Difficulty" ? "bg-yellow-50 dark:bg-yellow-950/20" :
+                    "bg-green-50 dark:bg-green-950/20"
+                  }`}>
+                    <Label>Ease of Replacement</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.easeOfReplacement}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on spend, utilization, and market size
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on spend allocation and spend value
-                  </p>
-                </div>
-                <div>
-                  <Label>Risk</Label>
-                  <div className="mt-1 text-2xl font-semibold">
-                    {supplier.risk}
+                  <div className={`p-4 rounded-lg ${
+                    supplier.utilization === "High" ? "bg-red-50 dark:bg-red-950/20" :
+                    supplier.utilization === "Moderate" ? "bg-yellow-50 dark:bg-yellow-950/20" :
+                    "bg-green-50 dark:bg-green-950/20"
+                  }`}>
+                    <Label>Utilization</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.utilization}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on spend allocation and spend value
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Based on ease of replacement and utilization
-                  </p>
+                  <div className={`p-4 rounded-lg ${
+                    supplier.risk === "High" ? "bg-red-50 dark:bg-red-950/20" :
+                    supplier.risk === "Moderate" ? "bg-yellow-50 dark:bg-yellow-950/20" :
+                    "bg-green-50 dark:bg-green-950/20"
+                  }`}>
+                    <Label>Overall Risk</Label>
+                    <div className="mt-1 text-2xl font-semibold">
+                      {supplier.risk}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Based on ease of replacement and utilization
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
