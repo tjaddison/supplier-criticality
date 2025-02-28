@@ -29,4 +29,10 @@ export interface Supplier {
   hiddenRisk?: number
   easeOfReplacement?: string
   risk?: string
+  hiddenWeightsSpendAllocation?: number
+  hiddenWeightsSpendValue?: number
+  hiddenWeightsSubcategorySize?: number
+  hiddenWeightsEaseOfReplacement?: number
+  hiddenWeightsUtilization?: number
+  hiddenWeightsRisk?: number
 } 

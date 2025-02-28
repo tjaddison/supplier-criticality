@@ -86,14 +86,14 @@ export default function MacroSupplierTierPage() {
       const userId = "user123" // Demo user ID
 
       if (supplier.id) {
-        await updateSupplier(userId, supplier)
+        await updateSupplier(supplier, userId)
       } else {
         const newSupplier = {
           ...supplier,
           id: uuidv4(),
           userId
         }
-        await createSupplier(userId, newSupplier)
+        await createSupplier(newSupplier, userId)
       }
 
       // Trigger refresh by incrementing the counter
@@ -116,7 +116,7 @@ export default function MacroSupplierTierPage() {
 
     try {
       const userId = "user123" // Demo user ID
-      await deleteSupplier(userId, supplierToDelete.id)
+      await deleteSupplier(supplierToDelete.id, userId)
       
       // Trigger refresh
       setRefreshTrigger(prev => prev + 1)

@@ -22,7 +22,7 @@ import { PlusCircle, Trash2, ChevronLeft, ChevronRight, ChevronDown, ChevronUp }
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
 import { getSuppliers } from "@/lib/dynamodb"
-import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel } from "@/lib/utils/calculations"
+import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
   weights: {
@@ -42,7 +42,15 @@ type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contr
 type SortDirection = 'asc' | 'desc'
 
 export function SupplierList({ 
-  onEdit,   // Fix: Keep onEdit separate
+  weights = {
+    spendPercentage: 20,
+    threeYearAverage: 20,
+    marketSize: 15,
+    replacementComplexity: 15,
+    utilization: 15,
+    riskLevel: 15
+  },
+  onEdit,
   onDelete, 
   refreshTrigger = 0 
 }: SupplierListProps) {
@@ -181,6 +189,37 @@ export function SupplierList({
     )
     const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
     
+    // Get weights from props
+    const hiddenWeightsSpendAllocation = calculateHiddenWeightsSpendAllocation(
+      hiddenSpendAllocation,
+      { spendPercentage: weights.spendPercentage }
+    )
+    
+    const hiddenWeightsSpendValue = calculateHiddenWeightsSpendValue(
+      hiddenSpendValue,
+      { threeYearAverage: weights.threeYearAverage }
+    )
+    
+    const hiddenWeightsSubcategorySize = calculateHiddenWeightsSubcategorySize(
+      hiddenSubcategorySize,
+      { marketSize: weights.marketSize }
+    )
+    
+    const hiddenWeightsEaseOfReplacement = calculateHiddenWeightsEaseOfReplacement(
+      hiddenEaseOfReplacement,
+      { replacementComplexity: weights.replacementComplexity }
+    )
+    
+    const hiddenWeightsUtilization = calculateHiddenWeightsUtilization(
+      hiddenUtilization,
+      { utilization: weights.utilization }
+    )
+    
+    const hiddenWeightsRisk = calculateHiddenWeightsRisk(
+      hiddenRisk,
+      { riskLevel: weights.riskLevel }
+    )
+    
     onEdit({
       ...supplier,
       categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
@@ -197,7 +236,13 @@ export function SupplierList({
       hiddenRisk,
       easeOfReplacement: getEaseOfReplacement(hiddenEaseOfReplacement),
       utilization: getUtilizationLevel(hiddenUtilization),
-      risk: getRiskLevel(hiddenRisk)
+      risk: getRiskLevel(hiddenRisk),
+      hiddenWeightsSpendAllocation,
+      hiddenWeightsSpendValue,
+      hiddenWeightsSubcategorySize,
+      hiddenWeightsEaseOfReplacement,
+      hiddenWeightsUtilization,
+      hiddenWeightsRisk
     })
   }
 

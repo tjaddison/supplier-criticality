@@ -138,3 +138,69 @@ export function getRiskLevel(hiddenRisk: number): string {
   if (hiddenRisk >= 20) return "Moderate";
   return "Low";
 }
+
+export function calculateHiddenWeightsSpendAllocation(
+  hiddenSpendAllocation: number,
+  weights: { spendPercentage: number }
+): number {
+  // Convert percentage to decimal (e.g., 30% -> 0.3)
+  const weightDecimal = weights.spendPercentage / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenSpendAllocation * weightDecimal);
+}
+
+export function calculateHiddenWeightsSpendValue(
+  hiddenSpendValue: number,
+  weights: { threeYearAverage: number }
+): number {
+  // Convert percentage to decimal (e.g., 20% -> 0.2)
+  const weightDecimal = weights.threeYearAverage / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenSpendValue * weightDecimal);
+}
+
+export function calculateHiddenWeightsSubcategorySize(
+  hiddenSubcategorySize: number,
+  weights: { marketSize: number }
+): number {
+  // Convert percentage to decimal (e.g., 15% -> 0.15)
+  const weightDecimal = weights.marketSize / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenSubcategorySize * weightDecimal);
+}
+
+export function calculateHiddenWeightsEaseOfReplacement(
+  hiddenEaseOfReplacement: number,
+  weights: { replacementComplexity: number }
+): number {
+  // Convert percentage to decimal (e.g., 15% -> 0.15)
+  const weightDecimal = weights.replacementComplexity / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenEaseOfReplacement * weightDecimal);
+}
+
+export function calculateHiddenWeightsUtilization(
+  hiddenUtilization: number,
+  weights: { utilization: number }
+): number {
+  // Convert percentage to decimal (e.g., 15% -> 0.15)
+  const weightDecimal = weights.utilization / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenUtilization * weightDecimal);
+}
+
+export function calculateHiddenWeightsRisk(
+  hiddenRisk: number,
+  weights: { riskLevel: number }
+): number {
+  // Convert percentage to decimal (e.g., 15% -> 0.15)
+  const weightDecimal = weights.riskLevel / 100;
+  
+  // Multiply hidden value by weight
+  return Math.round(hiddenRisk * weightDecimal);
+}
