@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -51,8 +51,7 @@ export function SupplierList({
     riskLevel: 15
   },
   onEdit,
-  onDelete, 
-  refreshTrigger = 0 
+  onDelete
 }: SupplierListProps) {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
@@ -126,11 +125,7 @@ export function SupplierList({
     }
   }
 
-  useEffect(() => {
-    loadSuppliers()
-  }, [weights, refreshTrigger])
-
-  const loadSuppliers = async () => {
+  const loadSuppliers = useCallback(async () => {
     try {
       const userId = "user123" // Demo user ID
       const data = await getSuppliers(userId)
@@ -207,7 +202,11 @@ export function SupplierList({
     } finally {
       setLoading(false)
     }
-  }
+  }, [weights])
+
+  useEffect(() => {
+    loadSuppliers()
+  }, [loadSuppliers])
 
   const handleDeleteClick = (e: React.MouseEvent, supplier: Supplier) => {
     e.stopPropagation() // Prevent row click from triggering

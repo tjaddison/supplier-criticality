@@ -3,23 +3,36 @@
 import { ProcureSciLogo } from "@/components/ui/logo"
 import Link from "next/link"
 import { 
-  LayoutDashboard, 
-  Users, 
   Settings, 
-  BarChart,
   LogOut,
-  Building2,
   Menu,
   X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { ReactNode } from "react"
+
+// Navigation items with "Suppliers" removed
+const navigationItems = [
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    name: "Macro Supplier Tier",
+    href: "/dashboard/macro-supplier-tier",
+  },
+  {
+    name: "Micro Supplier Tier",
+    href: "/dashboard/micro-supplier-tier",
+  },
+]
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -57,30 +70,17 @@ export default function DashboardLayout({
 
           {/* Navigation Section */}
           <nav className="space-y-2 flex-1 overflow-y-auto">
-            <Link href="/dashboard" onClick={() => setSidebarOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                <LayoutDashboard className="mr-2 h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-            <Link href="/dashboard/macro-supplier-tier" onClick={() => setSidebarOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                <Building2 className="mr-2 h-4 w-4" />
-                Macro Supplier Tier
-              </Button>
-            </Link>
-            <Link href="/dashboard/users" onClick={() => setSidebarOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                <Users className="mr-2 h-4 w-4" />
-                Users
-              </Button>
-            </Link>
-            <Link href="/dashboard/analytics" onClick={() => setSidebarOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                <BarChart className="mr-2 h-4 w-4" />
-                Analytics
-              </Button>
-            </Link>
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Button variant="ghost" className="w-full justify-start">
+                  {item.name}
+                </Button>
+              </Link>
+            ))}
             <Link href="/dashboard/settings" onClick={() => setSidebarOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">
                 <Settings className="mr-2 h-4 w-4" />
