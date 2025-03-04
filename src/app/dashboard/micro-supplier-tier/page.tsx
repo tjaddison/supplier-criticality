@@ -1,4 +1,4 @@
-import MicroSupplierTierClient from "./client"
+import MicroSupplierTierClient from "@/app/dashboard/micro-supplier-tier/client"
 import { getSuppliers } from "@/lib/dynamodb"
 
 export default async function MicroSupplierTierPage() {

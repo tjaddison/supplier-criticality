@@ -3,12 +3,8 @@
 import { ProcureSciLogo } from "@/components/ui/logo"
 import Link from "next/link"
 import { 
-  LayoutDashboard, 
-  Users, 
   Settings, 
-  BarChart,
   LogOut,
-  Building2,
   Menu,
   X
 } from "lucide-react"

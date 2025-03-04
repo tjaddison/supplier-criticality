@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Supplier } from "@/types/supplier"
 import { 
   Card, 
@@ -254,7 +254,7 @@ function SupplierGaugeChart({
             rx="4"
           />
           <text x="10" y="20" fill="white" fontSize="12">
-            Series "Target State" Point 1
+            Series &quot;Target State&quot; Point 1
           </text>
           <text x="10" y="38" fill="white" fontSize="14" fontWeight="bold">
             Value: {targetScore.toFixed(1)} ({targetPercentage}%)
@@ -328,19 +328,18 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
         return averageSpendOptions.find(opt => opt.key === key)
       case 'contracts':
         return contractsOptions.find(opt => opt.key === key)
+      case 'complexity':
       case 'utilization':
         return utilizationOptions.find(opt => opt.key === key)
       case 'risk':
         return riskOptions.find(opt => opt.key === key)
-      case 'complexity':
-        return utilizationOptions.find(opt => opt.key === key) // Reusing utilization options for complexity
       default:
         return null
     }
   }
 
-  // Calculate target state weighted score
-  const calculateTargetScore = () => {
+  // Function to calculate target score (using useCallback to avoid dependency issues)
+  const calculateTargetScore = useCallback(() => {
     const { spendAllocation, averageSpend, contracts, complexity, utilization, risk } = targetState
     
     const weightedSpendAllocation = (spendAllocation.value * spendAllocation.weight) / 100
@@ -350,14 +349,33 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
     const weightedUtilization = (utilization.value * utilization.weight) / 100
     const weightedRisk = (risk.value * risk.weight) / 100
     
-    const totalScore = weightedSpendAllocation + weightedAverageSpend + weightedContracts + 
-                       weightedComplexity + weightedUtilization + weightedRisk
+    const totalScore = weightedSpendAllocation +
+                     weightedAverageSpend +
+                     weightedContracts +
+                     weightedComplexity +
+                     weightedUtilization +
+                     weightedRisk
     
     return {
       totalScore,
       relationship: getRelationshipType(totalScore)
     }
-  }
+  }, [targetState])
+
+  // Calculate the target score whenever target state changes
+  const [targetScore, setTargetScore] = useState<{ totalScore: number, relationship: string } | null>(null)
+  
+  // Update the target score when form values change
+  useEffect(() => {
+    // Check if all fields have values selected
+    const allFieldsSelected = Object.values(targetState).every(field => field.selected !== "")
+    
+    if (allFieldsSelected) {
+      setTargetScore(calculateTargetScore())
+    } else {
+      setTargetScore(null)
+    }
+  }, [targetState, calculateTargetScore])
 
   // Get the selected supplier
   const selectedSupplier = selectedSupplierId 
@@ -446,16 +464,6 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
       relationshipType
     }
   }
-
-  // Calculate target state score if all fields are filled
-  const targetScore = useMemo(() => {
-    const { spendAllocation, averageSpend, contracts, complexity, utilization, risk } = targetState
-    if (spendAllocation.selected && averageSpend.selected && contracts.selected && 
-        complexity.selected && utilization.selected && risk.selected) {
-      return calculateTargetScore()
-    }
-    return null
-  }, [targetState])
 
   return (
     <div className="p-6 space-y-8">
@@ -558,7 +566,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               {/* Spend Allocation */}
               <div className="space-y-2">
                 <Label className="text-sm">
-                  What is the anticipated supplier spend allocation moving forward if awarded an agreement in relation to either the total subcategory or category
+                  What is the anticipated supplier spend allocation moving forward if awarded an agreement in relation to either the total subcategory or category?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
@@ -626,7 +634,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               {/* Contracts */}
               <div className="space-y-2">
                 <Label className="text-sm">
-                  What is the optimal number of available contracts in this subcategory? (one, few (2-5), many (6+))
+                  What is the optimal number of available contracts in this subcategory? (one, few (2-5), many (6+))?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
