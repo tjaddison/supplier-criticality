@@ -87,65 +87,90 @@ const riskOptions = [
 ]
 
 // Component for the gauge/odometer chart
-function SupplierGaugeChart({ 
-  currentScore = 0, 
-  targetScore = 0 
-}: { 
-  currentScore: number, 
-  targetScore: number 
+function SupplierGaugeChart({
+  currentScore = 0,
+  targetScore = 0
+}: {
+  currentScore: number,
+  targetScore: number
 }) {
-  // Chart parameters
-  const radius = 160;
-  const strokeWidth = 40;
-  const centerX = 200;
-  const centerY = 200;
+  // Chart parameters - Doubled size
+  const radius = 360; // Doubled outer radius
+  const innerRadius = 240; // Doubled inner radius
+  const centerX = 500; // Adjusted center X for doubled size
+  const centerY = 440; // Adjusted center Y for doubled size
   const startAngle = -180;
   const endAngle = 0;
 
-  // Calculate position on arc for a given score (0-100)
-  const calculatePosition = (score: number) => {
+  // Calculate position on arc (no changes needed, uses new radii)
+  const calculatePosition = (score: number, r = radius) => {
     const angle = startAngle + (score / 100) * (endAngle - startAngle);
     const radians = (angle * Math.PI) / 180;
     return {
-      x: centerX + (radius - strokeWidth / 2) * Math.cos(radians),
-      y: centerY + (radius - strokeWidth / 2) * Math.sin(radians)
+      x: centerX + r * Math.cos(radians),
+      y: centerY + r * Math.sin(radians)
     };
   };
 
-  // Calculate angle for needle
+  // Calculate angle for needle (no changes needed)
   const calculateNeedleAngle = (score: number) => {
     return startAngle + (score / 100) * (endAngle - startAngle);
   };
 
-  // Calculate SVG arc path
-  const describeArc = (startPercent: number, endPercent: number, color: string) => {
-    const start = calculatePosition(startPercent);
-    const end = calculatePosition(endPercent);
-    
+  // Calculate SVG arc path for outer colored segments (no changes needed, uses new radii)
+  const describeOuterArc = (startPercent: number, endPercent: number, color: string) => {
+    const startOuter = calculatePosition(startPercent, radius);
+    const endOuter = calculatePosition(endPercent, radius);
+    const startInner = calculatePosition(startPercent, innerRadius);
+    const endInner = calculatePosition(endPercent, innerRadius);
     const largeArcFlag = endPercent - startPercent <= 50 ? 0 : 1;
-    
+
     return (
-      <path 
+      <path
+        key={`outer-arc-${startPercent}-${endPercent}`}
         d={`
-          M ${start.x},${start.y}
-          A ${radius - strokeWidth / 2},${radius - strokeWidth / 2} 0 ${largeArcFlag} 1 ${end.x},${end.y}
+          M ${startOuter.x},${startOuter.y}
+          A ${radius},${radius} 0 ${largeArcFlag} 1 ${endOuter.x},${endOuter.y}
+          L ${endInner.x},${endInner.y}
+          A ${innerRadius},${innerRadius} 0 ${largeArcFlag} 0 ${startInner.x},${startInner.y}
+          Z
         `}
-        fill="none"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="butt"
+        fill={color}
+        stroke="none" // Dividers handle lines
       />
     );
   };
 
+   // Calculate SVG arc path for the inner gray ring segments (no changes needed, uses new radii)
+   const describeInnerRingSegment = (startPercent: number, endPercent: number, color: string) => {
+    const startOuter = calculatePosition(startPercent, innerRadius);
+    const endOuter = calculatePosition(endPercent, innerRadius);
+    const largeArcFlag = endPercent - startPercent <= 50 ? 0 : 1;
+
+    // Path for each inner ring segment
+    return (
+      <path
+        key={`inner-ring-${startPercent}-${endPercent}`}
+        d={`
+          M ${startOuter.x},${startOuter.y}
+          A ${innerRadius},${innerRadius} 0 ${largeArcFlag} 1 ${endOuter.x},${endOuter.y}
+          L ${centerX},${centerY} Z
+        `}
+        fill={color}
+        stroke="none"
+      />
+    );
+  };
+
+
   // Create needle component
-  const Needle = ({ score, color }: { score: number, color: string }) => {
-    const needleLength = radius - 60;
+  const Needle = ({ score, color, thickness = 5 }: { score: number, color: string, thickness?: number }) => {
+    const needleLength = radius - 40; // Adjusted length for larger radius
     const angle = calculateNeedleAngle(score);
     const radians = (angle * Math.PI) / 180;
     const tipX = centerX + needleLength * Math.cos(radians);
     const tipY = centerY + needleLength * Math.sin(radians);
-    
+
     return (
       <line
         x1={centerX}
@@ -153,32 +178,27 @@ function SupplierGaugeChart({
         x2={tipX}
         y2={tipY}
         stroke={color}
-        strokeWidth={4}
+        strokeWidth={thickness} // Keep thickness the same
         strokeLinecap="round"
       />
     );
   };
 
   // Create labels for the gauge (10, 20, 30, etc.)
-  const createLabels = () => {
+  const createNumericLabels = () => {
     const labels = [];
     for (let i = 10; i <= 100; i += 10) {
-      const pos = calculatePosition(i);
-      // Adjust position for better readability
-      const offset = 25;
-      const angleRad = ((startAngle + (i / 100) * (endAngle - startAngle)) * Math.PI) / 180;
-      const labelX = pos.x + offset * Math.cos(angleRad);
-      const labelY = pos.y + offset * Math.sin(angleRad);
-      
+      // Scaled offset for positioning labels outside larger gauge
+      const pos = calculatePosition(i, radius + 40);
       labels.push(
         <text
           key={`label-${i}`}
-          x={labelX}
-          y={labelY}
+          x={pos.x}
+          y={pos.y}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize="12"
-          fontWeight="bold"
+          fontSize="12" // Keep font size the same
+          fontWeight="500"
           fill="#4B5563"
         >
           {i}
@@ -190,15 +210,16 @@ function SupplierGaugeChart({
 
   // Create dividing lines between sections
   const createDividers = () => {
-    const dividers = [20, 40, 90]; // Divider positions
-    return dividers.map(pos => {
+    const dividerPositions = [20, 40, 90];
+    return dividerPositions.map(pos => {
       const angle = calculateNeedleAngle(pos);
       const radians = (angle * Math.PI) / 180;
-      const innerX = centerX + (radius - strokeWidth) * Math.cos(radians);
-      const innerY = centerY + (radius - strokeWidth) * Math.sin(radians);
-      const outerX = centerX + radius * Math.cos(radians);
-      const outerY = centerY + radius * Math.sin(radians);
-      
+      // Scaled offsets for extending dividers
+      const innerX = centerX + (innerRadius - 10) * Math.cos(radians);
+      const innerY = centerY + (innerRadius - 10) * Math.sin(radians);
+      const outerX = centerX + (radius + 10) * Math.cos(radians);
+      const outerY = centerY + (radius + 10) * Math.sin(radians);
+
       return (
         <line
           key={`divider-${pos}`}
@@ -207,59 +228,106 @@ function SupplierGaugeChart({
           x2={outerX}
           y2={outerY}
           stroke="white"
-          strokeWidth={2}
+          strokeWidth={2} // Keep stroke width the same
         />
       );
     });
   };
 
-  // Calculate the percentage for target score
-  const targetPercentage = Math.round((targetScore / 100) * 100);
+  // Colors matching the first image provided (no changes needed)
+  const colors = {
+    transactionalOuter: 'rgb(203, 213, 225)',
+    acquisitionalOuter: 'rgb(148, 163, 184)',
+    strategicOuter: 'rgb(71, 85, 105)',
+    criticalOuter: 'rgb(51, 65, 85)',
+    transactionalInner: '#E5E7EB', // Light Gray
+    acquisitionalInner: '#D1D5DB', // Medium Gray
+    strategicInner: '#9CA3AF',     // Darker Gray
+    criticalInner: '#6B7280',      // Very Dark Gray
+    needleGreen: '#84CC16',        // Vibrant Green
+    textDark: '#374151',
+    textLight: '#FFFFFF'
+  };
+
+  // Helper to calculate text position within the inner ring segments
+  const calculateInnerLabelPos = (score: number) => {
+      // Scaled offset for positioning text well within the wider inner ring
+      return calculatePosition(score, innerRadius - 60);
+  }
+
+  // Calculate positions for the dynamic state labels
+  // Position "Current State" label near the green needle (targetScore)
+  const currentStateLabelDynamicPos = calculatePosition(targetScore, radius + 40); // Offset from outer radius
+  // Position "Target State" label near the black needle (currentScore)
+  const targetStateLabelDynamicPos = calculatePosition(currentScore, radius + 40); // Offset from outer radius
+
 
   return (
+    // Increased SVG size significantly
     <div className="w-full flex justify-center">
-      <svg width="400" height="300" viewBox="0 0 400 300">
-        {/* Gauge background sections */}
-        {describeArc(0, 20, 'rgb(209, 213, 219)')} {/* Transactional: Light gray */}
-        {describeArc(20, 40, 'rgb(156, 163, 175)')} {/* Acquisitional: Medium gray */}
-        {describeArc(40, 90, 'rgb(75, 85, 99)')}  {/* Strategic: Dark gray */}
-        {describeArc(90, 100, 'rgb(55, 65, 81)')}  {/* Critical: Very dark gray */}
+      <svg width="1000" height="700" viewBox="0 0 1000 700">
+        {/* REMOVED Comparative Analysis Title */}
+        {/* <text x="500" y="60" textAnchor="middle" fontSize="18" fontWeight="600" fill={colors.textDark}>
+          Comparative Analysis
+        </text> */}
 
-        {/* White divider lines between sections */}
+        {/* Draw Inner Gray Ring Segments First */}
+        {describeInnerRingSegment(0, 20, colors.transactionalInner)}
+        {describeInnerRingSegment(20, 40, colors.acquisitionalInner)}
+        {describeInnerRingSegment(40, 90, colors.strategicInner)}
+        {describeInnerRingSegment(90, 100, colors.criticalInner)}
+
+
+        {/* Draw Outer Colored Segments */}
+        {describeOuterArc(0, 20, colors.transactionalOuter)}
+        {describeOuterArc(20, 40, colors.acquisitionalOuter)}
+        {describeOuterArc(40, 90, colors.strategicOuter)}
+        {describeOuterArc(90, 100, colors.criticalOuter)}
+
+        {/* Draw White Dividers Over Segments */}
         {createDividers()}
-        
-        {/* Numeric Labels */}
-        {createLabels()}
-        
-        {/* Relationship type labels - positioned in the center of each section */}
-        <text x="110" y="235" fontSize="14" fontWeight="500" fill="#6B7280" textAnchor="middle">Transactional</text>
-        <text x="130" y="170" fontSize="14" fontWeight="500" fill="#6B7280" textAnchor="middle">Acquisitional</text>
-        <text x="240" y="150" fontSize="14" fontWeight="500" fill="#F9FAFB" textAnchor="middle">Strategic</text>
-        <text x="320" y="180" fontSize="14" fontWeight="500" fill="#F9FAFB" textAnchor="middle">Critical</text>
-        
-        {/* Current and Target state labels */}
-        <text x="70" y="270" fontSize="14" fontWeight="bold" fill="#1F2937">Current State</text>
-        <text x="330" y="270" fontSize="14" fontWeight="bold" fill="#1F2937">Target State</text>
-        
-        {/* Needles */}
-        <Needle score={currentScore} color="black" />
-        <Needle score={targetScore} color="#22C55E" /> {/* Green */}
-        
-        {/* Target Score Tooltip/Info Box */}
-        <g transform={`translate(${calculatePosition(targetScore).x - 70}, ${calculatePosition(targetScore).y - 60})`}>
-          <rect 
-            width="160" 
-            height="50" 
-            fill="#1F2937" 
-            rx="4"
-          />
-          <text x="10" y="20" fill="white" fontSize="12">
-            Series &quot;Target State&quot; Point 1
-          </text>
-          <text x="10" y="38" fill="white" fontSize="14" fontWeight="bold">
-            Value: {targetScore.toFixed(1)} ({targetPercentage}%)
-          </text>
-        </g>
+
+        {/* Draw Numeric Labels */}
+        {createNumericLabels()}
+
+        {/* Relationship type labels - positioned inside the inner ring segments */}
+        {/* Keep font size the same */}
+        <text {...calculateInnerLabelPos(10)} dy="5" fontSize="14" fill={colors.textDark} textAnchor="middle">Transactional</text>
+        <text {...calculateInnerLabelPos(30)} dy="5" fontSize="14" fill={colors.textDark} textAnchor="middle">Acquisitional</text>
+        <text {...calculateInnerLabelPos(65)} dy="5" fontSize="14" fill={colors.textLight} textAnchor="middle">Strategic</text>
+        <text {...calculateInnerLabelPos(95)} dy="5" fontSize="14" fill={colors.textLight} textAnchor="middle">Critical</text>
+
+        {/* Dynamically Positioned State Labels */}
+        {/* "Current State" label follows the green needle (targetScore) */}
+        <text
+          x={currentStateLabelDynamicPos.x}
+          y={currentStateLabelDynamicPos.y}
+          fontSize="13"
+          fontWeight="600"
+          fill={colors.textDark}
+          textAnchor="middle"
+          dominantBaseline="middle" // Center vertically as well
+        >
+          Current State
+        </text>
+        {/* "Target State" label follows the black needle (currentScore) */}
+        <text
+          x={targetStateLabelDynamicPos.x}
+          y={targetStateLabelDynamicPos.y}
+          fontSize="13"
+          fontWeight="600"
+          fill={colors.textDark}
+          textAnchor="middle"
+          dominantBaseline="middle" // Center vertically as well
+        >
+          Target State
+        </text>
+
+        {/* Needles - Drawn last */}
+        {/* Assign scores as per the first image */}
+        <Needle score={currentScore} color="black" thickness={5} />           {/* Current is Black */}
+        <Needle score={targetScore} color={colors.needleGreen} thickness={5} /> {/* Target is Green */}
+
       </svg>
     </div>
   );
