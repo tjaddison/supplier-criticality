@@ -147,7 +147,7 @@ export default function Home() {
                   <span className="block">intelligence that <span className="text-[#B6EFF0]">sparks action</span></span>
                 </h1>
                 <p className="max-w-[600px] text-white md:text-2xl font-medium drop-shadow">
-                  Standardized, scalable supplier segmentation with tools that help procurement teams <span className="font-semibold text-[#B6EFF0]">prioritize</span>, <span className="font-semibold text-white">strategize</span>, and <span className="font-semibold text-[#B6EFF0]">act</span>.
+                  Empower your team to conquer <span className="font-semibold text-[#FFDDCC]">rising costs</span>, <span className="font-semibold text-white">workload pressures</span>, and <span className="font-semibold text-[#FFDDCC]">talent gaps</span> with standardized, scalable supplier intelligence that drives strategic decisions.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Link href="/contact">
@@ -183,15 +183,70 @@ export default function Home() {
           </div>
         </section>
 
+        {/* NEW: Industry Headwinds Section */}
+        <section className="w-full py-16 md:py-20 bg-gradient-to-br from-[#f0f9fa] to-white">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+              <h2 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl text-[#194866]">
+                Navigating Procurement's Toughest Challenges?
+              </h2>
+              <p className="max-w-[900px] text-[#194866] md:text-xl/relaxed">
+                You're not alone. Supply chain leaders are facing unprecedented pressure. Does this sound familiar?
+              </p>
+            </div>
+            {/* Grid for Headwind Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Stat Card 1: Rising Prices */}
+              <div className="flex items-start space-x-6 p-6 bg-white/80 rounded-xl shadow-lg border-l-8 border-[#194866]">
+                <span className="text-6xl font-extrabold text-[#194866] leading-none mt-1">53%</span>
+                <div>
+                  <h3 className="text-2xl font-bold text-[#194866] mb-1">Rising Prices</h3>
+                  <p className="text-[#194866]/90">Of Supply Chain leaders identify rising prices due to inflation as a major concern. (Deloitte)</p>
+                </div>
+              </div>
+              {/* Stat Card 2: Growing Workload */}
+              <div className="flex items-start space-x-6 p-6 bg-white/80 rounded-xl shadow-lg border-l-8 border-[#194866]">
+                <span className="text-6xl font-extrabold text-[#194866] leading-none mt-1">8%</span>
+                <div>
+                  <h3 className="text-2xl font-bold text-[#194866] mb-1">Growing Workload</h3>
+                  <p className="text-[#194866]/90">Procurement output predicted to increase, accompanied by expected productivity and efficiency gaps. (Hackett Group)</p>
+                </div>
+              </div>
+              {/* Stat Card 3: Staff Declines */}
+              <div className="flex items-start space-x-6 p-6 bg-white/80 rounded-xl shadow-lg border-l-8 border-[#194866]">
+                <span className="text-6xl font-extrabold text-[#194866] leading-none mt-1">52%</span>
+                <div>
+                  <h3 className="text-2xl font-bold text-[#194866] mb-1">Staff Declines</h3>
+                  <p className="text-[#194866]/90">Procurement leaders experiencing substantial staff decline due to employee burnout. (Gartner)</p>
+                </div>
+              </div>
+              {/* Stat Card 4: Talent Gaps */}
+              <div className="flex items-start space-x-6 p-6 bg-white/80 rounded-xl shadow-lg border-l-8 border-[#194866]">
+                <span className="text-6xl font-extrabold text-[#194866] leading-none mt-1">14%</span>
+                <div>
+                  <h3 className="text-2xl font-bold text-[#194866] mb-1">Talent Gaps</h3>
+                  <p className="text-[#194866]/90">Of Procurement leaders believe they have adequate talent to meet future needs of their function. (Gartner)</p>
+                </div>
+              </div>
+            </div>
+             {/* Transition to Solution */}
+             <div className="text-center mt-16">
+                <p className="text-xl md:text-2xl text-[#194866] max-w-3xl mx-auto font-medium">
+                    Stop fighting fires fueled by these headwinds. It's time to equip your team with the <span className="font-bold text-[#3CDBDD]">clarity</span> and <span className="font-bold text-[#3CDBDD]">tools</span> to build a resilient, strategic procurement function.
+                </p>
+            </div>
+          </div>
+        </section>
+
         {/* Stats Section */}
         <section className="w-full py-16 bg-gradient-to-br from-[#E5F9FA] to-white">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <h2 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl text-[#194866]">
-                Data-driven results for modern procurement
+                Overcome Headwinds: Achieve Tangible Results
               </h2>
               <p className="max-w-[900px] text-[#194866] md:text-xl/relaxed">
-                In an industry facing growing workloads, rising prices, and talent gaps, ProcureSci helps you do more with less.
+                ProcureSci isn't just about data; it's about driving measurable improvements that directly counter industry pressures. See how our clients benefit:
               </p>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 md:grid-cols-3">
@@ -260,10 +315,10 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-8 text-center">
               <h2 className="text-5xl font-extrabold tracking-tighter sm:text-6xl md:text-7xl drop-shadow-2xl">
-                Ready to Transform Your Procurement Strategy?
+                Stop Reacting, Start Strategizing.
               </h2>
               <p className="max-w-[900px] md:text-2xl/relaxed text-[#B6EFF0] font-semibold">
-                Join other procurement leaders who have streamlined their operations, reduced costs, and improved supplier relationships.
+                Don't let industry headwinds dictate your success. Take control with actionable intelligence. See how ProcureSci empowers your team to navigate complexity and unlock value.
               </p>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/contact">
