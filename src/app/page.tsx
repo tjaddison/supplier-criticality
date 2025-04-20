@@ -160,9 +160,15 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-[500px] aspect-square overflow-hidden rounded-3xl border-4 border-[#B6EFF0] bg-white/80 shadow-2xl flex items-center justify-center backdrop-blur-lg animate-fadein-slow">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#E5F9FA] via-white to-white opacity-60" />
-                  <p className="text-3xl text-[#194866] font-extrabold drop-shadow">Dashboard Preview</p>
+                <div className="relative w-full max-w-[600px] overflow-hidden rounded-3xl border-4 border-[#B6EFF0] bg-white/80 shadow-2xl animate-fadein-slow">
+                  {/* Dashboard Preview Image */}
+                  <img 
+                    src="/images/dashboard-preview.png" 
+                    alt="ProcureSci Supplier Insights Dashboard" 
+                    className="w-full h-auto rounded-2xl"
+                  />
+                  {/* Optional overlay gradient for better text contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#194866]/20 to-transparent pointer-events-none" />
                 </div>
               </div>
             </div>
@@ -337,7 +343,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full border-t py-10 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-          <p className="text-lg font-semibold">© 2024 ProcureSci. All rights reserved.</p>
+          <p className="text-lg font-semibold">© 2025 ProcureSci. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/terms" className="text-lg text-white/80 transition-colors hover:text-[#B6EFF0]">Terms</Link>
             <Link href="/privacy" className="text-lg text-white/80 transition-colors hover:text-[#B6EFF0]">Privacy</Link>
