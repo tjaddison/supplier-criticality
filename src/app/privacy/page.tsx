@@ -104,9 +104,9 @@ export default function PrivacyPage() {
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
             {/* Add other links as needed, e.g., Dashboard */}
-             <Link href="/dashboard">
-               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Get Started</Button>
-             </Link>
+            <Link href="/login">
+              <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
+            </Link>
           </nav>
         </div>
       </header>

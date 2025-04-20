@@ -99,10 +99,11 @@ export default function AboutPage() {
           </Link>
           <nav className="flex items-center space-x-6 text-base font-semibold">
             <Link href="/solutions" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Solutions</Link>
-            <Link href="/about" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">About</Link> {/* Highlight current page */}
+            <Link href="/about" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">About</Link>
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
-            <Link href="/dashboard">
-              <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Get Started</Button>
+            <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
+            <Link href="/login">
+              <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
             </Link>
           </nav>
         </div>
