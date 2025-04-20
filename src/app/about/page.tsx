@@ -1,58 +1,26 @@
-"use client"
+"use client" // Add if using client-side features like animations or hooks
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Use next/navigation for App Router
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight } from 'lucide-react';
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Star, HeartHandshake, Lightbulb, UserCircle, ArrowRight } from 'lucide-react'
 
-// Define colors (reuse or define globally)
+// Define colors (reuse from page.tsx or define globally)
 // const logoIconTeal = "#3CDBDD";
 // const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
 const accentColor = "#FF7D4D";
 
-export default function LoginPage() {
-  // Pre-fill state with mock credentials
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('password');
-  const [error, setError] = useState(''); // Keep error state in case needed later
-  const router = useRouter();
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(''); // Clear previous errors (though none should occur with this logic)
-
-    // --- Direct Navigation ---
-    // Directly navigate to the dashboard without checking credentials
-    console.log('Login button clicked, redirecting to dashboard...');
-    router.push('/dashboard');
-    // --- End Direct Navigation ---
-
-    /* --- Previous Dummy Credentials Check (Commented out) ---
-    if (email === 'test@example.com' && password === 'password') {
-      console.log('Login successful, redirecting...');
-      router.push('/dashboard'); // Redirect to dashboard
-    } else {
-      setError('Invalid email or password.');
-    }
-    --- End Dummy Check --- */
-  };
-
+export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen font-sans bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
-      {/* Header */}
+      {/* Re-use the same Header component or structure */}
       <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
         <div className="container flex h-20 items-center justify-between mx-auto px-4">
           <Link href="/" className="flex items-center space-x-3 group">
-            {/* Updated SVG Logo */}
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-               width="45" height="45"
+               width="45" height="45" // Applied previous dimensions
                viewBox="0 0 464 342" enableBackground="new 0 0 464 342" xmlSpace="preserve"
-               className="transition-transform group-hover:scale-105"
+               className="transition-transform group-hover:scale-105" // Applied previous classes
             >
               <path fill="#FEFFFF" opacity="1.000000" stroke="none"
                 d="
@@ -124,7 +92,6 @@ export default function LoginPage() {
                 C334.227325,239.329773 308.418152,239.301193 282.115906,239.228333
               z"/>
             </svg>
-            {/* Logo Text */}
             <div className="flex flex-col">
               <span className="text-4xl font-extrabold tracking-tight" style={{ color: logoTextColor }}>ProcureSci.</span>
               <span className="text-xs font-medium tracking-[0.15em] uppercase" style={{ color: logoTextColor }}>THE SCIENCE OF PROCUREMENT</span>
@@ -132,10 +99,9 @@ export default function LoginPage() {
           </Link>
           <nav className="flex items-center space-x-6 text-base font-semibold">
             <Link href="/solutions" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Solutions</Link>
-            <Link href="/about" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">About</Link>
+            <Link href="/about" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">About</Link>
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
-            {/* Login Button */}
             <Link href="/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
             </Link>
@@ -143,61 +109,100 @@ export default function LoginPage() {
         </div>
       </header>
 
-      {/* Main Content - Login Form */}
-      <main className="flex-1 flex items-center justify-center py-12 md:py-24">
-        <Card className="w-full max-w-md shadow-2xl border-2 border-[#194866]/20 bg-white/90">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold text-[#194866]">Login</CardTitle>
-            <CardDescription className="text-[#194866]/80">Access your ProcureSci dashboard.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-[#194866] font-semibold">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  required
-                  value={email} // Value is controlled by state
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="border-[#194866]/30 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
-                />
+      <main className="flex-1">
+        {/* About Hero Section */}
+        <section className="w-full py-20 md:py-32 bg-gradient-to-br from-[#E5F9FA] to-white text-center">
+          <div className="container px-4 md:px-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#194866] mb-4">
+              About ProcureSci
+            </h1>
+            <p className="max-w-3xl mx-auto text-lg md:text-xl text-[#194866]/80">
+              We empower procurement teams with the intelligence and tools needed to make intentional, strategic decisions that drive real business value.
+            </p>
+          </div>
+        </section>
+
+        {/* Mission/Vision/Values Section (Moved from landing page) */}
+        <section className="w-full py-16 bg-white">
+          <div className="container px-4 md:px-6">
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              {/* Mission */}
+              <div className="flex flex-col items-center space-y-3 bg-white/80 rounded-2xl p-6 shadow-lg border-l-4 border-[#3CDBDD]">
+                <Lightbulb className="h-12 w-12 text-[#3CDBDD] mb-2" />
+                <h3 className="text-2xl font-bold text-[#194866]">Our Mission</h3>
+                <p className="text-gray-700">To energize procurement organizations with data that creates &quot;light bulb&quot; moments, sparking conversation and action that previously seemed unclear.</p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-[#194866] font-semibold">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  value={password} // Value is controlled by state
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="border-[#194866]/30 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
-                />
+              {/* Vision */}
+              <div className="flex flex-col items-center space-y-3 bg-white/80 rounded-2xl p-6 shadow-lg border-l-4 border-[#194866]">
+                <Star className="h-12 w-12 text-[#194866] mb-2" />
+                <h3 className="text-2xl font-bold text-[#194866]">Our Vision</h3>
+                <p className="text-gray-700">To make procurement organizations more intentional, more strategic, and to give them clear reason to the tactics they employ.</p>
               </div>
-              {/* Error message display (kept for potential future use) */}
-              {error && (
-                <p className="text-sm font-medium text-red-600">{error}</p>
-              )}
-              <Button type="submit" className={`w-full h-12 text-lg font-bold bg-[${accentColor}] text-white shadow-lg hover:bg-[#FF6A33] transition-all`}>
-                Login
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="flex justify-center text-sm">
-             <p className="text-[#194866]/70">
-               Don&apos;t have an account?{' '} {/* Escaped apostrophe */}
-               <Link href="/contact" className={`font-semibold text-[${accentColor}] hover:underline`}>
-                 Request Access
-               </Link>
+              {/* Values */}
+              <div className={`flex flex-col items-center space-y-3 bg-white/80 rounded-2xl p-6 shadow-lg border-l-4 border-[${accentColor}]`}>
+                <HeartHandshake className={`h-12 w-12 text-[${accentColor}] mb-2`} />
+                <h3 className="text-2xl font-bold text-[#194866]">Our Values</h3>
+                <p className="text-gray-700">We are good people first, then talented, then creative. We have courage and a growth mindset.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Company Story/History (Optional - Add content here) */}
+        <section className="w-full py-16 bg-gradient-to-br from-[#f0f9fa] to-white">
+           <div className="container px-4 md:px-6">
+             <h2 className="text-3xl font-extrabold text-center mb-8 text-[#194866]">Our Story</h2>
+             <p className="max-w-3xl mx-auto text-center text-[#194866]/80">
+               Founded by procurement professionals who saw a need for better data utilization and strategic alignment, ProcureSci was built to bridge the gap between raw spend data and actionable insights. We believe that every procurement team, regardless of size, deserves access to tools that elevate their function from tactical purchasing to strategic value creation.
              </p>
-           </CardFooter>
-        </Card>
+             {/* Add more paragraphs or details as needed */}
+           </div>
+         </section>
+
+        {/* Meet the Team Section (Moved from landing page) */}
+        <section className="w-full py-20 bg-white">
+          <div className="container px-4 md:px-6">
+            <h2 className="text-3xl font-extrabold text-center mb-12 text-[#194866]">Meet the Team</h2>
+            <div className="flex flex-wrap justify-center gap-10">
+              {/* Team Member 1: Evan Davis */}
+              <div className="flex flex-col items-center space-y-2 bg-white/90 rounded-2xl p-6 shadow-lg border-2 border-[#194866] w-60 text-center">
+                <UserCircle className="h-16 w-16 text-[#194866]" />
+                <span className="font-bold text-lg text-[#194866]">Evan Davis</span>
+                <span className="text-[#194866]">President / Founder</span>
+                {/* Optional: Add a brief description or focus area */}
+                {/* <span className="text-sm text-[#3CDBDD]">Vision, Strategy</span> */}
+              </div>
+              {/* Team Member 2: Terrance Addison */}
+              <div className="flex flex-col items-center space-y-2 bg-white/90 rounded-2xl p-6 shadow-lg border-2 border-[#3CDBDD] w-60 text-center">
+                <UserCircle className="h-16 w-16 text-[#3CDBDD]" />
+                <span className="font-bold text-lg text-[#194866]">Terrance Addison</span>
+                <span className="text-[#194866]">Technical Partner</span>
+                {/* Optional: Add a brief description or focus area */}
+                {/* <span className="text-sm text-[#3CDBDD]">Technology, Development</span> */}
+              </div>
+              {/* Removed the third team member */}
+            </div>
+          </div>
+        </section>
+
+         {/* CTA Section */}
+         <section className="w-full py-20 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white">
+           <div className="container px-4 md:px-6 text-center">
+             <h2 className="text-4xl font-extrabold mb-4">Ready to Learn More?</h2>
+             <p className="max-w-xl mx-auto text-lg text-[#B6EFF0] mb-8">
+               See how ProcureSci can transform your procurement operations. Request a personalized demo today.
+             </p>
+             <Link href="/contact">
+               <Button className={`inline-flex h-14 px-10 py-4 text-xl font-bold bg-[${accentColor}] text-white border-2 border-[${accentColor}] shadow-2xl hover:bg-[#FF6A33] transition-all rounded-xl`}>
+                 Request a Demo
+                 <ArrowRight className="ml-2 h-6 w-6" />
+               </Button>
+             </Link>
+           </div>
+         </section>
       </main>
 
-      {/* Footer */}
+      {/* Re-use the same Footer component or structure */}
       <footer className="w-full border-t py-10 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <p className="text-lg font-semibold">© 2025 ProcureSci. All rights reserved.</p>
@@ -208,6 +213,8 @@ export default function LoginPage() {
           </div>
         </div>
       </footer>
+       {/* Include styles if needed, or manage globally */}
+       {/* <style jsx global>{` ... `}</style> */}
     </div>
-  );
+  )
 } 

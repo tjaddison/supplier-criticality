@@ -14,8 +14,10 @@ import {
   updateCriteriaWeights
 } from "@/lib/dynamodb"
 import { v4 as uuidv4 } from 'uuid'
+import { InfoIcon, SlidersIcon } from "lucide-react"
 
-interface CriteriaWeights {
+// Renamed to WeightCriteria to avoid naming conflict with the component
+interface WeightCriteria {
   spendPercentage: number
   threeYearAverage: number
   marketSize: number
@@ -24,7 +26,7 @@ interface CriteriaWeights {
   riskLevel: number
 }
 
-const DEFAULT_WEIGHTS: CriteriaWeights = {
+const DEFAULT_WEIGHTS: WeightCriteria = {
   spendPercentage: 20,
   threeYearAverage: 30,
   marketSize: 5,
@@ -34,7 +36,7 @@ const DEFAULT_WEIGHTS: CriteriaWeights = {
 }
 
 export default function MacroSupplierTierPage() {
-  const [weights, setWeights] = useState<CriteriaWeights>(DEFAULT_WEIGHTS)
+  const [weights, setWeights] = useState<WeightCriteria>(DEFAULT_WEIGHTS)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -55,7 +57,7 @@ export default function MacroSupplierTierPage() {
       const savedWeights = await getCriteriaWeights(userId)
       if (savedWeights) {
         // Ensure all required fields are present with proper types
-        const typedWeights: CriteriaWeights = {
+        const typedWeights: WeightCriteria = {
           spendPercentage: Number(savedWeights.spendPercentage) || DEFAULT_WEIGHTS.spendPercentage,
           threeYearAverage: Number(savedWeights.threeYearAverage) || DEFAULT_WEIGHTS.threeYearAverage,
           marketSize: Number(savedWeights.marketSize) || DEFAULT_WEIGHTS.marketSize,
@@ -72,7 +74,7 @@ export default function MacroSupplierTierPage() {
     }
   }
 
-  const handleWeightsChange = async (newWeights: CriteriaWeights) => {
+  const handleWeightsChange = async (newWeights: WeightCriteria) => {
     try {
       await updateCriteriaWeights(userId, newWeights)
       setWeights(newWeights)
@@ -129,22 +131,39 @@ export default function MacroSupplierTierPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-lg text-[#194866] flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3b82f6] mb-4"></div>
+          Loading criteria and supplier data...
+        </div>
       </div>
     )
   }
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
-      {/* Fixed Header Panel */}
-      <div className="bg-white dark:bg-gray-800 border-b p-4 md:p-6">
-        <h1 className="text-xl md:text-2xl font-bold mb-4">Macro Supplier Tier</h1>
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Macro Supplier Tier</h1>
+        <p className="text-blue-100 text-sm md:text-base max-w-3xl mb-4">
+          Analyze and manage your critical suppliers based on strategic importance, spend metrics, and risk factors.
+        </p>
+      </div>
+      
+      {/* Criteria Weights Panel */}
+      <div className="bg-white dark:bg-gray-800 border-b shadow-sm p-4 md:p-6">
+        <div className="flex items-center gap-2 mb-4 text-[#194866]">
+          <SlidersIcon className="h-5 w-5" />
+          <h2 className="text-lg md:text-xl font-semibold">Criticality Criteria Weights</h2>
+          <div className="rounded-full bg-blue-100 p-1" title="Adjust these weights to customize how supplier criticality is calculated">
+            <InfoIcon className="h-4 w-4 text-blue-700" />
+          </div>
+        </div>
         <CriteriaWeights weights={weights} onWeightsChange={handleWeightsChange} />
       </div>
 
       {/* Scrollable Content Panel */}
-      <div className="flex-1 overflow-auto p-4 md:p-6">
+      <div className="flex-1 overflow-auto p-4 md:p-6 bg-gray-50">
         <SupplierList 
           weights={weights}
           refreshTrigger={refreshTrigger}
