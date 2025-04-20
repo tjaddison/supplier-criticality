@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Phone, Mail, MessageSquare } from 'lucide-react'; // Icons for contact/value
+import { MessageSquare } from 'lucide-react'; // Icons for contact/value
 
 // Define colors (reuse or define globally if not already done)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
+// const logoIconTeal = "#3CDBDD";
+// const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
 const accentColor = "#FF7D4D"; // Orange accent
 
@@ -125,7 +125,7 @@ export default function PricingPage() {
               As an early-stage solution, ProcureSci is focused on delivering maximum value tailored to each client. We currently offer customized pricing based on your specific requirements, data volume, and desired level of support.
             </p>
             <p className="max-w-2xl mx-auto text-lg md:text-xl text-[#194866]/80">
-              Let's discuss how ProcureSci can empower your procurement team.
+              Let&apos;s discuss how ProcureSci can empower your procurement team.
             </p>
           </div>
         </section>
@@ -157,9 +157,9 @@ export default function PricingPage() {
         {/* Contact CTA Section */}
         <section className="w-full py-20 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white">
           <div className="container px-4 md:px-6 text-center">
-            <h2 className="text-4xl font-extrabold mb-4">Let's Talk About Your Solution</h2>
+            <h2 className="text-4xl font-extrabold mb-4">Let&apos;s Talk About Your Solution</h2>
             <p className="max-w-xl mx-auto text-lg text-[#B6EFF0] mb-8">
-              Reach out today for a no-obligation consultation. We'll explore your needs and provide a personalized pricing proposal designed to deliver exceptional value.
+              We&apos;ll explore your needs and provide a personalized pricing proposal designed to deliver exceptional value.
             </p>
             <Link href="/contact">
               <Button className={`inline-flex items-center h-14 px-10 py-4 text-xl font-bold bg-[${accentColor}] text-white border-2 border-[${accentColor}] shadow-2xl hover:bg-[#FF6A33] transition-all rounded-xl`}>

@@ -3,12 +3,17 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
-  ArrowRight, BarChart2, Zap, DollarSign, Users, TrendingUp, Star, HeartHandshake, Lightbulb, ShieldCheck, Globe2, UserCheck, Trophy, Building2, Briefcase, UserCircle
+  ArrowRight, 
+  Zap, 
+  DollarSign, 
+  TrendingUp, 
+  Trophy, 
+  Building2, 
+  Briefcase
 } from 'lucide-react'
+import Image from 'next/image'
 
 // Define logo colors based on the image
-const logoIconTeal = "#3CDBDD"; // Teal from the icon
-const logoIconDarkBlue = "#194866"; // Dark blue from the icon
 const logoTextColor = "#2D2D2D"; // Dark brown/black from the text
 
 export default function Home() {
@@ -162,9 +167,11 @@ export default function Home() {
               <div className="flex items-center justify-center">
                 <div className="relative w-full max-w-[600px] overflow-hidden rounded-3xl border-4 border-[#B6EFF0] bg-white/80 shadow-2xl animate-fadein-slow">
                   {/* Dashboard Preview Image */}
-                  <img 
+                  <Image 
                     src="/images/dashboard-preview.png" 
                     alt="ProcureSci Supplier Insights Dashboard" 
+                    width={600}
+                    height={400}
                     className="w-full h-auto rounded-2xl"
                   />
                   {/* Optional overlay gradient for better text contrast */}
@@ -195,10 +202,10 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <h2 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl text-[#194866]">
-                Navigating Procurement's Toughest Challenges?
+                Navigating Procurement&apos;s Toughest Challenges?
               </h2>
               <p className="max-w-[900px] text-[#194866] md:text-xl/relaxed">
-                You're not alone. Supply chain leaders are facing unprecedented pressure. Does this sound familiar?
+                You&apos;re not alone. Supply chain leaders are facing unprecedented pressure. Does this sound familiar?
               </p>
             </div>
             {/* Grid for Headwind Stats */}
@@ -239,7 +246,7 @@ export default function Home() {
              {/* Transition to Solution */}
              <div className="text-center mt-16">
                 <p className="text-xl md:text-2xl text-[#194866] max-w-3xl mx-auto font-medium">
-                    Stop fighting fires fueled by these headwinds. It's time to equip your team with the <span className="font-bold text-[#3CDBDD]">clarity</span> and <span className="font-bold text-[#3CDBDD]">tools</span> to build a resilient, strategic procurement function.
+                    Stop fighting fires fueled by these headwinds. It&apos;s time to equip your team with the <span className="font-bold text-[#3CDBDD]">clarity</span> and <span className="font-bold text-[#3CDBDD]">tools</span> to build a resilient, strategic procurement function.
                 </p>
             </div>
           </div>
@@ -253,7 +260,7 @@ export default function Home() {
                 Overcome Headwinds: Achieve Tangible Results
               </h2>
               <p className="max-w-[900px] text-[#194866] md:text-xl/relaxed">
-                ProcureSci isn't just about data; it's about driving measurable improvements that directly counter industry pressures. See how our clients benefit:
+                ProcureSci isn&apos;t just about data; it&apos;s about driving measurable improvements that directly counter industry pressures. See how our clients benefit:
               </p>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 md:grid-cols-3">
@@ -325,7 +332,7 @@ export default function Home() {
                 Stop Reacting, Start Strategizing.
               </h2>
               <p className="max-w-[900px] md:text-2xl/relaxed text-[#B6EFF0] font-semibold">
-                Don't let industry headwinds dictate your success. Take control with actionable intelligence. See how ProcureSci empowers your team to navigate complexity and unlock value.
+                Don&apos;t let industry headwinds dictate your success. Take control with actionable intelligence. See how ProcureSci empowers your team to navigate complexity and unlock value.
               </p>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/contact">

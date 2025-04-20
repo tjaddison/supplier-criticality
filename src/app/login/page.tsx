@@ -10,8 +10,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowRight } from 'lucide-react';
 
 // Define colors (reuse or define globally)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
+// const logoIconTeal = "#3CDBDD";
+// const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
 const accentColor = "#FF7D4D";
 

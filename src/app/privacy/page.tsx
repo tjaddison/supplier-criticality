@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 // Define colors (reuse or define globally)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
+// const logoIconTeal = "#3CDBDD";
+// const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
-const accentColor = "#FF7D4D"; // Keep consistent if used elsewhere
+// const accentColor = "#FF7D4D"; // Keep consistent if used elsewhere
 
 export default function PrivacyPage() {
   return (
@@ -116,70 +116,72 @@ export default function PrivacyPage() {
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#194866] mb-8 text-center">
             Privacy Policy
           </h1>
-          <div className="prose prose-lg max-w-none text-[#194866]/90 space-y-6">
-            <p className="text-sm text-gray-500">Last Updated: April 19, 2025</p>
+          <div className="prose prose-lg max-w-none text-[#194866]/90 space-y-6" dangerouslySetInnerHTML={{
+            __html: `
+              <p class="text-sm text-gray-500">Last Updated: April 19, 2025</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">1. Introduction</h2>
-            <p>ProcureSci ("us", "we", or "our") operates the ProcureSci.com website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data. **Please replace this generic text with your actual Privacy Policy reviewed by legal counsel.**</p>
-            <p>We use your data to provide and improve the Service. By using the Service, you agree to the collection and use of information in accordance with this policy.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">1. Introduction</h2>
+              <p>ProcureSci ("us", "we", or "our") operates the ProcureSci.com website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data. <strong>"Please replace this generic text with your actual Privacy Policy reviewed by legal counsel."</strong></p>
+              <p>We use your data to provide and improve the Service. By using the Service, you agree to the collection and use of information in accordance with this policy.</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">2. Information Collection and Use</h2>
-            <p>We collect several different types of information for various purposes to provide and improve our Service to you.</p>
-            <h3 className="text-xl font-semibold text-[#194866]">Types of Data Collected</h3>
-            <h4>Personal Data</h4>
-            <p>While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:</p>
-            <ul>
-              <li>Email address</li>
-              <li>First name and last name</li>
-              <li>Company Name</li>
-              <li>Phone number (Optional)</li>
-              <li>Cookies and Usage Data</li>
-            </ul>
-            <h4>Usage Data</h4>
-            <p>We may also collect information on how the Service is accessed and used ("Usage Data"). This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
-            <h4>Tracking & Cookies Data</h4>
-            <p>We use cookies and similar tracking technologies to track the activity on our Service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">2. Information Collection and Use</h2>
+              <p>We collect several different types of information for various purposes to provide and improve our Service to you.</p>
+              <h3 class="text-xl font-semibold text-[#194866]">Types of Data Collected</h3>
+              <h4>Personal Data</h4>
+              <p>While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you (&ldquo;Personal Data&rdquo;). Personally identifiable information may include, but is not limited to:</p>
+              <ul>
+                <li>Email address</li>
+                <li>First name and last name</li>
+                <li>Company Name</li>
+                <li>Phone number (Optional)</li>
+                <li>Cookies and Usage Data</li>
+              </ul>
+              <h4>Usage Data</h4>
+              <p>We may also collect information on how the Service is accessed and used ("Usage Data"). This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
+              <h4>Tracking & Cookies Data</h4>
+              <p>We use cookies and similar tracking technologies to track the activity on our Service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">3. Use of Data</h2>
-            <p>ProcureSci uses the collected data for various purposes:</p>
-            <ul>
-              <li>To provide and maintain our Service</li>
-              <li>To notify you about changes to our Service</li>
-              <li>To allow you to participate in interactive features of our Service when you choose to do so</li>
-              <li>To provide customer support</li>
-              <li>To gather analysis or valuable information so that we can improve our Service</li>
-              <li>To monitor the usage of our Service</li>
-              <li>To detect, prevent and address technical issues</li>
-              <li>To process demo requests and contact inquiries</li>
-            </ul>
+              <h2 class="text-2xl font-bold text-[#194866]">3. Use of Data</h2>
+              <p>ProcureSci uses the collected data for various purposes:</p>
+              <ul>
+                <li>To provide and maintain our Service</li>
+                <li>To notify you about changes to our Service</li>
+                <li>To allow you to participate in interactive features of our Service when you choose to do so</li>
+                <li>To provide customer support</li>
+                <li>To gather analysis or valuable information so that we can improve our Service</li>
+                <li>To monitor the usage of our Service</li>
+                <li>To detect, prevent and address technical issues</li>
+                <li>To process demo requests and contact inquiries</li>
+              </ul>
 
-            <h2 className="text-2xl font-bold text-[#194866]">4. Transfer of Data</h2>
-            <p>Your information, including Personal Data, may be transferred to — and maintained on — computers located outside of your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from your jurisdiction. **Ensure this reflects your actual data transfer practices and legal compliance (e.g., GDPR adequacy).**</p>
+              <h2 class="text-2xl font-bold text-[#194866]">4. Transfer of Data</h2>
+              <p>Your information, including Personal Data, may be transferred to — and maintained on — computers located outside of your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from your jurisdiction. **Ensure this reflects your actual data transfer practices and legal compliance (e.g., GDPR adequacy).**</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">5. Disclosure of Data</h2>
-            <p>We may disclose your Personal Data in the good faith belief that such action is necessary to: [List specific legal reasons, e.g., comply with a legal obligation, protect rights, prevent wrongdoing, protect safety, protect against liability]. **Consult legal counsel.**</p>
+              <h2 class="text-2xl font-bold text-[#194866]">5. Disclosure of Data</h2>
+              <p>We may disclose your Personal Data in the good faith belief that such action is necessary to: [List specific legal reasons, e.g., comply with a legal obligation, protect rights, prevent wrongdoing, protect safety, protect against liability]. **Consult legal counsel.**</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">6. Security of Data</h2>
-            <p>The security of your data is important to us, but remember that no method of transmission over the Internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">6. Security of Data</h2>
+              <p>The security of your data is important to us, but remember that no method of transmission over the Internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">7. Your Data Protection Rights (Example: GDPR)</h2>
-            <p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. ProcureSci aims to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data. [Detail specific rights like access, rectification, erasure, restriction, objection, portability]. **This section MUST be tailored based on applicable laws (GDPR, CCPA, etc.) and reviewed by legal counsel.**</p>
+              <h2 class="text-2xl font-bold text-[#194866]">7. Your Data Protection Rights (Example: GDPR)</h2>
+              <p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. ProcureSci aims to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data. [Detail specific rights like access, rectification, erasure, restriction, objection, portability]. **This section MUST be tailored based on applicable laws (GDPR, CCPA, etc.) and reviewed by legal counsel.**</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">8. Service Providers</h2>
-            <p>We may employ third-party companies and individuals to facilitate our Service ("Service Providers"), provide the Service on our behalf, perform Service-related services or assist us in analyzing how our Service is used. [List types of providers, e.g., hosting, analytics, email].</p>
+              <h2 class="text-2xl font-bold text-[#194866]">8. Service Providers</h2>
+              <p>We may employ third-party companies and individuals to facilitate our Service ("Service Providers"), provide the Service on our behalf, perform Service-related services or assist us in analyzing how our Service is used. [List types of providers, e.g., hosting, analytics, email].</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">9. Links to Other Sites</h2>
-            <p>Our Service may contain links to other sites that are not operated by us. If you click a third party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">9. Links to Other Sites</h2>
+              <p>Our Service may contain links to other sites that are not operated by us. If you click a third party link, you will be directed to that third party&apos;s site. We strongly advise you to review the Privacy Policy of every site you visit.</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">10. Children's Privacy</h2>
-            <p>Our Service does not address anyone under the age of 18 ("Children"). We do not knowingly collect personally identifiable information from anyone under the age of 18. **Verify age threshold based on applicable laws like COPPA.**</p>
+              <h2 class="text-2xl font-bold text-[#194866]">10. Children&apos;s Privacy</h2>
+              <p>Our Service does not address anyone under the age of 18 (&ldquo;Children&rdquo;). We do not knowingly collect personally identifiable information from anyone under the age of 18. **Verify age threshold based on applicable laws like COPPA.**</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">11. Changes to This Privacy Policy</h2>
-            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">11. Changes to This Privacy Policy</h2>
+              <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
 
-            <h2 className="text-2xl font-bold text-[#194866]">12. Contact Us</h2>
-            <p>If you have any questions about this Privacy Policy, please <Link href="/contact" className="text-[#3CDBDD] hover:underline">contact us</Link>.</p>
-          </div>
+              <h2 class="text-2xl font-bold text-[#194866]">12. Contact Us</h2>
+              <p>If you have any questions about this Privacy Policy, please <Link href="/contact" className="text-[#3CDBDD] hover:underline">contact us</Link>.</p>
+            `
+          }} />
         </div>
       </main>
 

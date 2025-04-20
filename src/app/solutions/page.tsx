@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Eye, Search, Grid } from 'lucide-react'; // Icons for steps
 
 // Define colors (reuse or define globally if not already done)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
+// const logoIconTeal = "#3CDBDD";
+// const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
 const accentColor = "#FF7D4D"; // Orange accent
 
@@ -159,7 +159,7 @@ export default function SolutionsPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-[#194866]">3. Eisenhower Matrix</h3>
                 <p className="text-[#194866]/90 text-lg leading-relaxed">
-                  Prioritize effectively using our intuitive X,Y chart. Plot suppliers based on strategic priority and operational condition, instantly identifying where to focus your team's efforts for maximum impact.
+                  Prioritize effectively using our intuitive X,Y chart. Plot suppliers based on strategic priority and operational condition, instantly identifying where to focus your team&apos;s efforts for maximum impact.
                 </p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function SolutionsPage() {
           <div className="container px-4 md:px-6 text-center">
             <h2 className="text-4xl font-extrabold mb-4">Ready to See It in Action?</h2>
             <p className="max-w-xl mx-auto text-lg text-[#B6EFF0] mb-8">
-              Discover how ProcureSci's 3-Step Solution can empower your procurement team. Request a personalized demo tailored to your specific needs.
+              ProcureSci&apos;s 3-Step Solution can empower your procurement team. Request a personalized demo tailored to your specific needs.
             </p>
             <Link href="/contact">
               <Button className={`inline-flex h-14 px-10 py-4 text-xl font-bold bg-[${accentColor}] text-white border-2 border-[${accentColor}] shadow-2xl hover:bg-[#FF6A33] transition-all rounded-xl`}>

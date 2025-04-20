@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 // Define colors (reuse or define globally)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
+// const logoIconTeal = "#3CDBDD";
+// const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
-const accentColor = "#FF7D4D"; // Keep consistent if used elsewhere
+// const accentColor = "#FF7D4D"; // Keep consistent if used elsewhere
 
 export default function TermsPage() {
   return (
@@ -120,7 +120,7 @@ export default function TermsPage() {
             <p className="text-sm text-gray-500">Last Updated: April 19, 2025</p>
 
             <h2 className="text-2xl font-bold text-[#194866]">1. Introduction</h2>
-            <p>Welcome to ProcureSci ("Company", "we", "our", "us")! These Terms of Service ("Terms") govern your use of our website located at ProcureSci.com (the "Service") operated by ProcureSci.</p>
+            <p>Welcome to ProcureSci (&ldquo;Company&rdquo;, &ldquo;we&rdquo;, &ldquo;our&rdquo;, &ldquo;us&rdquo;)! These Terms of Service (&ldquo;Terms&rdquo;) govern your use of our website located at ProcureSci.com (the &ldquo;Service&rdquo;) operated by ProcureSci.</p>
             <p>By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service. **Please replace this generic text with your actual Terms of Service reviewed by legal counsel.**</p>
 
             <h2 className="text-2xl font-bold text-[#194866]">2. Use of Service</h2>
@@ -128,7 +128,7 @@ export default function TermsPage() {
             <ul>
               <li>In any way that violates any applicable national or international law or regulation.</li>
               <li>For the purpose of exploiting, harming, or attempting to exploit or harm minors in any way.</li>
-              <li>To transmit, or procure the sending of, any advertising or promotional material, including any "junk mail", "chain letter," "spam," or any other similar solicitation.</li>
+              <li>To transmit, or procure the sending of, any advertising or promotional material, including any &ldquo;junk mail&rdquo;, &ldquo;chain letter,&rdquo; &ldquo;spam,&rdquo; or any other similar solicitation.</li>
               <li>To impersonate or attempt to impersonate the Company, a Company employee, another user, or any other person or entity.</li>
             </ul>
 
@@ -143,7 +143,7 @@ export default function TermsPage() {
             <p>We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever and without limitation, including but not limited to a breach of the Terms.</p>
 
             <h2 className="text-2xl font-bold text-[#194866]">6. Disclaimer of Warranties</h2>
-            <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Company makes no representations or warranties of any kind, express or implied, as to the operation of their services, or the information, content or materials included therein. **This is a generic disclaimer; consult legal counsel for appropriate language.**</p>
+            <p>The Service is provided on an &ldquo;AS IS&rdquo; and &ldquo;AS AVAILABLE&rdquo; basis. The Company makes no representations or warranties of any kind, express or implied, as to the operation of their services, or the information, content or materials included therein. **This is a generic disclaimer; consult legal counsel for appropriate language.**</p>
 
             <h2 className="text-2xl font-bold text-[#194866]">7. Limitation of Liability</h2>
             <p>Except as prohibited by law, you will hold us and our officers, directors, employees, and agents harmless for any indirect, punitive, special, incidental, or consequential damage... **Consult legal counsel for appropriate limitation of liability clauses.**</p>

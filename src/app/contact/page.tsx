@@ -5,12 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea'; // Optional: if you add a message field
 import { Mail, Building, User } from 'lucide-react';
 
 // Define colors (reuse or define globally)
-const logoIconTeal = "#3CDBDD";
-const logoIconDarkBlue = "#194866";
 const logoTextColor = "#2D2D2D";
 const accentColor = "#FF7D4D";
 
@@ -164,7 +161,7 @@ export default function ContactPage() {
               Request a Demo or Get In Touch
             </h1>
             <p className="text-lg text-[#194866]/80">
-              Fill out the form below to request a personalized demo or ask any questions you may have. We'll get back to you shortly!
+              Fill out the form below to request a personalized demo or ask any questions you may have. We&apos;ll get back to you shortly!
             </p>
           </div>
 
