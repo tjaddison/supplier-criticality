@@ -5,40 +5,34 @@ export async function POST(request: Request) {
   try {
     const { name, email, company } = await request.json();
 
-    // Basic validation
+    // Validate input
     if (!name || !email || !company) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
     // Configure Nodemailer transporter
-    // Ensure environment variables are set!
+    // IMPORTANT: Use environment variables for sensitive credentials
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: Number(process.env.EMAIL_SERVER_PORT),
-      secure: Number(process.env.EMAIL_SERVER_PORT) === 465, // true for 465, false for other ports
+      host: process.env.EMAIL_HOST, // e.g., smtp.example.com
+      port: parseInt(process.env.EMAIL_PORT || '587', 10), // e.g., 587 or 465
+      secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_SENDER_EMAIL,
-        pass: process.env.EMAIL_SENDER_PASSWORD,
+        user: process.env.EMAIL_USER, // Your sending email address (e.g., noreply@procuresci.com or info@procuresci.com)
+        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
       },
     });
 
     // Email options
     const mailOptions = {
-      from: `"ProcureSci Contact Form" <${process.env.EMAIL_SENDER_EMAIL}>`, // Sender address (must be authorized)
-      to: process.env.EMAIL_RECIPIENT, // List of receivers (your procuresci@gmail.com)
-      subject: 'New Contact Form Submission / Demo Request', // Subject line
-      text: `
-        New contact form submission:
-
-        Name: ${name}
-        Email: ${email}
-        Company/Organization: ${company}
-      `,
+      from: `"ProcureSci Contact Form" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`, // Sender address (display name + email)
+      to: 'info@procuresci.com', // <<< Update recipient email here
+      replyTo: email, // Set the reply-to field to the user's email
+      subject: `New Contact Form Submission from ${name}`,
       html: `
-        <h2>New Contact Form Submission / Demo Request</h2>
+        <h1>New Contact Request</h1>
         <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-        <p><strong>Company/Organization:</strong> ${company}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Company:</strong> ${company}</p>
       `,
     };
 
@@ -48,7 +42,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Email sent successfully!' }, { status: 200 });
 
   } catch (error) {
-    console.error('Failed to send email:', error);
-    return NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
+    console.error('Error sending email:', error);
+    // It's good practice to avoid exposing detailed error messages to the client
+    return NextResponse.json({ message: 'Failed to send email. Please try again later.' }, { status: 500 });
   }
 } 

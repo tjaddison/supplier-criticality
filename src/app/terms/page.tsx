@@ -155,7 +155,14 @@ export default function TermsPage() {
             <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide notice of any changes by posting the new Terms on this page.</p>
 
             <h2 className="text-2xl font-bold text-[#194866]">10. Contact Us</h2>
-            <p>If you have any questions about these Terms, please <Link href="/contact" className="text-[#3CDBDD] hover:underline">contact us</Link>.</p>
+            <p>
+              If you have any questions about these Terms, please contact us at{' '}
+              <a href="mailto:info@procuresci.com" className="text-[#3CDBDD] hover:underline">
+                info@procuresci.com
+              </a>
+              {' '}or use our{' '}
+              <Link href="/contact" className="text-[#3CDBDD] hover:underline">contact form</Link>.
+            </p>
           </div>
         </div>
       </main>
