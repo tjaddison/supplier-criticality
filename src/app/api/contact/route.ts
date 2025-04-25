@@ -1,49 +1,57 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { v4 as uuidv4 } from 'uuid';
+
+// Initialize DynamoDB clients
+const client = new DynamoDBClient({
+  region: process.env.AWS_REGION || 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  },
+});
+
+const docClient = DynamoDBDocumentClient.from(client);
 
 export async function POST(request: Request) {
   try {
     const { name, email, company } = await request.json();
 
-    // Validate input
+    // Basic validation
     if (!name || !email || !company) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Configure Nodemailer transporter
-    // IMPORTANT: Use environment variables for sensitive credentials
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST, // e.g., smtp.example.com
-      port: parseInt(process.env.EMAIL_PORT || '587', 10), // e.g., 587 or 465
-      secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_USER, // Your sending email address (e.g., noreply@procuresci.com or info@procuresci.com)
-        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
-      },
-    });
+    // Create a unique ID for this contact submission
+    const id = uuidv4();
+    const timestamp = new Date().toISOString();
 
-    // Email options
-    const mailOptions = {
-      from: `"ProcureSci Contact Form" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`, // Sender address (display name + email)
-      to: 'info@procuresci.com', // <<< Update recipient email here
-      replyTo: email, // Set the reply-to field to the user's email
-      subject: `New Contact Form Submission from ${name}`,
-      html: `
-        <h1>New Contact Request</h1>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company}</p>
-      `,
-    };
+    // Save to DynamoDB
+    await docClient.send(
+      new PutCommand({
+        TableName: process.env.CONTACTS_TABLE_NAME || 'ProcureSciContacts',
+        Item: {
+          id,
+          name,
+          email,
+          company,
+          createdAt: timestamp,
+          status: 'new', // For tracking follow-up status
+        },
+      })
+    );
 
-    // Send email
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json({ message: 'Email sent successfully!' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Contact information received successfully!' }, 
+      { status: 200 }
+    );
 
   } catch (error) {
-    console.error('Error sending email:', error);
-    // It's good practice to avoid exposing detailed error messages to the client
-    return NextResponse.json({ message: 'Failed to send email. Please try again later.' }, { status: 500 });
+    console.error('Failed to save contact form data:', error);
+    return NextResponse.json(
+      { message: 'Failed to process your request' }, 
+      { status: 500 }
+    );
   }
 } 
