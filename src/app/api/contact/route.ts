@@ -1,5 +1,18 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { v4 as uuidv4 } from 'uuid';
+
+// Initialize DynamoDB clients
+const client = new DynamoDBClient({
+  region: process.env.AWS_REGION || 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  },
+});
+
+const docClient = DynamoDBDocumentClient.from(client);
 
 export async function POST(request: Request) {
   try {
@@ -10,45 +23,35 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
 
-    // Configure Nodemailer transporter
-    // Ensure environment variables are set!
-    const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: Number(process.env.EMAIL_SERVER_PORT),
-      secure: Number(process.env.EMAIL_SERVER_PORT) === 465, // true for 465, false for other ports
-      auth: {
-        user: process.env.EMAIL_SENDER_EMAIL,
-        pass: process.env.EMAIL_SENDER_PASSWORD,
-      },
-    });
+    // Create a unique ID for this contact submission
+    const id = uuidv4();
+    const timestamp = new Date().toISOString();
 
-    // Email options
-    const mailOptions = {
-      from: `"ProcureSci Contact Form" <${process.env.EMAIL_SENDER_EMAIL}>`, // Sender address (must be authorized)
-      to: process.env.EMAIL_RECIPIENT, // List of receivers (your procuresci@gmail.com)
-      subject: 'New Contact Form Submission / Demo Request', // Subject line
-      text: `
-        New contact form submission:
+    // Save to DynamoDB
+    await docClient.send(
+      new PutCommand({
+        TableName: process.env.CONTACTS_TABLE_NAME || 'ProcureSciContacts',
+        Item: {
+          id,
+          name,
+          email,
+          company,
+          createdAt: timestamp,
+          status: 'new', // For tracking follow-up status
+        },
+      })
+    );
 
-        Name: ${name}
-        Email: ${email}
-        Company/Organization: ${company}
-      `,
-      html: `
-        <h2>New Contact Form Submission / Demo Request</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-        <p><strong>Company/Organization:</strong> ${company}</p>
-      `,
-    };
-
-    // Send email
-    await transporter.sendMail(mailOptions);
-
-    return NextResponse.json({ message: 'Email sent successfully!' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Contact information received successfully!' }, 
+      { status: 200 }
+    );
 
   } catch (error) {
-    console.error('Failed to send email:', error);
-    return NextResponse.json({ message: 'Failed to send email' }, { status: 500 });
+    console.error('Failed to save contact form data:', error);
+    return NextResponse.json(
+      { message: 'Failed to process your request' }, 
+      { status: 500 }
+    );
   }
 } 

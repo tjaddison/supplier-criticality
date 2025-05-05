@@ -178,8 +178,13 @@ export default function PrivacyPage() {
               <h2 class="text-2xl font-bold text-[#194866]">11. Changes to This Privacy Policy</h2>
               <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
 
-              <h2 class="text-2xl font-bold text-[#194866]">12. Contact Us</h2>
-              <p>If you have any questions about this Privacy Policy, please <Link href="/contact" className="text-[#3CDBDD] hover:underline">contact us</Link>.</p>
+              <h2 class="text-2xl font-bold text-[#194866]">Contact Us</h2>
+              <p>
+                If you have any questions about this Privacy Policy or our data practices, please contact us at{' '}
+                <a href="mailto:info@procuresci.com" className="text-[#3CDBDD] hover:underline">
+                  info@procuresci.com
+                </a>.
+              </p>
             `
           }} />
         </div>
