@@ -1,29 +1,38 @@
 "use client"
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { MessageSquare } from 'lucide-react'; // Icons for contact/value
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { Check, ArrowRight, Building, Building2 as Buildings, Building as BuildingSkyscraper } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-// Define colors (reuse or define globally if not already done)
-// const logoIconTeal = "#3CDBDD";
-// const logoIconDarkBlue = "#194866";
-const logoTextColor = "#2D2D2D";
-const accentColor = "#FF7D4D"; // Orange accent
+// Define colors (reuse from other pages)
+const logoTextColor = "#2D2D2D"
+const accentColor = "#FF7D4D"
 
 export default function PricingPage() {
+  const [billingAnnually, setBillingAnnually] = useState(false)
+  
+  // Base monthly prices
+  const proMonthlyPrice = 500
+  const enterpriseMonthlyPrice = 750
+  
+  // Calculate discounted annual prices (total yearly amount)
+  const proYearlyPrice = Math.round(proMonthlyPrice * 12 * 0.917) // 8.3% discount
+  const enterpriseYearlyPrice = Math.round(enterpriseMonthlyPrice * 12 * 0.917) // 8.3% discount
+
   return (
     <div className="flex flex-col min-h-screen font-sans bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
-      {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
         <div className="container flex h-20 items-center justify-between mx-auto px-4">
           <Link href="/" className="flex items-center space-x-3 group">
-            {/* Updated SVG Logo */}
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-               width="45" height="45"
+               width="45" height="45" // Applied previous dimensions
                viewBox="0 0 464 342" enableBackground="new 0 0 464 342" xmlSpace="preserve"
-               className="transition-transform group-hover:scale-105"
+               className="transition-transform group-hover:scale-105" // Applied previous classes
             >
-              {/* SVG paths */}
               <path fill="#FEFFFF" opacity="1.000000" stroke="none"
                 d="
               M336.000000,343.000000
@@ -94,18 +103,15 @@ export default function PricingPage() {
                 C334.227325,239.329773 308.418152,239.301193 282.115906,239.228333
               z"/>
             </svg>
-            {/* Logo Text */}
             <div className="flex flex-col">
               <span className="text-4xl font-extrabold tracking-tight" style={{ color: logoTextColor }}>ProcureSci.</span>
               <span className="text-xs font-medium tracking-[0.15em] uppercase" style={{ color: logoTextColor }}>THE SCIENCE OF PROCUREMENT</span>
             </div>
           </Link>
-          {/* Navigation */}
           <nav className="flex items-center space-x-6 text-base font-semibold">
             <Link href="/solutions" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Solutions</Link>
-            <Link href="/about" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">About</Link>
-            {/* Highlight Pricing link */}
-            <Link href="/pricing" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">Pricing</Link>
+            <Link href="/about" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">About</Link>
+            <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
             <Link href="/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
@@ -116,56 +122,258 @@ export default function PricingPage() {
 
       <main className="flex-1">
         {/* Pricing Hero Section */}
-        <section className="w-full py-20 md:py-32 bg-gradient-to-br from-[#E5F9FA] to-white text-center">
+        <section className="w-full py-20 bg-gradient-to-br from-[#E5F9FA] to-white text-center">
           <div className="container px-4 md:px-6">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#194866] mb-4">
-              Customized Pricing for Your Needs
+              Simple, Transparent Pricing
             </h1>
-            <p className="max-w-3xl mx-auto text-lg md:text-xl text-[#194866]/80 mb-8">
-              As an early-stage solution, ProcureSci is focused on delivering maximum value tailored to each client. We currently offer customized pricing based on your specific requirements, data volume, and desired level of support.
+            <p className="max-w-3xl mx-auto text-lg md:text-xl text-[#194866]/80 mb-10">
+              Choose the plan that fits your organization&apos;s needs. Scale as you grow.
             </p>
-            <p className="max-w-2xl mx-auto text-lg md:text-xl text-[#194866]/80">
-              Let&apos;s discuss how ProcureSci can empower your procurement team.
-            </p>
-          </div>
-        </section>
+            
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center space-x-4 mb-16">
+              <span className={`text-lg font-semibold ${!billingAnnually ? 'text-[#194866]' : 'text-[#194866]/60'}`}>Monthly</span>
+              <Switch
+                checked={billingAnnually}
+                onCheckedChange={setBillingAnnually}
+                className="data-[state=checked]:bg-[#3CDBDD]"
+              />
+              <span className={`text-lg font-semibold ${billingAnnually ? 'text-[#194866]' : 'text-[#194866]/60'}`}>
+                Yearly
+                {billingAnnually && (
+                  <span className="ml-2 inline-block bg-[#FF7D4D] text-white text-xs font-semibold px-2 py-1 rounded">
+                    Save 8.3%
+                  </span>
+                )}
+              </span>
+            </div>
 
-        {/* Value Proposition / Why Contact Us */}
-        <section className="w-full py-16 md:py-24 bg-white">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-extrabold text-center mb-12 text-[#194866]">Invest in Strategic Clarity</h2>
-            <p className="max-w-3xl mx-auto text-center text-lg text-[#194866]/80 mb-16">
-              While we finalize standard pricing tiers, contacting us allows us to understand your unique challenges and demonstrate the specific ROI ProcureSci can deliver for your organization. Gain insights into:
-            </p>
-            <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-              <div className="flex flex-col items-center text-center space-y-3 p-6 bg-white/80 rounded-lg shadow-lg border-l-4 border-[#3CDBDD]">
-                <h3 className="text-xl font-bold text-[#194866]">Time Savings</h3>
-                <p className="text-[#194866]/80">Reduce manual analysis and reporting efforts significantly.</p>
+            {/* Pricing Tiers */}
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {/* Starter Tier */}
+              <div className="relative flex flex-col p-8 bg-white border rounded-2xl shadow-lg overflow-hidden">
+                <div className="text-center mb-6">
+                  <div className="mb-3 flex justify-center">
+                    <Building className="h-10 w-10 text-[#194866]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#194866]">Starter</h3>
+                  <div className="mt-3 text-4xl font-bold text-[#194866]">Free<span className="text-lg font-normal text-[#194866]/60"> forever</span></div>
+                  <p className="mt-2 text-[#194866]/70">Perfect for small teams</p>
+                </div>
+                
+                <ul className="space-y-4 mb-6 flex-1">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Manage up to 5 suppliers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Basic supplier analytics</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Standard reporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Email support</span>
+                  </li>
+                </ul>
+                
+                <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
+                  Get Started
+                </Button>
               </div>
-              <div className="flex flex-col items-center text-center space-y-3 p-6 bg-white/80 rounded-lg shadow-lg border-l-4 border-[#194866]">
-                <h3 className="text-xl font-bold text-[#194866]">Cost Optimization</h3>
-                <p className="text-[#194866]/80">Identify opportunities by focusing on high-impact suppliers.</p>
+              
+              {/* Professional Tier */}
+              <div className="relative flex flex-col p-8 bg-white border border-[#3CDBDD] rounded-2xl shadow-xl overflow-hidden">
+                <div className="absolute top-0 right-0">
+                  <div className="bg-[#FF7D4D] text-white text-xs font-bold px-4 py-1 uppercase">
+                    Popular
+                  </div>
+                </div>
+                
+                <div className="text-center mb-6">
+                  <div className="mb-3 flex justify-center">
+                    <Buildings className="h-10 w-10 text-[#3CDBDD]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#194866]">Professional</h3>
+                  <div className="mt-3 text-4xl font-bold text-[#194866]">
+                    ${billingAnnually ? proYearlyPrice : proMonthlyPrice}
+                    <span className="text-lg font-normal text-[#194866]/60">/{billingAnnually ? 'year' : 'month'}</span>
+                  </div>
+                  <p className="mt-2 text-[#194866]/70">For growing organizations</p>
+                </div>
+                
+                <ul className="space-y-4 mb-6 flex-1">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Manage 6-200 suppliers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Advanced supplier analytics</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Custom reporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Priority email & phone support</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Supplier risk assessment</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Team collaboration tools</span>
+                  </li>
+                </ul>
+                
+                <Link href="/contact">
+                  <Button className="w-full bg-[#3CDBDD] hover:bg-[#194866]">
+                    Request a Demo
+                  </Button>
+                </Link>
               </div>
-              <div className="flex flex-col items-center text-center space-y-3 p-6 bg-white/80 rounded-lg shadow-lg border-l-4 border-[#FF7D4D]">
-                <h3 className="text-xl font-bold text-[#194866]">Strategic Alignment</h3>
-                <p className="text-[#194866]/80">Empower your team with data for better decision-making.</p>
+              
+              {/* Enterprise Tier */}
+              <div className="relative flex flex-col p-8 bg-white border rounded-2xl shadow-lg overflow-hidden">
+                <div className="text-center mb-6">
+                  <div className="mb-3 flex justify-center">
+                    <BuildingSkyscraper className="h-10 w-10 text-[#194866]" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#194866]">Enterprise</h3>
+                  <div className="mt-3 text-4xl font-bold text-[#194866]">
+                    ${billingAnnually ? enterpriseYearlyPrice : enterpriseMonthlyPrice}
+                    <span className="text-lg font-normal text-[#194866]/60">/{billingAnnually ? 'year' : 'month'}</span>
+                  </div>
+                  <p className="mt-2 text-[#194866]/70">For large enterprises</p>
+                </div>
+                
+                <ul className="space-y-4 mb-6 flex-1">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Manage 201+ suppliers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Enterprise-grade analytics</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Advanced custom reporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Dedicated account manager</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Advanced risk management</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">API access</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-[#194866]">Custom integrations</span>
+                  </li>
+                </ul>
+                
+                <Link href="/contact">
+                  <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
+                    Contact Sales
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
         </section>
-
-        {/* Contact CTA Section */}
+        
+        {/* FAQ Section */}
+        <section className="w-full py-20 bg-white">
+          <div className="container px-4 md:px-6">
+            <h2 className="text-3xl font-extrabold text-center mb-12 text-[#194866]">Frequently Asked Questions</h2>
+            
+            <div className="max-w-3xl mx-auto space-y-6">
+              {/* FAQ Item 1 */}
+              <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#194866] mb-2">Can I change plans later?</h3>
+                <p className="text-[#194866]/80">
+                  Yes, you can upgrade or downgrade your plan at any time. Changes to your subscription will be prorated based on the remaining time in your billing cycle.
+                </p>
+              </div>
+              
+              {/* FAQ Item 2 */}
+              <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#194866] mb-2">Is there a free trial for paid plans?</h3>
+                <p className="text-[#194866]/80">
+                  We offer a 14-day free trial for our Professional plan. No credit card is required to start your trial. You can also request a personalized demo to see how ProcureSci can benefit your specific needs.
+                </p>
+              </div>
+              
+              {/* FAQ Item 3 */}
+              <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#194866] mb-2">What payment methods do you accept?</h3>
+                <p className="text-[#194866]/80">
+                  We accept all major credit cards including Visa, Mastercard, and American Express. For Enterprise customers, we also offer invoicing with net-30 payment terms.
+                </p>
+              </div>
+              
+              {/* FAQ Item 4 */}
+              <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#194866] mb-2">Do you offer discounts for non-profits or educational institutions?</h3>
+                <p className="text-[#194866]/80">
+                  Yes, we offer special pricing for non-profit organizations, educational institutions, and startups. Please contact our sales team to learn more about our discount programs.
+                </p>
+              </div>
+              
+              {/* FAQ Item 5 */}
+              <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-[#194866] mb-2">How does data security work with ProcureSci?</h3>
+                <p className="text-[#194866]/80">
+                  We take data security seriously. All your data is encrypted both in transit and at rest. We use industry-standard security practices, and our infrastructure is hosted on secure AWS servers. We are compliant with major data protection regulations.
+                </p>
+              </div>
+            </div>
+            
+            {/* Contact for more questions */}
+            <div className="text-center mt-10">
+              <p className="text-[#194866]/80 mb-4">Still have questions about our pricing or features?</p>
+              <Link href="/contact">
+                <Button className="bg-[#194866] hover:bg-[#3CDBDD] transition-all">
+                  Contact Our Team
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+        
+        {/* CTA Section */}
         <section className="w-full py-20 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white">
           <div className="container px-4 md:px-6 text-center">
-            <h2 className="text-4xl font-extrabold mb-4">Let&apos;s Talk About Your Solution</h2>
+            <h2 className="text-4xl font-extrabold mb-4">Ready to Transform Your Procurement?</h2>
             <p className="max-w-xl mx-auto text-lg text-[#B6EFF0] mb-8">
-              We&apos;ll explore your needs and provide a personalized pricing proposal designed to deliver exceptional value.
+              Get started today or contact our sales team for a personalized demo.
             </p>
-            <Link href="/contact">
-              <Button className={`inline-flex items-center h-14 px-10 py-4 text-xl font-bold bg-[${accentColor}] text-white border-2 border-[${accentColor}] shadow-2xl hover:bg-[#FF6A33] transition-all rounded-xl`}>
-                <MessageSquare className="mr-3 h-6 w-6" /> Contact Us for Pricing
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/contact">
+                <Button className={`inline-flex h-14 px-10 py-4 text-xl font-bold bg-[${accentColor}] text-white border-2 border-[${accentColor}] shadow-xl hover:bg-[#FF6A33] transition-all rounded-xl`}>
+                  Request a Demo
+                  <ArrowRight className="ml-2 h-6 w-6" />
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button className="inline-flex h-14 px-10 py-4 text-xl font-bold bg-transparent text-white border-2 border-white shadow-xl hover:bg-white/10 transition-all rounded-xl">
+                  Sign Up Free
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
@@ -182,5 +390,5 @@ export default function PricingPage() {
         </div>
       </footer>
     </div>
-  );
+  )
 } 
