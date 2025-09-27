@@ -2,11 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Check, ArrowRight, Building, Building2 as Buildings, Building as BuildingSkyscraper } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 // Define colors (reuse from other pages)
 const logoTextColor = "#2D2D2D"
