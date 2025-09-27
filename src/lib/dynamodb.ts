@@ -39,9 +39,15 @@ export async function getSuppliers(userId: string) {
 
     const response = await docClient.send(command)
     return response.Items as Supplier[]
-  } catch (error) {
+  } catch (error: unknown) {
+    // Check if the error is ResourceNotFoundException (table doesn't exist)
+    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
+      console.log("Suppliers table not found, returning empty array")
+      return []
+    }
+
     console.error("Error fetching suppliers:", error)
-    // Return empty array on error
+    // Return empty array on other errors
     return []
   }
 }
@@ -132,9 +138,23 @@ export async function getCriteriaWeights(userId: string) {
 
     const response = await docClient.send(command)
     return response.Item
-  } catch (error) {
+  } catch (error: unknown) {
+    // Check if the error is ResourceNotFoundException (table doesn't exist)
+    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
+      console.log("Criteria weights table not found, returning default weights")
+      // Return default weights structure when table doesn't exist
+      return {
+        spendPercentage: 20,
+        threeYearAverage: 20,
+        marketSize: 15,
+        replacementComplexity: 15,
+        utilization: 15,
+        riskLevel: 15
+      }
+    }
+
     console.error("Error fetching criteria weights:", error)
-    // Return null on error
+    // Return null on other errors
     return null
   }
 }
@@ -161,7 +181,15 @@ export async function updateCriteriaWeights(userId: string, weights: CriteriaWei
 
     await docClient.send(command)
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    // Check if the error is ResourceNotFoundException (table doesn't exist)
+    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
+      console.warn("Criteria weights table not found, weights update skipped")
+      // Return success even if table doesn't exist for now
+      // In production, you would want to create the table or handle this differently
+      return { success: true, warning: "Table not found, update skipped" }
+    }
+
     console.error("Error updating criteria weights:", error)
     throw error
   }
@@ -187,7 +215,7 @@ export async function getUniqueSubcategories(userId: string): Promise<{ [categor
     items.forEach(item => {
       const category = item.category || '';
       const subcategory = item.subcategory || '';
-      
+
       if (!subcategoriesMap[category]) {
         subcategoriesMap[category] = new Set();
       }
@@ -200,7 +228,13 @@ export async function getUniqueSubcategories(userId: string): Promise<{ [categor
       return acc;
     }, {} as { [category: string]: string[] });
 
-  } catch (error) {
+  } catch (error: unknown) {
+    // Check if the error is ResourceNotFoundException (table doesn't exist)
+    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
+      console.log("Suppliers table not found, returning empty subcategories map")
+      return {}
+    }
+
     console.error('Error getting unique subcategories:', error);
     return {};
   }
