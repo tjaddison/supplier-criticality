@@ -147,7 +147,7 @@ export default function ContactPage() {
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             {/* Highlight Contact link */}
             <Link href="/contact" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">Contact</Link>
-            <Link href="/login">
+            <Link href="/api/auth/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
             </Link>
           </nav>
