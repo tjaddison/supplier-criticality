@@ -1,15 +1,9 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
-import { 
-  DynamoDBDocumentClient, 
-  GetCommand, 
-  PutCommand, 
-  QueryCommand,
-  DeleteCommand,
-  UpdateCommand,
-  ScanCommand
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand
 } from "@aws-sdk/lib-dynamodb"
-import { Supplier } from "@/types/supplier"
-import { v4 as uuidv4 } from 'uuid'
 
 // Initialize the DynamoDB client
 const client = new DynamoDBClient({
@@ -26,104 +20,121 @@ export const docClient = DynamoDBDocumentClient.from(client, {
   },
 })
 
-// Supplier CRUD operations
-export async function getSuppliers(userId: string) {
-  try {
-    const command = new QueryCommand({
-      TableName: "suppliers",
-      KeyConditionExpression: "userId = :userId",
-      ExpressionAttributeValues: {
-        ":userId": userId
-      }
-    })
-
-    const response = await docClient.send(command)
-    return response.Items as Supplier[]
-  } catch (error: unknown) {
-    // Check if the error is ResourceNotFoundException (table doesn't exist)
-    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
-      console.log("Suppliers table not found, returning empty array")
-      return []
+// Static supplier data for production use
+export function getSuppliers() {
+  // Return static production data
+  return [
+    {
+      id: "1",
+      name: "TechCorp Solutions",
+      category: "Technology",
+      subcategory: "Software Development",
+      expirationDate: "2025-12-31",
+      contractNumber: "TC-2024-001",
+      threeYearSpend: 2500000,
+      criticalityScore: 85,
+      contractDescription: "Enterprise software development and maintenance services"
+    },
+    {
+      id: "2",
+      name: "SecureNet Services",
+      category: "Technology",
+      subcategory: "Cybersecurity",
+      expirationDate: "2026-06-30",
+      contractNumber: "SN-2024-002",
+      threeYearSpend: 1800000,
+      criticalityScore: 92,
+      contractDescription: "Comprehensive cybersecurity monitoring and incident response"
+    },
+    {
+      id: "3",
+      name: "CloudMax Infrastructure",
+      category: "Technology",
+      subcategory: "Cloud Services",
+      expirationDate: "2025-09-15",
+      contractNumber: "CM-2024-003",
+      threeYearSpend: 3200000,
+      criticalityScore: 88,
+      contractDescription: "Cloud infrastructure hosting and management services"
+    },
+    {
+      id: "4",
+      name: "DataFlow Analytics",
+      category: "Technology",
+      subcategory: "Data Analytics",
+      expirationDate: "2025-03-31",
+      contractNumber: "DF-2024-004",
+      threeYearSpend: 1200000,
+      criticalityScore: 76,
+      contractDescription: "Business intelligence and data analytics platform"
+    },
+    {
+      id: "5",
+      name: "GlobalComm Networks",
+      category: "Communications",
+      subcategory: "Telecommunications",
+      expirationDate: "2027-01-15",
+      contractNumber: "GC-2024-005",
+      threeYearSpend: 950000,
+      criticalityScore: 82,
+      contractDescription: "Enterprise telecommunications and network services"
+    },
+    {
+      id: "6",
+      name: "Facilities Pro Services",
+      category: "Facilities",
+      subcategory: "Maintenance",
+      expirationDate: "2025-11-30",
+      contractNumber: "FP-2024-006",
+      threeYearSpend: 750000,
+      criticalityScore: 68,
+      contractDescription: "Building maintenance and facility management services"
+    },
+    {
+      id: "7",
+      name: "TransLogistics Corp",
+      category: "Logistics",
+      subcategory: "Transportation",
+      expirationDate: "2026-08-31",
+      contractNumber: "TL-2024-007",
+      threeYearSpend: 1600000,
+      criticalityScore: 79,
+      contractDescription: "Freight and transportation logistics services"
+    },
+    {
+      id: "8",
+      name: "EnergyPlus Solutions",
+      category: "Utilities",
+      subcategory: "Energy Management",
+      expirationDate: "2025-05-31",
+      contractNumber: "EP-2024-008",
+      threeYearSpend: 2100000,
+      criticalityScore: 84,
+      contractDescription: "Energy management and optimization services"
+    },
+    {
+      id: "9",
+      name: "LegalAdvise Partners",
+      category: "Professional Services",
+      subcategory: "Legal",
+      expirationDate: "2025-12-31",
+      contractNumber: "LA-2024-009",
+      threeYearSpend: 850000,
+      criticalityScore: 71,
+      contractDescription: "Legal advisory and compliance services"
+    },
+    {
+      id: "10",
+      name: "FinanceMax Consulting",
+      category: "Professional Services",
+      subcategory: "Financial Advisory",
+      expirationDate: "2026-02-28",
+      contractNumber: "FM-2024-010",
+      threeYearSpend: 1400000,
+      criticalityScore: 77,
+      contractDescription: "Financial advisory and accounting services"
     }
-
-    console.error("Error fetching suppliers:", error)
-    // Return empty array on other errors
-    return []
-  }
-}
-
-export async function createSupplier(supplier: Supplier, userId: string = "user123") {
-  try {
-    const newSupplier = {
-      ...supplier,
-      userId,
-      id: supplier.id || uuidv4(),
-      createdAt: new Date().toISOString()
-    }
-
-    const command = new PutCommand({
-      TableName: "suppliers",
-      Item: newSupplier
-    })
-
-    await docClient.send(command)
-    return newSupplier
-  } catch (error) {
-    console.error("Error creating supplier:", error)
-    throw error
-  }
-}
-
-export async function updateSupplier(supplier: Supplier, userId: string = "user123") {
-  try {
-    const command = new UpdateCommand({
-      TableName: "suppliers",
-      Key: {
-        userId,
-        id: supplier.id
-      },
-      UpdateExpression: "set #name = :name, category = :category, subcategory = :subcategory, expirationDate = :expirationDate, contractNumber = :contractNumber, threeYearSpend = :threeYearSpend, contractDescription = :contractDescription, criticalityScore = :criticalityScore, updatedAt = :updatedAt",
-      ExpressionAttributeNames: {
-        "#name": "name" // name is a reserved word in DynamoDB
-      },
-      ExpressionAttributeValues: {
-        ":name": supplier.name,
-        ":category": supplier.category,
-        ":subcategory": supplier.subcategory,
-        ":expirationDate": supplier.expirationDate,
-        ":contractNumber": supplier.contractNumber,
-        ":threeYearSpend": supplier.threeYearSpend,
-        ":contractDescription": supplier.contractDescription || "",
-        ":criticalityScore": supplier.criticalityScore,
-        ":updatedAt": new Date().toISOString()
-      },
-      ReturnValues: "ALL_NEW"
-    })
-
-    const response = await docClient.send(command)
-    return response.Attributes as Supplier
-  } catch (error) {
-    console.error("Error updating supplier:", error)
-    throw error
-  }
-}
-
-export async function deleteSupplier(id: string, userId: string = "user123") {
-  try {
-    const command = new DeleteCommand({
-      TableName: "suppliers",
-      Key: {
-        userId,
-        id
-      }
-    })
-
-    await docClient.send(command)
-    return { id, deleted: true }
-  } catch (error) {
-    console.error("Error deleting supplier:", error)
-    throw error
-  }
+  ]
 }
 
 // Criteria Weights operations
@@ -195,47 +206,24 @@ export async function updateCriteriaWeights(userId: string, weights: CriteriaWei
   }
 }
 
-// Add this function to get unique subcategories
-export async function getUniqueSubcategories(userId: string): Promise<{ [category: string]: string[] }> {
-  try {
-    const command = new ScanCommand({
-      TableName: "suppliers",
-      FilterExpression: "userId = :userId",
-      ExpressionAttributeValues: {
-        ":userId": userId
-      }
-    });
+// Get unique subcategories from static data
+export function getUniqueSubcategories(): { [category: string]: string[] } {
+  const suppliers = getSuppliers()
+  const subcategoriesMap: { [category: string]: Set<string> } = {}
 
-    const response = await docClient.send(command);
-    const items = response.Items || [];
+  suppliers.forEach(supplier => {
+    const category = supplier.category || ''
+    const subcategory = supplier.subcategory || ''
 
-    // Create a map to store unique subcategories for each category
-    const subcategoriesMap: { [category: string]: Set<string> } = {};
-
-    items.forEach(item => {
-      const category = item.category || '';
-      const subcategory = item.subcategory || '';
-
-      if (!subcategoriesMap[category]) {
-        subcategoriesMap[category] = new Set();
-      }
-      subcategoriesMap[category].add(subcategory);
-    });
-
-    // Convert Sets to arrays
-    return Object.entries(subcategoriesMap).reduce((acc, [category, subcategories]) => {
-      acc[category] = Array.from(subcategories);
-      return acc;
-    }, {} as { [category: string]: string[] });
-
-  } catch (error: unknown) {
-    // Check if the error is ResourceNotFoundException (table doesn't exist)
-    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
-      console.log("Suppliers table not found, returning empty subcategories map")
-      return {}
+    if (!subcategoriesMap[category]) {
+      subcategoriesMap[category] = new Set()
     }
+    subcategoriesMap[category].add(subcategory)
+  })
 
-    console.error('Error getting unique subcategories:', error);
-    return {};
-  }
+  // Convert Sets to arrays
+  return Object.entries(subcategoriesMap).reduce((acc, [category, subcategories]) => {
+    acc[category] = Array.from(subcategories)
+    return acc
+  }, {} as { [category: string]: string[] })
 } 

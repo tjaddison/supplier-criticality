@@ -77,7 +77,7 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">View and manage your macro and micro supplier tiers</p>
+            <p className="text-muted-foreground mb-4">View and manage your supplier segmentation and comparative criticality assessments</p>
             <div className="grid grid-cols-2 gap-4">
               <a href="/dashboard/macro-supplier-tier" className="inline-block">
                 <div className="bg-blue-50 hover:bg-blue-100 transition-colors p-4 rounded-lg text-center border border-blue-100">

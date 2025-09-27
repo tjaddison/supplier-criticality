@@ -18,11 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Supplier } from "@/types/supplier"
-import { PlusCircle, Trash2, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
-import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
 import { getSuppliers } from "@/lib/dynamodb"
-import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
+import { calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
   weights: {
@@ -33,15 +32,12 @@ interface SupplierListProps {
     utilization: number
     riskLevel: number
   }
-  onEdit: (supplier: Supplier) => void
-  onDelete: (supplier: Supplier) => void
-  refreshTrigger?: number
 }
 
 type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend'
 type SortDirection = 'asc' | 'desc'
 
-export function SupplierList({ 
+export function SupplierList({
   weights = {
     spendPercentage: 20,
     threeYearAverage: 20,
@@ -49,16 +45,12 @@ export function SupplierList({
     replacementComplexity: 15,
     utilization: 15,
     riskLevel: 15
-  },
-  onEdit,
-  onDelete
+  }
 }: SupplierListProps) {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null)
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -127,8 +119,7 @@ export function SupplierList({
 
   const loadSuppliers = useCallback(async () => {
     try {
-      const userId = "user123" // Demo user ID
-      const data = await getSuppliers(userId)
+      const data = getSuppliers()
       if (data) {
         // Calculate criticality scores for all suppliers
         const suppliersWithCriticalityScores = data.map(supplier => {
@@ -208,104 +199,6 @@ export function SupplierList({
     loadSuppliers()
   }, [loadSuppliers])
 
-  const handleDeleteClick = (e: React.MouseEvent, supplier: Supplier) => {
-    e.stopPropagation() // Prevent row click from triggering
-    setSupplierToDelete(supplier)
-    setDeleteDialogOpen(true)
-  }
-
-  const handleDeleteConfirm = () => {
-    if (supplierToDelete) {
-      onDelete(supplierToDelete)
-    }
-    setDeleteDialogOpen(false)
-    setSupplierToDelete(null)
-  }
-
-  const handleRowClick = (supplier: Supplier) => {
-    // Calculate values before passing to modal
-    const subcategoryPercentage = calculateSubcategoryPercentage(supplier, suppliers)
-    const subcategoryCount = calculateSubcategoryCount(supplier, suppliers)
-    const spendAllocation = getSpendAllocationCategory(subcategoryPercentage)
-    const spendCategory = getSpendCategory(supplier.threeYearSpend)
-    const subcategorySize = getSubcategorySize(subcategoryCount)
-    const hiddenSpendAllocation = getHiddenSpendAllocation(spendAllocation)
-    const hiddenSpendValue = getHiddenSpendValue(spendCategory)
-    const hiddenSubcategorySize = getHiddenSubcategorySize(subcategorySize)
-    const hiddenUtilization = calculateHiddenUtilization(hiddenSpendAllocation, hiddenSpendValue)
-    const hiddenEaseOfReplacement = calculateHiddenEaseOfReplacement(
-      hiddenSpendValue,
-      hiddenUtilization,
-      hiddenSubcategorySize
-    )
-    const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
-    
-    // Get weights from props
-    const hiddenWeightsSpendAllocation = calculateHiddenWeightsSpendAllocation(
-      hiddenSpendAllocation,
-      { spendPercentage: weights.spendPercentage }
-    )
-    
-    const hiddenWeightsSpendValue = calculateHiddenWeightsSpendValue(
-      hiddenSpendValue,
-      { threeYearAverage: weights.threeYearAverage }
-    )
-    
-    const hiddenWeightsSubcategorySize = calculateHiddenWeightsSubcategorySize(
-      hiddenSubcategorySize,
-      { marketSize: weights.marketSize }
-    )
-    
-    const hiddenWeightsEaseOfReplacement = calculateHiddenWeightsEaseOfReplacement(
-      hiddenEaseOfReplacement,
-      { replacementComplexity: weights.replacementComplexity }
-    )
-    
-    const hiddenWeightsUtilization = calculateHiddenWeightsUtilization(
-      hiddenUtilization,
-      { utilization: weights.utilization }
-    )
-    
-    const hiddenWeightsRisk = calculateHiddenWeightsRisk(
-      hiddenRisk,
-      { riskLevel: weights.riskLevel }
-    )
-    
-    // Calculate the overall criticality value
-    const supplierCriticalityValue = 
-      hiddenWeightsSpendAllocation +
-      hiddenWeightsSpendValue +
-      hiddenWeightsSubcategorySize +
-      hiddenWeightsEaseOfReplacement +
-      hiddenWeightsUtilization +
-      hiddenWeightsRisk;
-    
-    onEdit({
-      ...supplier,
-      categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
-      subcategoryCount,
-      subcategoryPercentage,
-      spendAllocation,
-      spendCategory,
-      subcategorySize,
-      hiddenSpendAllocation,
-      hiddenSpendValue,
-      hiddenSubcategorySize,
-      hiddenUtilization,
-      hiddenEaseOfReplacement,
-      hiddenRisk,
-      easeOfReplacement: getEaseOfReplacement(hiddenEaseOfReplacement),
-      utilization: getUtilizationLevel(hiddenUtilization),
-      risk: getRiskLevel(hiddenRisk),
-      hiddenWeightsSpendAllocation,
-      hiddenWeightsSpendValue,
-      hiddenWeightsSubcategorySize,
-      hiddenWeightsEaseOfReplacement,
-      hiddenWeightsUtilization,
-      hiddenWeightsRisk,
-      criticalityScore: supplierCriticalityValue // Set the criticality score
-    })
-  }
 
   const SortIndicator = ({ field }: { field: SortField }) => {
     if (sortField !== field) return null
@@ -321,21 +214,7 @@ export function SupplierList({
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <Button onClick={() => onEdit({  // Fix: Now onEdit is properly typed as a function
-            id: "",
-            name: "",
-            category: "",
-            subcategory: "",
-            expirationDate: "",
-            contractNumber: "",
-            threeYearSpend: 0,
-            criticalityScore: 0,
-            contractDescription: ""
-          })}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Supplier
-          </Button>
+        <div className="flex flex-col md:flex-row justify-end items-start md:items-center gap-4">
           <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select page size" />
@@ -382,41 +261,23 @@ export function SupplierList({
                 >
                   Contract # <SortIndicator field="contractNumber" />
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="cursor-pointer"
                   onClick={() => handleSort('threeYearSpend')}
                 >
                   3-yr Avg Spend <SortIndicator field="threeYearSpend" />
                 </TableHead>
-                <TableHead className="w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {currentSuppliersSorted.map((supplier) => (
-                <TableRow 
-                  key={supplier.id} 
-                  className="cursor-pointer hover:bg-muted"
-                  onClick={() => handleRowClick(supplier)}
-                >
+                <TableRow key={supplier.id}>
                   <TableCell>{supplier.name}</TableCell>
                   <TableCell>{supplier.category}</TableCell>
                   <TableCell>{supplier.subcategory}</TableCell>
                   <TableCell>{supplier.expirationDate}</TableCell>
                   <TableCell>{supplier.contractNumber}</TableCell>
                   <TableCell>${supplier.threeYearSpend.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hover:bg-destructive hover:text-destructive-foreground"
-                      onClick={(e) => {
-                        e.stopPropagation() // Prevent row click
-                        handleDeleteClick(e, supplier)
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -453,12 +314,6 @@ export function SupplierList({
           </div>
         </div>
 
-        <DeleteConfirmationDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          onConfirm={handleDeleteConfirm}
-          supplierName={supplierToDelete?.name || ""}
-        />
       </div>
 
       {/* Add the chart below the table */}

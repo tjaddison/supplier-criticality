@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Info } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 interface CriteriaWeightsProps {
   weights: {
@@ -119,17 +120,38 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
             {Object.entries(localWeights).map(([key, value]) => {
               const field = key as keyof typeof weights
               const label = {
-                spendPercentage: "What is the supplier spend in relation to the total subcategory?",
-                threeYearAverage: "What is the 3 year average spend?",
-                marketSize: "What is the market size (one, few, or many)?",
-                replacementComplexity: "What is the anticipated complexity to replacing the supplier if necessary?",
-                utilization: "How heavily utilized is the supplier(s) across the Commonwealth (low, moderate, high) relative to other suppliers in the subcategory",
-                riskLevel: "What is the associated risk level for this supplier (consider cloud, PII, type of data, financial investment)?"
+                spendPercentage: "Subcategory Size",
+                threeYearAverage: "Spend",
+                marketSize: "Size of Contract Pool",
+                replacementComplexity: "Ease of Replacement",
+                utilization: "Utilization",
+                riskLevel: "Risk"
+              }[field]
+
+              const definition = {
+                spendPercentage: "The relative spend of one supplier in comparison to all awarded suppliers for the same good/service.",
+                threeYearAverage: "The total spend with each supplier.",
+                marketSize: "The count of contracted suppliers that offer the same good and/or services.",
+                replacementComplexity: "The difficulty of transitioning from one supplier to a new one.",
+                utilization: "The utilization rate of a supplier compared to other contracted suppliers.",
+                riskLevel: "The level of risk associated with each supplier."
               }[field]
 
               return (
                 <div key={field} className="flex flex-col gap-2">
-                  <Label htmlFor={field}>{label}</Label>
+                  <div className="flex items-center gap-1">
+                    <Label htmlFor={field}>{label}</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button type="button" className="text-muted-foreground hover:text-foreground transition-colors">
+                          <Info className="h-3 w-3" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 text-sm">
+                        {definition}
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                   <div className="flex justify-between items-center">
                     <Slider
                       id={`${field}-slider`}

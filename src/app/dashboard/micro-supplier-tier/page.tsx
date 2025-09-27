@@ -3,17 +3,15 @@ import { getSuppliers } from "@/lib/dynamodb"
 
 export default async function MicroSupplierTierPage() {
   try {
-    const userId = "user123" // Demo user ID
-    const suppliers = await getSuppliers(userId)
+    const suppliers = getSuppliers()
     
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
         {/* Hero Header */}
         <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Micro Supplier Tier</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
           <p className="text-blue-100 text-sm md:text-base max-w-3xl">
-            Detailed supplier analysis at a granular level. Examine supplier performance metrics, 
-            contract details, and subcategory relationships.
+            Compare current supplier criticality against target scenarios. Analyze spend allocation, contract availability, and risk factors to evaluate supplier criticality changes.
           </p>
         </div>
         
@@ -31,7 +29,7 @@ export default async function MicroSupplierTierPage() {
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
         <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Micro Supplier Tier</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
         </div>
         
         <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
