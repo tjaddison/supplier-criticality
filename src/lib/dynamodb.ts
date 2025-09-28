@@ -8,14 +8,15 @@ import {
   UpdateCommand
 } from "@aws-sdk/lib-dynamodb"
 import { Supplier } from "@/types/supplier"
+import { UploadAuditLog } from "@/types/upload-audit"
 import { v4 as uuidv4 } from 'uuid'
 
 // Initialize the DynamoDB client
 const client = new DynamoDBClient({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'us-east-1',
+  region: process.env.AWS_REGION || 'us-east-1',
   credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || ''
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
   }
 })
 
@@ -430,4 +431,152 @@ export function getUniqueSubcategories(): { [category: string]: string[] } {
     acc[category] = Array.from(subcategories)
     return acc
   }, {} as { [category: string]: string[] })
+}
+
+// Upload audit log operations
+export async function createUploadAuditLog(userId: string, auditLog: Omit<UploadAuditLog, 'id' | 'userId'>) {
+  try {
+    const id = uuidv4()
+    const log = {
+      id,
+      userId,
+      ...auditLog
+    }
+
+    const command = new PutCommand({
+      TableName: "upload_audit_logs",
+      Item: log
+    })
+
+    await docClient.send(command)
+    return log
+  } catch (error) {
+    console.error("Error creating upload audit log:", error)
+    throw error
+  }
+}
+
+export async function updateUploadAuditLog(userId: string, id: string, updates: Partial<UploadAuditLog>) {
+  try {
+    const updateExpressions = []
+    const expressionAttributeValues: Record<string, unknown> = {}
+    const expressionAttributeNames: Record<string, string> = {}
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (key === 'id' || key === 'userId') continue // Skip primary key fields
+
+      const attributeName = `#${key}`
+      const attributeValue = `:${key}`
+
+      updateExpressions.push(`${attributeName} = ${attributeValue}`)
+      expressionAttributeNames[attributeName] = key
+      expressionAttributeValues[attributeValue] = value
+    }
+
+    if (updateExpressions.length === 0) {
+      throw new Error("No valid fields to update")
+    }
+
+    const command = new UpdateCommand({
+      TableName: "upload_audit_logs",
+      Key: { userId, id },
+      UpdateExpression: `SET ${updateExpressions.join(', ')}`,
+      ExpressionAttributeNames: expressionAttributeNames,
+      ExpressionAttributeValues: expressionAttributeValues,
+      ReturnValues: "ALL_NEW"
+    })
+
+    const response = await docClient.send(command)
+    return response.Attributes as UploadAuditLog
+  } catch (error) {
+    console.error("Error updating upload audit log:", error)
+    throw error
+  }
+}
+
+export async function getUserUploadHistory(userId: string, limit = 50) {
+  try {
+    const command = new QueryCommand({
+      TableName: "upload_audit_logs",
+      KeyConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId
+      },
+      ScanIndexForward: false, // Sort by sort key (id) in descending order
+      Limit: limit
+    })
+
+    const response = await docClient.send(command)
+    return response.Items as UploadAuditLog[]
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'ResourceNotFoundException') {
+      console.log("Upload audit logs table not found, returning empty array")
+      return []
+    }
+    console.error("Error fetching upload history:", error)
+    throw error
+  }
+}
+
+// Function to get user role from Auth0 metadata
+export function getUserRole(user: { [key: string]: unknown }): string {
+  // Extract role from Auth0 user metadata
+  const appMetadata = user?.['https://procuresci.com/app_metadata'] as { [key: string]: unknown } | undefined
+  const role = appMetadata?.role || appMetadata?.subscription_tier || 'free'
+
+  // Convert to string for processing
+  const roleStr = String(role)
+ 
+  // Normalize role names
+  if (roleStr.includes('tier-1') || roleStr === 'tier1') return 'tier-1'
+  if (roleStr.includes('tier-2') || roleStr === 'tier2') return 'tier-2'
+  if (roleStr.includes('tier-3') || roleStr === 'tier3') return 'tier-3'
+  if (roleStr.includes('tier-4') || roleStr === 'tier4') return 'tier-4'
+
+  return 'free'
+}
+
+// Bulk replace suppliers for a user
+export async function replaceAllUserSuppliers(userId: string, suppliers: Supplier[]) {
+  try {
+    // First, get existing suppliers to track what's being replaced
+    const existingSuppliers = await getUserSuppliers(userId)
+
+    // Delete all existing suppliers
+    const deletePromises = existingSuppliers.map(supplier =>
+      docClient.send(new DeleteCommand({
+        TableName: "suppliers",
+        Key: { userId, id: supplier.id }
+      }))
+    )
+
+    await Promise.all(deletePromises)
+
+    // Insert new suppliers
+    const putPromises = suppliers.map(supplier => {
+      const newSupplier = {
+        ...supplier,
+        userId,
+        id: supplier.id || uuidv4(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      return docClient.send(new PutCommand({
+        TableName: "suppliers",
+        Item: newSupplier
+      }))
+    })
+
+    await Promise.all(putPromises)
+
+    return {
+      previousCount: existingSuppliers.length,
+      newCount: suppliers.length,
+      success: true
+    }
+  } catch (error) {
+    console.error("Error replacing user suppliers:", error)
+    throw error
+  }
 } 

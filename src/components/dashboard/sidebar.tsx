@@ -2,8 +2,7 @@
 
 import { ProcureSciLogo } from "@/components/ui/logo";
 import Link from "next/link";
-import { 
-  Settings, 
+import {
   LogOut,
   Menu,
   X
@@ -83,12 +82,13 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
                 </Button>
               </Link>
             ))}
-            <Link href="/dashboard/settings" onClick={() => setSidebarOpen(false)}>
+            {/* Settings feature will be implemented in a future release */}
+            {/* <Link href="/dashboard/settings" onClick={() => setSidebarOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
-            </Link>
+            </Link> */}
           </nav>
 
           {/* User Info & Logout Section */}

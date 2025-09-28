@@ -1,16 +1,17 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { CriteriaWeights } from "@/components/macro-supplier/criteria-weights"
 import { SupplierList } from "@/components/macro-supplier/supplier-list"
 import { SupplierModal } from "@/components/macro-supplier/supplier-modal"
+import { CSVUpload } from "@/components/csv-upload/csv-upload"
+import { UploadHistory } from "@/components/csv-upload/upload-history"
 import { Supplier } from "@/types/supplier"
-import {
-  getCriteriaWeights,
-  updateCriteriaWeights
-} from "@/lib/dynamodb"
+import { getUserRole } from "@/lib/dynamodb"
+import { ROLE_LIMITS } from "@/types/upload-audit"
 import { InfoIcon, SlidersIcon } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Renamed to WeightCriteria to avoid naming conflict with the component
 interface WeightCriteria {
@@ -35,17 +36,42 @@ export default function MacroSupplierTierPage() {
   const [weights, setWeights] = useState<WeightCriteria>(DEFAULT_WEIGHTS)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
-  const [refreshTrigger] = useState(0)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [uploadHistoryRefresh, setUploadHistoryRefresh] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState('free')
+  const [maxSuppliers, setMaxSuppliers] = useState(5)
   const { user, loading: authLoading, login, getUserId } = useAuth()
+  const dataLoadedRef = useRef(false)
 
   const loadData = useCallback(async () => {
+    // Prevent multiple loads
+    if (dataLoadedRef.current) return
+    dataLoadedRef.current = true
+
     try {
       const userId = getUserId()
       if (!userId) return
 
+      // Get user role and set limits
+      if (user) {
+        const role = getUserRole(user as unknown as { [key: string]: unknown })
+        setUserRole(role)
+        setMaxSuppliers(ROLE_LIMITS[role] || ROLE_LIMITS.free)
+      }
+
       // Load weights
-      const savedWeights = await getCriteriaWeights(userId)
+      const response = await fetch('/api/criteria-weights', {
+        credentials: 'include'
+      })
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/api/auth/login'
+          return
+        }
+        throw new Error('Failed to fetch criteria weights')
+      }
+      const { weights: savedWeights } = await response.json()
       if (savedWeights) {
         // Ensure all required fields are present with proper types
         const typedWeights: WeightCriteria = {
@@ -56,14 +82,27 @@ export default function MacroSupplierTierPage() {
           utilization: Number(savedWeights.utilization) || DEFAULT_WEIGHTS.utilization,
           riskLevel: Number(savedWeights.riskLevel) || DEFAULT_WEIGHTS.riskLevel,
         }
-        setWeights(typedWeights)
+
+        // Only update weights if they've actually changed
+        setWeights(prevWeights => {
+          const hasChanged =
+            prevWeights.spendPercentage !== typedWeights.spendPercentage ||
+            prevWeights.threeYearAverage !== typedWeights.threeYearAverage ||
+            prevWeights.marketSize !== typedWeights.marketSize ||
+            prevWeights.replacementComplexity !== typedWeights.replacementComplexity ||
+            prevWeights.utilization !== typedWeights.utilization ||
+            prevWeights.riskLevel !== typedWeights.riskLevel
+
+          return hasChanged ? typedWeights : prevWeights
+        })
       }
     } catch (error) {
       console.error('Error loading data:', error)
+      dataLoadedRef.current = false // Reset on error so it can retry
     } finally {
       setLoading(false)
     }
-  }, [getUserId])
+  }, [getUserId, user])
 
   useEffect(() => {
     if (!authLoading) {
@@ -73,14 +112,29 @@ export default function MacroSupplierTierPage() {
         setLoading(false)
       }
     }
-  }, [user, authLoading, loadData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading])
 
   const handleWeightsChange = async (newWeights: WeightCriteria): Promise<void> => {
     try {
       const userId = getUserId()
       if (!userId) throw new Error('User not authenticated')
 
-      await updateCriteriaWeights(userId, newWeights)
+      const response = await fetch('/api/criteria-weights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(newWeights),
+      })
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/api/auth/login'
+          return
+        }
+        throw new Error('Failed to update criteria weights')
+      }
       setWeights(newWeights)
     } catch (error) {
       console.error('Error updating weights:', error)
@@ -91,6 +145,12 @@ export default function MacroSupplierTierPage() {
   const handleViewSupplier = (supplier: Supplier) => {
     setSelectedSupplier(supplier)
     setModalOpen(true)
+  }
+
+  const handleUploadComplete = () => {
+    // Refresh supplier list and upload history
+    setRefreshTrigger(prev => prev + 1)
+    setUploadHistoryRefresh(prev => prev + 1)
   }
 
 
@@ -126,12 +186,12 @@ export default function MacroSupplierTierPage() {
     <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
       {/* Hero Header */}
       <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Supplier Segmentation View</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Supplier Management</h1>
         <p className="text-blue-100 text-sm md:text-base max-w-3xl mb-4">
-          Analyze and manage your critical suppliers based on strategic importance, spend metrics, and risk factors.
+          Manage your supplier data, upload CSV files, analyze criticality, and track upload history.
         </p>
       </div>
-      
+
       {/* Criteria Weights Panel */}
       <div className="bg-white dark:bg-gray-800 border-b shadow-sm p-4 md:p-6">
         <div className="flex items-center gap-2 mb-4 text-[#194866]">
@@ -144,16 +204,42 @@ export default function MacroSupplierTierPage() {
         <CriteriaWeights weights={weights} onWeightsChange={handleWeightsChange} />
       </div>
 
-      {/* Scrollable Content Panel */}
+      {/* Tabbed Content Panel */}
       <div className="flex-1 overflow-auto p-4 md:p-6 bg-gray-50">
-        {getUserId() && (
-          <SupplierList
-            weights={weights}
-            userId={getUserId()!}
-            refreshTrigger={refreshTrigger}
-            onView={handleViewSupplier}
-          />
-        )}
+        <Tabs defaultValue="suppliers" className="h-full flex flex-col">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
+            <TabsTrigger value="upload">CSV Upload</TabsTrigger>
+            <TabsTrigger value="history">Upload History</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="suppliers" className="flex-1 overflow-auto">
+            {getUserId() && (
+              <SupplierList
+                weights={weights}
+                userId={getUserId()!}
+                refreshTrigger={refreshTrigger}
+                onView={handleViewSupplier}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="upload" className="flex-1 overflow-auto">
+            <div className="max-w-4xl mx-auto">
+              <CSVUpload
+                onUploadComplete={handleUploadComplete}
+                userRole={userRole}
+                maxSuppliers={maxSuppliers}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="flex-1 overflow-auto">
+            <div className="max-w-6xl mx-auto">
+              <UploadHistory refreshTrigger={uploadHistoryRefresh} />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       <SupplierModal

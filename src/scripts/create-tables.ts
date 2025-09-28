@@ -18,10 +18,10 @@ type DynamoDBError = {
 dotenv.config({ path: '.env.local' })
 
 const client = new DynamoDBClient({
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || ''
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ''
   }
 })
 
@@ -79,6 +79,35 @@ async function createTables() {
       console.log('Criteria weights table already exists')
     } else {
       console.error('Error creating criteria weights table:', dbError.message)
+    }
+  }
+
+  // Create upload audit logs table
+  try {
+    const uploadAuditTableParams = {
+      TableName: "upload_audit_logs",
+      KeySchema: [
+        { AttributeName: "userId", KeyType: KeyType.HASH },
+        { AttributeName: "id", KeyType: KeyType.RANGE }
+      ],
+      AttributeDefinitions: [
+        { AttributeName: "userId", AttributeType: ScalarAttributeType.S },
+        { AttributeName: "id", AttributeType: ScalarAttributeType.S }
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 25,
+        WriteCapacityUnits: 25
+      }
+    }
+
+    await client.send(new CreateTableCommand(uploadAuditTableParams))
+    console.log("Created upload audit logs table")
+  } catch (error) {
+    const dbError = error as DynamoDBError
+    if (dbError.name === 'ResourceInUseException') {
+      console.log('Upload audit logs table already exists')
+    } else {
+      console.error('Error creating upload audit logs table:', dbError.message)
     }
   }
 

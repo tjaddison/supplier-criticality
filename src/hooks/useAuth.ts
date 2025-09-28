@@ -1,75 +1,27 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useUser } from '@auth0/nextjs-auth0'
 
-interface User {
-  sub: string
-  email: string
-  name?: string
-  picture?: string
-}
-
-interface AuthState {
-  user: User | null
-  loading: boolean
-  error: string | null
-}
-
-export function useAuth(): AuthState & {
-  login: () => void
-  logout: () => void
-  getUserId: () => string | null
-} {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    checkAuthStatus()
-  }, [])
-
-  const checkAuthStatus = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch('/api/auth/me')
-
-      if (response.ok) {
-        const userData = await response.json()
-        setUser(userData)
-        setError(null)
-      } else {
-        setUser(null)
-        if (response.status !== 401) {
-          setError('Failed to check authentication status')
-        }
-      }
-    } catch (err) {
-      console.error('Auth check error:', err)
-      setUser(null)
-      setError('Failed to check authentication status')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const login = () => {
-    window.location.href = '/api/auth/login'
-  }
-
-  const logout = () => {
-    window.location.href = '/api/auth/logout'
-  }
-
-  const getUserId = (): string | null => {
-    return user?.sub || null
-  }
+export function useAuth() {
+  const { user, error, isLoading } = useUser()
 
   return {
-    user,
-    loading,
-    error,
-    login,
-    logout,
-    getUserId
+    user: user ? {
+      id: user.sub || '',
+      email: user.email || '',
+      name: user.name || '',
+      picture: user.picture || '',
+      role: user.app_metadata?.role || user.app_metadata?.subscription_tier || 'free',
+      subscription: user.app_metadata?.subscription_tier
+    } : null,
+    loading: isLoading,
+    error: error?.message || null,
+    login: () => window.location.href = '/auth/login',
+    logout: () => window.location.href = '/auth/logout',
+    getUserId: () => user?.sub || null,
+    isAuthenticated: !!user,
+    refreshUser: async () => {
+      window.location.reload()
+    },
   }
 }

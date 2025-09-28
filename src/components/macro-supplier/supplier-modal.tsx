@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -43,6 +44,9 @@ export function SupplierModal({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto sm:max-h-[85vh]">
         <DialogHeader>
           <DialogTitle>Supplier Details - {supplier?.name}</DialogTitle>
+          <DialogDescription>
+            View detailed information about this supplier including contract details, spend information, and calculated risk assessments.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="border-b border-gray-200 dark:border-gray-700">

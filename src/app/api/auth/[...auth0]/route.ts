@@ -1,102 +1,80 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { exchangeCodeForTokens, getUserInfo } from '@/lib/auth0-client';
+import { createSession, getSession, deleteSession } from '@/lib/session';
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const authAction = url.pathname.split('/').pop();
+export async function GET(request: NextRequest, { params }: { params: Promise<{ auth0: string[] }> }) {
+  const { auth0: authPath } = await params;
+  const action = authPath[0];
 
-  try {
-    switch (authAction) {
-      case 'login':
-        // Redirect to Auth0 login
-        const loginUrl = new URL(`https://${process.env.AUTH0_DOMAIN}/authorize`);
-        loginUrl.searchParams.set('response_type', 'code');
-        loginUrl.searchParams.set('client_id', process.env.AUTH0_CLIENT_ID!);
-        loginUrl.searchParams.set('redirect_uri', `${process.env.AUTH0_BASE_URL}/api/auth/callback`);
-        loginUrl.searchParams.set('scope', 'openid profile email');
-        loginUrl.searchParams.set('state', 'state');
+  switch (action) {
+    case 'login':
+      // Redirect to Auth0 login
+      const loginUrl = new URL(`https://${process.env.AUTH0_DOMAIN}/authorize`);
+      loginUrl.searchParams.set('response_type', 'code');
+      loginUrl.searchParams.set('client_id', process.env.AUTH0_CLIENT_ID!);
+      loginUrl.searchParams.set('redirect_uri', `${process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL}/api/auth/callback`);
+      loginUrl.searchParams.set('scope', 'openid profile email user_role');
+      return Response.redirect(loginUrl.toString());
 
-        return NextResponse.redirect(loginUrl);
+    case 'logout':
+      // Clear local session
+      await deleteSession();
 
-      case 'logout':
-        // Redirect to Auth0 logout
-        const logoutUrl = new URL(`https://${process.env.AUTH0_DOMAIN}/v2/logout`);
-        logoutUrl.searchParams.set('client_id', process.env.AUTH0_CLIENT_ID!);
-        logoutUrl.searchParams.set('returnTo', `${process.env.AUTH0_BASE_URL}`);
+      // Redirect to Auth0 logout
+      const logoutUrl = new URL(`https://${process.env.AUTH0_DOMAIN}/v2/logout`);
+      logoutUrl.searchParams.set('client_id', process.env.AUTH0_CLIENT_ID!);
+      logoutUrl.searchParams.set('returnTo', process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL!);
+      return Response.redirect(logoutUrl.toString());
 
-        return NextResponse.redirect(logoutUrl);
+    case 'callback':
+      // Handle OAuth callback - get the authorization code and redirect to dashboard
+      const url = new URL(request.url);
+      const code = url.searchParams.get('code');
+      const error = url.searchParams.get('error');
 
-      case 'callback':
-        // Handle the callback from Auth0
-        const code = url.searchParams.get('code');
+      if (error) {
+        return Response.redirect(`${process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL}/?error=${error}`);
+      }
 
-        if (!code) {
-          return NextResponse.redirect(new URL('/', req.url));
+      if (code) {
+        try {
+          // Exchange authorization code for tokens
+          const tokens = await exchangeCodeForTokens(code);
+
+          // Get user information using the access token
+          const user = await getUserInfo(tokens.access_token);
+          console.log('Authenticated user:', user);
+          // Create session with user data and access token
+          await createSession(user as unknown as Record<string, unknown>, tokens.access_token);
+
+          return Response.redirect(`${process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL}/dashboard`);
+        } catch (error) {
+          console.error('Authentication error:', error);
+          return Response.redirect(`${process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL}/?error=auth_failed`);
         }
+      }
 
-        // Exchange code for tokens
-        const tokenResponse = await fetch(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            grant_type: 'authorization_code',
-            client_id: process.env.AUTH0_CLIENT_ID,
-            client_secret: process.env.AUTH0_CLIENT_SECRET,
-            code,
-            redirect_uri: `${process.env.AUTH0_BASE_URL}/api/auth/callback`,
-          }),
-        });
+      return Response.redirect(`${process.env.AUTH0_BASE_URL || process.env.APP_BASE_URL}/?error=no_code`);
 
-        if (tokenResponse.ok) {
-          const tokens = await tokenResponse.json();
+    case 'profile':
+      // Return real user profile from session
+      const session = await getSession();
+      if (!session) {
+        return Response.json({ error: 'Not authenticated' }, { status: 401 });
+      }
 
-          // Create a response that redirects to dashboard
-          const response = NextResponse.redirect(new URL('/dashboard', req.url));
-
-          // Set session cookie (simplified - in production you'd want to encrypt this)
-          response.cookies.set('auth_token', tokens.access_token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 3600, // 1 hour
-          });
-
-          return response;
-        } else {
-          return NextResponse.redirect(new URL('/', req.url));
+      return Response.json({
+        sub: session.sub,
+        email: session.email,
+        name: session.name,
+        picture: session.picture,
+        app_metadata: {
+          role: session.role,
+          subscription_tier: session.subscription
         }
+      });
 
-      case 'me':
-        // Return user info
-        const token = req.cookies.get('auth_token')?.value;
-        if (!token) {
-          return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-        }
-
-        // Get user info from Auth0
-        const userResponse = await fetch(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (userResponse.ok) {
-          const user = await userResponse.json();
-          return NextResponse.json(user);
-        } else {
-          return NextResponse.json({ error: 'Failed to get user' }, { status: 401 });
-        }
-
-      default:
-        return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    }
-  } catch (error) {
-    console.error('Auth error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    default:
+      return new Response('Not found', { status: 404 });
   }
-}
-
-export async function POST(req: NextRequest) {
-  return GET(req);
 }
