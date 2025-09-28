@@ -39,8 +39,8 @@ async function createTables() {
         { AttributeName: "id", AttributeType: ScalarAttributeType.S }
       ],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 25,
+        WriteCapacityUnits: 25
       }
     }
 
@@ -66,8 +66,8 @@ async function createTables() {
         { AttributeName: "userId", AttributeType: ScalarAttributeType.S }
       ],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 25,
+        WriteCapacityUnits: 25
       }
     }
 

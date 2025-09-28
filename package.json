@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "create-tables": "ts-node --project tsconfig.json src/scripts/create-tables.ts",
+    "update-table-capacity": "ts-node --project tsconfig.json src/scripts/update-table-capacity.ts",
     "seed-suppliers": "ts-node -r tsconfig-paths/register src/scripts/seed-suppliers.ts"
   },
   "dependencies": {
