@@ -1,39 +1,82 @@
-import MicroSupplierTierClient from "@/app/dashboard/micro-supplier-tier/client"
-import { getSuppliers } from "@/lib/dynamodb"
+"use client"
 
-export default async function MicroSupplierTierPage() {
-  try {
-    const userId = "user123" // Demo user ID
-    const suppliers = await getSuppliers(userId)
-    
+import { useState, useEffect, useCallback } from "react"
+import MicroSupplierTierClient from "@/app/dashboard/micro-supplier-tier/client"
+import { getUserSuppliers } from "@/lib/dynamodb"
+import { useAuth } from "@/hooks/useAuth"
+import { Supplier } from "@/types/supplier"
+
+export default function MicroSupplierTierPage() {
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const { user, loading: authLoading, login, getUserId } = useAuth()
+
+  const loadSuppliers = useCallback(async () => {
+    try {
+      const userId = getUserId()
+      if (!userId) {
+        setLoading(false)
+        return
+      }
+
+      const data = await getUserSuppliers(userId)
+      if (data) {
+        setSuppliers(data)
+      }
+    } catch (error) {
+      console.error('Error loading suppliers:', error)
+      setError('Failed to load supplier data')
+    } finally {
+      setLoading(false)
+    }
+  }, [getUserId])
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (user) {
+        loadSuppliers()
+      } else {
+        setLoading(false)
+      }
+    }
+  }, [user, authLoading, loadSuppliers])
+
+  if (authLoading || loading) {
     return (
-      <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
-        {/* Hero Header */}
-        <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Micro Supplier Tier</h1>
-          <p className="text-blue-100 text-sm md:text-base max-w-3xl">
-            Detailed supplier analysis at a granular level. Examine supplier performance metrics, 
-            contract details, and subcategory relationships.
-          </p>
-        </div>
-        
-        {/* Content Area */}
-        <div className="flex-1 overflow-auto bg-gray-50">
-          <div className="container mx-auto px-4 py-6 max-w-7xl">
-            <MicroSupplierTierClient initialSuppliers={suppliers} />
-          </div>
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-lg text-[#194866] flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3b82f6] mb-4"></div>
+          Loading supplier data...
         </div>
       </div>
     )
-  } catch (error) {
-    console.error('Error loading suppliers:', error)
-    
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[#194866] mb-4">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">Please log in to access the comparative criticality assessment.</p>
+          <button
+            onClick={login}
+            className="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors"
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
         <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Micro Supplier Tier</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
         </div>
-        
+
         <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
           <div className="text-center p-8 bg-white rounded-lg shadow-md border border-red-100 max-w-md">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4">
@@ -43,8 +86,8 @@ export default async function MicroSupplierTierPage() {
             </div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Suppliers</h2>
             <p className="text-gray-600 mb-4">We couldn&apos;t load your supplier data. Please try again later or contact support if the problem persists.</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="px-4 py-2 bg-[#194866] text-white rounded hover:bg-[#0f2942] transition-colors"
             >
               Try Again
@@ -54,4 +97,23 @@ export default async function MicroSupplierTierPage() {
       </div>
     )
   }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
+      {/* Hero Header */}
+      <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
+        <p className="text-blue-100 text-sm md:text-base max-w-3xl">
+          Compare current supplier criticality against target scenarios. Analyze spend allocation, contract availability, and risk factors to evaluate supplier criticality changes.
+        </p>
+      </div>
+
+      {/* Content Area */}
+      <div className="flex-1 overflow-auto bg-gray-50">
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+          <MicroSupplierTierClient initialSuppliers={suppliers} />
+        </div>
+      </div>
+    </div>
+  )
 } 

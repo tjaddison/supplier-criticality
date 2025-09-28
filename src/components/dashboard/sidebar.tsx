@@ -19,11 +19,11 @@ const navigationItems = [
     href: "/dashboard",
   },
   {
-    name: "Macro Supplier Tier",
+    name: "Supplier Segmentation",
     href: "/dashboard/macro-supplier-tier",
   },
   {
-    name: "Micro Supplier Tier",
+    name: "Comparative Criticality",
     href: "/dashboard/micro-supplier-tier",
   },
 ];

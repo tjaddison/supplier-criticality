@@ -8,102 +8,24 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Supplier } from "@/types/supplier"
-import { getUniqueSubcategories } from "@/lib/dynamodb"
 
 interface SupplierModalProps {
   open: boolean
   supplier: Supplier | null
   onClose: () => void
-  onSave: (supplier: Supplier) => void
-  onDelete: (supplier: Supplier) => void
 }
 
-export function SupplierModal({ 
-  open, 
-  supplier, 
-  onClose,
-  onSave,
-  onDelete 
+export function SupplierModal({
+  open,
+  supplier,
+  onClose
 }: SupplierModalProps) {
   const [activeTab, setActiveTab] = useState('details')
-  const [formData, setFormData] = useState<Supplier>(supplier || {
-    id: "",
-    name: "",
-    category: "",
-    subcategory: "",
-    expirationDate: "",
-    contractNumber: "",
-    threeYearSpend: 0,
-    criticalityScore: 0,
-    contractDescription: ""
-  })
-  const [subcategories, setSubcategories] = useState<{ [category: string]: string[] }>({})
-  const [loading, setLoading] = useState(true)
-
-  // Reset form when supplier changes
-  useEffect(() => {
-    if (supplier) {
-      setFormData(supplier)
-    }
-  }, [supplier])
-
-  // Add useEffect to load subcategories
-  useEffect(() => {
-    const loadSubcategories = async () => {
-      try {
-        const userId = "user123" // Demo user ID
-        const data = await getUniqueSubcategories(userId)
-        setSubcategories(data)
-      } catch (error) {
-        console.error('Error loading subcategories:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadSubcategories()
-  }, [])
-
-  // Use these categories from the database instead of hardcoded ones
-  const categories = Object.keys(subcategories)
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value
-    if (text.length <= 1000) {
-      setFormData(prev => ({ ...prev, contractDescription: text }))
-    }
-  }
-
-  const handleInputChange = (field: keyof Supplier, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      handleInputChange('expirationDate', format(date, 'yyyy-MM-dd'))
-    }
-  }
 
   const formatCurrency = (value: number): string => {
     return value.toLocaleString('en-US', {
@@ -114,23 +36,13 @@ export function SupplierModal({
     })
   }
 
-  const handleSpendChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Remove currency formatting to get raw number
-    const rawValue = e.target.value.replace(/[^0-9.]/g, '')
-    const numberValue = parseFloat(rawValue) || 0
-    handleInputChange('threeYearSpend', numberValue)
-  }
-
-  const handleSave = () => {
-    onSave(formData)
-    onClose()
-  }
+  if (!supplier) return null
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto sm:max-h-[85vh]">
         <DialogHeader>
-          <DialogTitle>{supplier?.id ? "Edit" : "Add"} Supplier</DialogTitle>
+          <DialogTitle>Supplier Details - {supplier?.name}</DialogTitle>
         </DialogHeader>
 
         <div className="border-b border-gray-200 dark:border-gray-700">
@@ -164,117 +76,59 @@ export function SupplierModal({
 
         <div className="py-4">
           {activeTab === 'details' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Supplier Name</Label>
-                <Input 
-                  id="name" 
-                  value={formData.name || ''} 
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select 
-                  value={formData.category} 
-                  onValueChange={(value) => handleInputChange('category', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">Supplier Name</Label>
+                <div className="mt-1 text-lg font-semibold">{supplier.name}</div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="subcategory">Subcategory</Label>
-                <Select 
-                  value={formData.subcategory} 
-                  onValueChange={(value) => handleInputChange('subcategory', value)}
-                  disabled={!formData.category || loading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={loading ? "Loading subcategories..." : "Select subcategory"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {formData.category && subcategories[formData.category]?.map((subcat) => (
-                      <SelectItem key={subcat} value={subcat}>
-                        {subcat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">Category</Label>
+                <div className="mt-1 text-lg font-semibold">{supplier.category}</div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="expirationDate">Expiration Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.expirationDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.expirationDate ? format(new Date(formData.expirationDate), "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={formData.expirationDate ? new Date(formData.expirationDate) : undefined}
-                      onSelect={handleDateSelect}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">Subcategory</Label>
+                <div className="mt-1 text-lg font-semibold">{supplier.subcategory}</div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="contractNumber">Contract Number</Label>
-                <Input 
-                  id="contractNumber" 
-                  value={formData.contractNumber || ''} 
-                  onChange={(e) => handleInputChange('contractNumber', e.target.value)}
-                  placeholder="CTR-001"
-                />
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">Expiration Date</Label>
+                <div className="mt-1 text-lg font-semibold">
+                  {supplier.expirationDate ? format(new Date(supplier.expirationDate), "PPP") : "Not specified"}
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="threeYearSpend">3-Year Average Spend</Label>
-                <Input 
-                  id="threeYearSpend" 
-                  value={formatCurrency(formData.threeYearSpend)} 
-                  onChange={handleSpendChange}
-                  placeholder="$0.00"
-                />
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">Contract Number</Label>
+                <div className="mt-1 text-lg font-semibold">{supplier.contractNumber || "Not specified"}</div>
               </div>
 
-              <div className="space-y-2 col-span-2">
-                <Label htmlFor="contractDescription">Contract Description</Label>
-                <Textarea
-                  id="contractDescription"
-                  value={formData.contractDescription || ''}
-                  onChange={handleDescriptionChange}
-                  placeholder="Enter contract description..."
-                  className="resize-none h-32"
-                />
-                <p className="text-sm text-muted-foreground">
-                  {formData.contractDescription?.length || 0}/1000 characters
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <Label className="text-sm font-medium text-muted-foreground">3-Year Average Spend</Label>
+                <div className="mt-1 text-lg font-semibold">{formatCurrency(supplier.threeYearSpend)}</div>
+              </div>
+
+              {supplier.contractDescription && (
+                <div className="bg-muted/50 p-4 rounded-lg col-span-2">
+                  <Label className="text-sm font-medium text-muted-foreground">Contract Description</Label>
+                  <div className="mt-1 text-base whitespace-pre-wrap">{supplier.contractDescription}</div>
+                </div>
+              )}
+
+              <div className="bg-primary/10 p-4 rounded-lg col-span-2">
+                <Label className="text-sm font-medium text-muted-foreground">Criticality Score</Label>
+                <div className="mt-1 text-2xl font-bold text-primary">
+                  {supplier.criticalityScore?.toFixed(2) || 'Not calculated'}
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Overall risk assessment based on weighted criteria
                 </p>
               </div>
             </div>
           )}
 
-          {activeTab === 'calculated' && supplier?.id && (
+          {activeTab === 'calculated' && supplier && (
             <div className="space-y-8">
               {/* Contract Percentages Section */}
               <div>
@@ -386,27 +240,12 @@ export function SupplierModal({
           )}
         </div>
 
-        <DialogFooter className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
-          <div>
-            {supplier?.id && (
-              <Button
-                variant="destructive"
-                onClick={() => onDelete(supplier)}
-              >
-                Delete Supplier
-              </Button>
-            )}
-          </div>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <Button variant="outline" onClick={onClose} className="flex-1 sm:flex-none">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} className="flex-1 sm:flex-none">
-              {supplier?.id ? "Save Changes" : "Create Supplier"}
-            </Button>
-          </div>
+        <DialogFooter>
+          <Button onClick={onClose}>
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
-} 
+}

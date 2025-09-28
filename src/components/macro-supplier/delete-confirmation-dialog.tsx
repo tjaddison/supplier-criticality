@@ -43,4 +43,4 @@ export function DeleteConfirmationDialog({
       </AlertDialogContent>
     </AlertDialog>
   )
-} 
+}
