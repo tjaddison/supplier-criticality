@@ -1,9 +1,7 @@
 "use client"
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
 import { Check, ArrowRight, Building, Building2 as Buildings, Building as BuildingSkyscraper } from 'lucide-react'
 
 // Define colors (reuse from other pages)
@@ -11,15 +9,6 @@ const logoTextColor = "#2D2D2D"
 const accentColor = "#FF7D4D"
 
 export default function PricingPage() {
-  const [billingAnnually, setBillingAnnually] = useState(false)
-  
-  // Base monthly prices
-  const proMonthlyPrice = 500
-  const enterpriseMonthlyPrice = 750
-  
-  // Calculate discounted annual prices (total yearly amount)
-  const proYearlyPrice = Math.round(proMonthlyPrice * 12 * 0.917) // 8.3% discount
-  const enterpriseYearlyPrice = Math.round(enterpriseMonthlyPrice * 12 * 0.917) // 8.3% discount
 
   return (
     <div className="flex flex-col min-h-screen font-sans bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
@@ -108,8 +97,8 @@ export default function PricingPage() {
           </Link>
           <nav className="flex items-center space-x-6 text-base font-semibold">
             <Link href="/solutions" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Solutions</Link>
-            <Link href="/about" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">About</Link>
-            <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
+            <Link href="/about" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">About</Link>
+            <Link href="/pricing" className="text-[#194866] font-bold border-b-2 border-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
             <Link href="/api/auth/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
@@ -129,160 +118,224 @@ export default function PricingPage() {
               Choose the plan that fits your organization&apos;s needs. Scale as you grow.
             </p>
             
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-16">
-              <span className={`text-lg font-semibold ${!billingAnnually ? 'text-[#194866]' : 'text-[#194866]/60'}`}>Monthly</span>
-              <Switch
-                checked={billingAnnually}
-                onCheckedChange={setBillingAnnually}
-                className="data-[state=checked]:bg-[#3CDBDD]"
-              />
-              <span className={`text-lg font-semibold ${billingAnnually ? 'text-[#194866]' : 'text-[#194866]/60'}`}>
-                Yearly
-                {billingAnnually && (
-                  <span className="ml-2 inline-block bg-[#FF7D4D] text-white text-xs font-semibold px-2 py-1 rounded">
-                    Save 8.3%
-                  </span>
-                )}
-              </span>
+            <div className="text-center mb-8">
+              <p className="text-lg font-semibold text-[#194866]">
+                All plans are billed annually
+              </p>
             </div>
 
             {/* Pricing Tiers */}
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {/* Starter Tier */}
-              <div className="relative flex flex-col p-8 bg-white border rounded-2xl shadow-lg overflow-hidden">
+            <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+              {/* Free Tier */}
+              <div className="relative flex flex-col p-6 bg-white border rounded-2xl shadow-lg overflow-hidden">
                 <div className="text-center mb-6">
                   <div className="mb-3 flex justify-center">
-                    <Building className="h-10 w-10 text-[#194866]" />
+                    <Building className="h-8 w-8 text-[#194866]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-[#194866]">Starter</h3>
-                  <div className="mt-3 text-4xl font-bold text-[#194866]">Free<span className="text-lg font-normal text-[#194866]/60"> forever</span></div>
-                  <p className="mt-2 text-[#194866]/70">Perfect for small teams</p>
+                  <h3 className="text-xl font-bold text-[#194866]">Free</h3>
+                  <div className="mt-3 text-3xl font-bold text-[#194866]">$0<span className="text-sm font-normal text-[#194866]/60"> forever</span></div>
+                  <p className="mt-2 text-sm text-[#194866]/70">1-5 suppliers</p>
                 </div>
-                
-                <ul className="space-y-4 mb-6 flex-1">
+
+                <ul className="space-y-3 mb-6 flex-1">
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Manage up to 5 suppliers</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Up to 5 suppliers</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Basic supplier analytics</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Basic analytics</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Standard reporting</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Standard reporting</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Email support</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Email support</span>
                   </li>
                 </ul>
-                
+
                 <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
                   Get Started
                 </Button>
               </div>
               
-              {/* Professional Tier */}
-              <div className="relative flex flex-col p-8 bg-white border border-[#3CDBDD] rounded-2xl shadow-xl overflow-hidden">
+              {/* Tier 1 */}
+              <div className="relative flex flex-col p-6 bg-white border border-[#3CDBDD] rounded-2xl shadow-xl overflow-hidden">
                 <div className="absolute top-0 right-0">
-                  <div className="bg-[#FF7D4D] text-white text-xs font-bold px-4 py-1 uppercase">
+                  <div className="bg-[#FF7D4D] text-white text-xs font-bold px-3 py-1 uppercase">
                     Popular
                   </div>
                 </div>
-                
+
                 <div className="text-center mb-6">
                   <div className="mb-3 flex justify-center">
-                    <Buildings className="h-10 w-10 text-[#3CDBDD]" />
+                    <Buildings className="h-8 w-8 text-[#3CDBDD]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-[#194866]">Professional</h3>
-                  <div className="mt-3 text-4xl font-bold text-[#194866]">
-                    ${billingAnnually ? proYearlyPrice : proMonthlyPrice}
-                    <span className="text-lg font-normal text-[#194866]/60">/{billingAnnually ? 'year' : 'month'}</span>
+                  <h3 className="text-xl font-bold text-[#194866]">Tier 1</h3>
+                  <div className="mt-3 text-3xl font-bold text-[#194866]">
+                    $20k
+                    <span className="text-sm font-normal text-[#194866]/60">/year</span>
                   </div>
-                  <p className="mt-2 text-[#194866]/70">For growing organizations</p>
+                  <p className="mt-2 text-sm text-[#194866]/70">6-200 suppliers</p>
                 </div>
-                
-                <ul className="space-y-4 mb-6 flex-1">
+
+                <ul className="space-y-3 mb-6 flex-1">
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Manage 6-200 suppliers</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">6-200 suppliers</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Advanced supplier analytics</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Advanced analytics</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Custom reporting</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Custom reporting</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Priority email & phone support</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Priority support</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Supplier risk assessment</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Team collaboration tools</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Risk assessment</span>
                   </li>
                 </ul>
-                
+
                 <Link href="/contact">
                   <Button className="w-full bg-[#3CDBDD] hover:bg-[#194866]">
-                    Request a Demo
+                    Contact Sales
                   </Button>
                 </Link>
               </div>
               
-              {/* Enterprise Tier */}
-              <div className="relative flex flex-col p-8 bg-white border rounded-2xl shadow-lg overflow-hidden">
+              {/* Tier 2 */}
+              <div className="relative flex flex-col p-6 bg-white border rounded-2xl shadow-lg overflow-hidden">
                 <div className="text-center mb-6">
                   <div className="mb-3 flex justify-center">
-                    <BuildingSkyscraper className="h-10 w-10 text-[#194866]" />
+                    <Buildings className="h-8 w-8 text-[#194866]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-[#194866]">Enterprise</h3>
-                  <div className="mt-3 text-4xl font-bold text-[#194866]">
-                    ${billingAnnually ? enterpriseYearlyPrice : enterpriseMonthlyPrice}
-                    <span className="text-lg font-normal text-[#194866]/60">/{billingAnnually ? 'year' : 'month'}</span>
+                  <h3 className="text-xl font-bold text-[#194866]">Tier 2</h3>
+                  <div className="mt-3 text-3xl font-bold text-[#194866]">
+                    $35k
+                    <span className="text-sm font-normal text-[#194866]/60">/year</span>
                   </div>
-                  <p className="mt-2 text-[#194866]/70">For large enterprises</p>
+                  <p className="mt-2 text-sm text-[#194866]/70">201-500 suppliers</p>
                 </div>
-                
-                <ul className="space-y-4 mb-6 flex-1">
+
+                <ul className="space-y-3 mb-6 flex-1">
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Manage 201+ suppliers</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">201-500 suppliers</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Enterprise-grade analytics</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Enhanced analytics</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Advanced custom reporting</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Advanced reporting</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Dedicated account manager</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Priority support</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Advanced risk management</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">API access</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-[#3CDBDD] mr-2 mt-0.5" />
-                    <span className="text-[#194866]">Custom integrations</span>
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Risk management</span>
                   </li>
                 </ul>
-                
+
+                <Link href="/contact">
+                  <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
+                    Contact Sales
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Tier 3 */}
+              <div className="relative flex flex-col p-6 bg-white border rounded-2xl shadow-lg overflow-hidden">
+                <div className="text-center mb-6">
+                  <div className="mb-3 flex justify-center">
+                    <BuildingSkyscraper className="h-8 w-8 text-[#194866]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#194866]">Tier 3</h3>
+                  <div className="mt-3 text-3xl font-bold text-[#194866]">
+                    $50k
+                    <span className="text-sm font-normal text-[#194866]/60">/year</span>
+                  </div>
+                  <p className="mt-2 text-sm text-[#194866]/70">501-1500 suppliers</p>
+                </div>
+
+                <ul className="space-y-3 mb-6 flex-1">
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">501-1500 suppliers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Enterprise analytics</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Custom reporting</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Account manager</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">API access</span>
+                  </li>
+                </ul>
+
+                <Link href="/contact">
+                  <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
+                    Contact Sales
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Tier 4 - Enterprise */}
+              <div className="relative flex flex-col p-6 bg-white border rounded-2xl shadow-lg overflow-hidden">
+                <div className="text-center mb-6">
+                  <div className="mb-3 flex justify-center">
+                    <BuildingSkyscraper className="h-8 w-8 text-[#194866]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#194866]">Tier 4</h3>
+                  <div className="mt-3 text-2xl font-bold text-[#194866]">
+                    Enterprise
+                  </div>
+                  <p className="mt-2 text-sm text-[#194866]/70">1501+ suppliers</p>
+                  <p className="text-xs text-[#194866]/60">(contact for info)</p>
+                </div>
+
+                <ul className="space-y-3 mb-6 flex-1">
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">1501+ suppliers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Full enterprise suite</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Custom integrations</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">Dedicated support</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-4 w-4 text-[#3CDBDD] mr-2 mt-0.5" />
+                    <span className="text-sm text-[#194866]">SLA guarantees</span>
+                  </li>
+                </ul>
+
                 <Link href="/contact">
                   <Button className="w-full bg-[#194866] hover:bg-[#3CDBDD]">
                     Contact Sales
@@ -303,7 +356,7 @@ export default function PricingPage() {
               <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
                 <h3 className="text-xl font-bold text-[#194866] mb-2">Can I change plans later?</h3>
                 <p className="text-[#194866]/80">
-                  Yes, you can upgrade or downgrade your plan at any time. Changes to your subscription will be prorated based on the remaining time in your billing cycle.
+                  Yes, you can upgrade or downgrade your plan at any time. Changes to your subscription will take effect at your next annual billing cycle.
                 </p>
               </div>
               
@@ -311,7 +364,7 @@ export default function PricingPage() {
               <div className="bg-[#F9FDFD] border border-[#E0F7F8] rounded-xl p-6 shadow-sm">
                 <h3 className="text-xl font-bold text-[#194866] mb-2">Is there a free trial for paid plans?</h3>
                 <p className="text-[#194866]/80">
-                  We offer a 14-day free trial for our Professional plan. No credit card is required to start your trial. You can also request a personalized demo to see how ProcureSci can benefit your specific needs.
+                  Start with our Free tier to manage up to 5 suppliers at no cost. For larger supplier bases, contact our sales team for a personalized demo to see how ProcureSci can benefit your specific needs.
                 </p>
               </div>
               
