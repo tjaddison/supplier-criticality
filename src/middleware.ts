@@ -1,60 +1,77 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
-export async function middleware(request: NextRequest) {
-  // Public routes that don't require authentication
-  const isPublicRoute =
-    request.nextUrl.pathname.startsWith('/api/') ||
-    request.nextUrl.pathname.startsWith('/auth/') ||
-    request.nextUrl.pathname.startsWith('/_next/') ||
-    request.nextUrl.pathname === '/' ||
-    request.nextUrl.pathname.startsWith('/about') ||
-    request.nextUrl.pathname.startsWith('/contact') ||
-    request.nextUrl.pathname.startsWith('/pricing') ||
-    request.nextUrl.pathname.startsWith('/solutions') ||
-    request.nextUrl.pathname.startsWith('/terms') ||
-    request.nextUrl.pathname.startsWith('/privacy');
+const secretKey = process.env.AUTH0_SECRET || process.env.JWT_SECRET;
+const key = new TextEncoder().encode(secretKey);
+
+async function verifySession(request: NextRequest) {
+  const session = request.cookies.get('session')?.value;
+
+  if (!session) return null;
 
   try {
-    // For public routes, just continue
-    if (isPublicRoute) {
-      return NextResponse.next();
-    }
-
-    // For protected routes, check session
-    const authToken = request.cookies.get('auth_token')?.value;
-
-    // Redirect authenticated users from home to dashboard
-    if (authToken && request.nextUrl.pathname === '/') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
-
-    // Protected routes - check authentication
-    if (!authToken && !isPublicRoute) {
-      return NextResponse.redirect(new URL('/api/auth/login', request.url));
-    }
-
-    return NextResponse.next();
-  } catch (error: unknown) {
-    console.error(`Middleware error:`, error);
-
-    // If there's an error with Auth0 setup, allow public routes
-    if (isPublicRoute) {
-      return NextResponse.next();
-    }
-
-    // For protected routes with Auth0 errors, redirect to login
-    return NextResponse.redirect(new URL('/api/auth/login', request.url));
+    const { payload } = await jwtVerify(session, key, {
+      algorithms: ['HS256'],
+    });
+    return payload;
+  } catch {
+    return null;
   }
+}
+
+// Define route access rules
+const routeRules: Record<string, string> = {
+  '/dashboard/settings': 'free',
+  '/dashboard/suppliers': 'pro', // Example: Suppliers page requires pro tier
+  '/dashboard/admin': 'admin', // Example: Admin pages require admin role
+};
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Only protect dashboard routes
+  if (!pathname.startsWith('/dashboard')) {
+    return NextResponse.next();
+  }
+
+  // Check if user has valid session
+  const session = await verifySession(request);
+
+  if (!session) {
+    // Redirect to login if no valid session
+    const loginUrl = new URL('/api/auth/login', request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Check role-based access for specific routes
+  for (const route in routeRules) {
+    if (pathname.startsWith(route)) {
+      const requiredRole = routeRules[route];
+      const userRole = (session.role as string) || 'free';
+
+      // Simple role hierarchy check
+      const roleHierarchy = ['free', 'pro', 'enterprise', 'admin'];
+      const userRoleIndex = roleHierarchy.indexOf(userRole);
+      const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
+
+      if (userRoleIndex < requiredRoleIndex) {
+        // Redirect to unauthorized page
+        const unauthorizedUrl = new URL('/unauthorized', request.url);
+        return NextResponse.redirect(unauthorizedUrl);
+      }
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     * Match protected routes that require authentication:
+     * - /dashboard and all sub-routes
+     * - Exclude API routes and static files
      */
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    '/dashboard/:path*',
   ],
 };

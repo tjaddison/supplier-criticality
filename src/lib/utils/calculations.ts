@@ -215,6 +215,52 @@ export function calculateSupplierCriticalityValue(supplier: Supplier): number {
     (supplier.hiddenWeightsUtilization || 0) +
     (supplier.hiddenWeightsRisk || 0)
   );
-  
+
   return sum;
+}
+
+export function calculateCriticalityScore(
+  supplier: Supplier,
+  weights: {
+    spendPercentage: number
+    threeYearAverage: number
+    marketSize: number
+    replacementComplexity: number
+    utilization: number
+    riskLevel: number
+  }
+): number {
+  // For new suppliers in CSV upload, we need to calculate a simplified score
+  // without having access to all suppliers for context
+
+  // Get spend category and value
+  const spendCategory = getSpendCategory(supplier.threeYearSpend)
+  const hiddenSpendValue = getHiddenSpendValue(spendCategory)
+
+  // Assume moderate values for context-dependent calculations
+  const hiddenSpendAllocation = 50 // Default to medium allocation
+  const hiddenSubcategorySize = 50 // Default to medium market size
+
+  // Calculate derived values
+  const hiddenUtilization = calculateHiddenUtilization(hiddenSpendAllocation, hiddenSpendValue)
+  const hiddenEaseOfReplacement = calculateHiddenEaseOfReplacement(
+    hiddenSpendValue,
+    hiddenUtilization,
+    hiddenSubcategorySize
+  )
+  const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
+
+  // Calculate weighted values
+  const weightsSpendAllocation = calculateHiddenWeightsSpendAllocation(hiddenSpendAllocation, weights)
+  const weightsSpendValue = calculateHiddenWeightsSpendValue(hiddenSpendValue, weights)
+  const weightsSubcategorySize = calculateHiddenWeightsSubcategorySize(hiddenSubcategorySize, weights)
+  const weightsEaseOfReplacement = calculateHiddenWeightsEaseOfReplacement(hiddenEaseOfReplacement, weights)
+  const weightsUtilization = calculateHiddenWeightsUtilization(hiddenUtilization, weights)
+  const weightsRisk = calculateHiddenWeightsRisk(hiddenRisk, weights)
+
+  // Calculate final score
+  const score = weightsSpendAllocation + weightsSpendValue + weightsSubcategorySize +
+                weightsEaseOfReplacement + weightsUtilization + weightsRisk
+
+  return Math.min(100, Math.max(0, score)) // Clamp between 0-100
 }

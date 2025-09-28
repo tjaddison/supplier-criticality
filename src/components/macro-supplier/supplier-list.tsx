@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -20,7 +20,6 @@ import {
 import { Supplier } from "@/types/supplier"
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
-import { getUserSuppliers } from "@/lib/dynamodb"
 import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
@@ -57,6 +56,7 @@ export function SupplierList({
   const [currentPage, setCurrentPage] = useState(1)
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
+  const loadedRef = useRef(false)
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -130,10 +130,20 @@ export function SupplierList({
     }
 
     try {
-      const data = await getUserSuppliers(userId)
+      const response = await fetch('/api/suppliers', {
+        credentials: 'include'
+      })
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/api/auth/login'
+          return
+        }
+        throw new Error('Failed to fetch suppliers')
+      }
+      const { suppliers: data } = await response.json()
       if (data) {
         // Calculate criticality scores for all suppliers
-        const suppliersWithCriticalityScores = data.map(supplier => {
+        const suppliersWithCriticalityScores = data.map((supplier: Supplier) => {
           // Calculate all the hidden values and weights
           const subcategoryPercentage = calculateSubcategoryPercentage(supplier, data)
           const subcategoryCount = calculateSubcategoryCount(supplier, data)
@@ -206,9 +216,23 @@ export function SupplierList({
     }
   }, [weights, userId])
 
+  // Load suppliers when component mounts or when weights/userId change
   useEffect(() => {
-    loadSuppliers()
-  }, [loadSuppliers, refreshTrigger])
+    if (userId && weights && !loadedRef.current) {
+      loadedRef.current = true
+      loadSuppliers()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weights, userId])
+
+  // Reload suppliers when refresh is triggered
+  useEffect(() => {
+    if (refreshTrigger && refreshTrigger > 0) {
+      loadedRef.current = false // Reset to allow refresh
+      loadSuppliers()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTrigger])
 
 
   const handleRowClick = (supplier: Supplier) => {
