@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { SupplierList } from "../../../components/macro-supplier/supplier-list"
+import { Supplier } from "@/types/supplier"
+import { SupplierModal } from "@/components/macro-supplier/supplier-modal"
 import { CriteriaWeights } from "@/components/macro-supplier/criteria-weights"
 import { updateCriteriaWeights, getCriteriaWeights } from "@/lib/dynamodb"
 import { useEffect } from "react"
+import { useAuth } from "@/hooks/useAuth"
 
 const DEFAULT_WEIGHTS = {
   spendPercentage: 20,
@@ -16,16 +19,18 @@ const DEFAULT_WEIGHTS = {
 }
 
 export default function SuppliersPage() {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [currentSupplier, setCurrentSupplier] = useState<Supplier | null>(null)
+  const [refreshTrigger] = useState(0)
   const [weights, setWeights] = useState(DEFAULT_WEIGHTS)
   const [loading, setLoading] = useState(true)
-  const userId = "user123" // Demo user ID
+  const { user, loading: authLoading, login, getUserId } = useAuth()
 
-  useEffect(() => {
-    loadWeights()
-  }, [])
-
-  const loadWeights = async () => {
+  const loadWeights = useCallback(async () => {
     try {
+      const userId = getUserId()
+      if (!userId) return
+
       const savedWeights = await getCriteriaWeights(userId)
       if (savedWeights) {
         const typedWeights = {
@@ -43,18 +48,37 @@ export default function SuppliersPage() {
     } finally {
       setLoading(false)
     }
+  }, [getUserId])
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (user) {
+        loadWeights()
+      } else {
+        setLoading(false)
+      }
+    }
+  }, [user, authLoading, loadWeights])
+
+  const handleViewSupplier = (supplier: Supplier) => {
+    setCurrentSupplier(supplier)
+    setModalOpen(true)
   }
 
-  const handleWeightsChange = async (newWeights: typeof weights) => {
+  const handleWeightsChange = async (newWeights: typeof weights): Promise<void> => {
     try {
+      const userId = getUserId()
+      if (!userId) throw new Error('User not authenticated')
+
       await updateCriteriaWeights(userId, newWeights)
       setWeights(newWeights)
     } catch (error) {
       console.error('Error updating weights:', error)
+      throw error
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-lg text-[#194866] flex flex-col items-center">
@@ -65,16 +89,46 @@ export default function SuppliersPage() {
     )
   }
 
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[#194866] mb-4">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">Please log in to access the supplier analysis dashboard.</p>
+          <button
+            onClick={login}
+            className="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors"
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto py-6 space-y-8">
-      <h1 className="text-3xl font-bold">Supplier Analysis</h1>
+      <h1 className="text-3xl font-bold">Supplier Management</h1>
 
       <CriteriaWeights
         weights={weights}
         onWeightsChange={handleWeightsChange}
       />
 
-      <SupplierList weights={weights} />
+      {getUserId() && (
+        <SupplierList
+          weights={weights}
+          userId={getUserId()!}
+          onView={handleViewSupplier}
+          refreshTrigger={refreshTrigger}
+        />
+      )}
+
+      <SupplierModal
+        open={modalOpen}
+        supplier={currentSupplier}
+        onClose={() => setModalOpen(false)}
+      />
     </div>
   )
 } 

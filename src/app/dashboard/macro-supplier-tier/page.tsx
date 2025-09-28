@@ -1,13 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { CriteriaWeights } from "@/components/macro-supplier/criteria-weights"
 import { SupplierList } from "@/components/macro-supplier/supplier-list"
+import { SupplierModal } from "@/components/macro-supplier/supplier-modal"
+import { Supplier } from "@/types/supplier"
 import {
   getCriteriaWeights,
   updateCriteriaWeights
 } from "@/lib/dynamodb"
 import { InfoIcon, SlidersIcon } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
 
 // Renamed to WeightCriteria to avoid naming conflict with the component
 interface WeightCriteria {
@@ -30,17 +33,17 @@ const DEFAULT_WEIGHTS: WeightCriteria = {
 
 export default function MacroSupplierTierPage() {
   const [weights, setWeights] = useState<WeightCriteria>(DEFAULT_WEIGHTS)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null)
+  const [refreshTrigger] = useState(0)
   const [loading, setLoading] = useState(true)
+  const { user, loading: authLoading, login, getUserId } = useAuth()
 
-  // Mock user ID (replace with actual user authentication)
-  const userId = "user123"
-
-  useEffect(() => {
-    loadData()
-  }, [])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
+      const userId = getUserId()
+      if (!userId) return
+
       // Load weights
       const savedWeights = await getCriteriaWeights(userId)
       if (savedWeights) {
@@ -60,24 +63,60 @@ export default function MacroSupplierTierPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [getUserId])
 
-  const handleWeightsChange = async (newWeights: WeightCriteria) => {
+  useEffect(() => {
+    if (!authLoading) {
+      if (user) {
+        loadData()
+      } else {
+        setLoading(false)
+      }
+    }
+  }, [user, authLoading, loadData])
+
+  const handleWeightsChange = async (newWeights: WeightCriteria): Promise<void> => {
     try {
+      const userId = getUserId()
+      if (!userId) throw new Error('User not authenticated')
+
       await updateCriteriaWeights(userId, newWeights)
       setWeights(newWeights)
     } catch (error) {
       console.error('Error updating weights:', error)
+      throw error
     }
   }
 
+  const handleViewSupplier = (supplier: Supplier) => {
+    setSelectedSupplier(supplier)
+    setModalOpen(true)
+  }
 
-  if (loading) {
+
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-lg text-[#194866] flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3b82f6] mb-4"></div>
           Loading criteria and supplier data...
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[#194866] mb-4">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">Please log in to access the supplier analysis dashboard.</p>
+          <button
+            onClick={login}
+            className="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors"
+          >
+            Log In
+          </button>
         </div>
       </div>
     )
@@ -107,8 +146,24 @@ export default function MacroSupplierTierPage() {
 
       {/* Scrollable Content Panel */}
       <div className="flex-1 overflow-auto p-4 md:p-6 bg-gray-50">
-        <SupplierList weights={weights} />
+        {getUserId() && (
+          <SupplierList
+            weights={weights}
+            userId={getUserId()!}
+            refreshTrigger={refreshTrigger}
+            onView={handleViewSupplier}
+          />
+        )}
       </div>
+
+      <SupplierModal
+        open={modalOpen}
+        supplier={selectedSupplier}
+        onClose={() => {
+          setModalOpen(false)
+          setSelectedSupplier(null)
+        }}
+      />
     </div>
   )
 } 

@@ -20,8 +20,8 @@ import {
 import { Supplier } from "@/types/supplier"
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
 import { SupplierCriticalityChart } from "./supplier-criticality-chart"
-import { getSuppliers } from "@/lib/dynamodb"
-import { calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
+import { getUserSuppliers } from "@/lib/dynamodb"
+import { calculateCategoryPercentage, calculateSubcategoryCount, calculateSubcategoryPercentage, getSpendAllocationCategory, getSpendCategory, getSubcategorySize, getHiddenSpendAllocation, getHiddenSpendValue, getHiddenSubcategorySize, calculateHiddenUtilization, calculateHiddenEaseOfReplacement, calculateHiddenRisk, getEaseOfReplacement, getUtilizationLevel, getRiskLevel, calculateHiddenWeightsSpendAllocation, calculateHiddenWeightsSpendValue, calculateHiddenWeightsSubcategorySize, calculateHiddenWeightsEaseOfReplacement, calculateHiddenWeightsUtilization, calculateHiddenWeightsRisk } from "@/lib/utils/calculations"
 
 interface SupplierListProps {
   weights: {
@@ -32,6 +32,9 @@ interface SupplierListProps {
     utilization: number
     riskLevel: number
   }
+  userId: string
+  onView: (supplier: Supplier) => void
+  refreshTrigger?: number
 }
 
 type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend'
@@ -45,7 +48,10 @@ export function SupplierList({
     replacementComplexity: 15,
     utilization: 15,
     riskLevel: 15
-  }
+  },
+  userId,
+  onView,
+  refreshTrigger
 }: SupplierListProps) {
   const [pageSize, setPageSize] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
@@ -118,8 +124,13 @@ export function SupplierList({
   }
 
   const loadSuppliers = useCallback(async () => {
+    if (!userId) {
+      setLoading(false)
+      return
+    }
+
     try {
-      const data = getSuppliers()
+      const data = await getUserSuppliers(userId)
       if (data) {
         // Calculate criticality scores for all suppliers
         const suppliersWithCriticalityScores = data.map(supplier => {
@@ -193,12 +204,97 @@ export function SupplierList({
     } finally {
       setLoading(false)
     }
-  }, [weights])
+  }, [weights, userId])
 
   useEffect(() => {
     loadSuppliers()
-  }, [loadSuppliers])
+  }, [loadSuppliers, refreshTrigger])
 
+
+  const handleRowClick = (supplier: Supplier) => {
+    // Calculate values before passing to modal
+    const subcategoryPercentage = calculateSubcategoryPercentage(supplier, suppliers)
+    const subcategoryCount = calculateSubcategoryCount(supplier, suppliers)
+    const spendAllocation = getSpendAllocationCategory(subcategoryPercentage)
+    const spendCategory = getSpendCategory(supplier.threeYearSpend)
+    const subcategorySize = getSubcategorySize(subcategoryCount)
+    const hiddenSpendAllocation = getHiddenSpendAllocation(spendAllocation)
+    const hiddenSpendValue = getHiddenSpendValue(spendCategory)
+    const hiddenSubcategorySize = getHiddenSubcategorySize(subcategorySize)
+    const hiddenUtilization = calculateHiddenUtilization(hiddenSpendAllocation, hiddenSpendValue)
+    const hiddenEaseOfReplacement = calculateHiddenEaseOfReplacement(
+      hiddenSpendValue,
+      hiddenUtilization,
+      hiddenSubcategorySize
+    )
+    const hiddenRisk = calculateHiddenRisk(hiddenEaseOfReplacement, hiddenUtilization)
+
+    // Get weights from props
+    const hiddenWeightsSpendAllocation = calculateHiddenWeightsSpendAllocation(
+      hiddenSpendAllocation,
+      { spendPercentage: weights.spendPercentage }
+    )
+
+    const hiddenWeightsSpendValue = calculateHiddenWeightsSpendValue(
+      hiddenSpendValue,
+      { threeYearAverage: weights.threeYearAverage }
+    )
+
+    const hiddenWeightsSubcategorySize = calculateHiddenWeightsSubcategorySize(
+      hiddenSubcategorySize,
+      { marketSize: weights.marketSize }
+    )
+
+    const hiddenWeightsEaseOfReplacement = calculateHiddenWeightsEaseOfReplacement(
+      hiddenEaseOfReplacement,
+      { replacementComplexity: weights.replacementComplexity }
+    )
+
+    const hiddenWeightsUtilization = calculateHiddenWeightsUtilization(
+      hiddenUtilization,
+      { utilization: weights.utilization }
+    )
+
+    const hiddenWeightsRisk = calculateHiddenWeightsRisk(
+      hiddenRisk,
+      { riskLevel: weights.riskLevel }
+    )
+
+    // Calculate the overall criticality value
+    const supplierCriticalityValue =
+      hiddenWeightsSpendAllocation +
+      hiddenWeightsSpendValue +
+      hiddenWeightsSubcategorySize +
+      hiddenWeightsEaseOfReplacement +
+      hiddenWeightsUtilization +
+      hiddenWeightsRisk;
+
+    onView({
+      ...supplier,
+      categoryPercentage: calculateCategoryPercentage(supplier, suppliers),
+      subcategoryCount,
+      subcategoryPercentage,
+      spendAllocation,
+      spendCategory,
+      subcategorySize,
+      hiddenSpendAllocation,
+      hiddenSpendValue,
+      hiddenSubcategorySize,
+      hiddenUtilization,
+      hiddenEaseOfReplacement,
+      hiddenRisk,
+      easeOfReplacement: getEaseOfReplacement(hiddenEaseOfReplacement),
+      utilization: getUtilizationLevel(hiddenUtilization),
+      risk: getRiskLevel(hiddenRisk),
+      hiddenWeightsSpendAllocation,
+      hiddenWeightsSpendValue,
+      hiddenWeightsSubcategorySize,
+      hiddenWeightsEaseOfReplacement,
+      hiddenWeightsUtilization,
+      hiddenWeightsRisk,
+      criticalityScore: supplierCriticalityValue // Set the criticality score
+    })
+  }
 
   const SortIndicator = ({ field }: { field: SortField }) => {
     if (sortField !== field) return null
@@ -214,7 +310,7 @@ export function SupplierList({
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="flex flex-col md:flex-row justify-end items-start md:items-center gap-4">
+        <div className="flex justify-end">
           <Select value={pageSize.toString()} onValueChange={handlePageSizeChange}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select page size" />
@@ -271,7 +367,11 @@ export function SupplierList({
             </TableHeader>
             <TableBody>
               {currentSuppliersSorted.map((supplier) => (
-                <TableRow key={supplier.id}>
+                <TableRow
+                  key={supplier.id}
+                  className="cursor-pointer hover:bg-muted"
+                  onClick={() => handleRowClick(supplier)}
+                >
                   <TableCell>{supplier.name}</TableCell>
                   <TableCell>{supplier.category}</TableCell>
                   <TableCell>{supplier.subcategory}</TableCell>
@@ -317,12 +417,12 @@ export function SupplierList({
       </div>
 
       {/* Add the chart below the table */}
-      <SupplierCriticalityChart 
+      <SupplierCriticalityChart
         suppliers={suppliers.map(s => ({
           id: s.id,
           name: s.name,
           criticalityScore: s.criticalityScore
-        }))} 
+        }))}
       />
     </div>
   )

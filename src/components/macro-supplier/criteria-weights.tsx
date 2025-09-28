@@ -19,7 +19,7 @@ interface CriteriaWeightsProps {
     utilization: number
     riskLevel: number
   }
-  onWeightsChange: (weights: CriteriaWeightsProps["weights"]) => void
+  onWeightsChange: (weights: CriteriaWeightsProps["weights"]) => Promise<void>
 }
 
 export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsProps) {
@@ -75,11 +75,16 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
     }))
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (isValid) {
-      onWeightsChange(localWeights)
-      setIsEditing(false)
-      setError(null)
+      try {
+        await onWeightsChange(localWeights)
+        setIsEditing(false)
+        setError(null)
+      } catch (error) {
+        console.error('Error saving weights:', error)
+        setError("Failed to save weights. Please try again.")
+      }
     } else {
       setError("Total percentage must equal 100% before saving")
     }

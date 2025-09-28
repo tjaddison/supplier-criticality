@@ -26,8 +26,8 @@ const client = new DynamoDBClient({
 })
 
 async function createTables() {
+  // Create suppliers table
   try {
-    // Create suppliers table
     const suppliersTableParams = {
       TableName: "suppliers",
       KeySchema: [
@@ -46,8 +46,17 @@ async function createTables() {
 
     await client.send(new CreateTableCommand(suppliersTableParams))
     console.log("Created suppliers table")
+  } catch (error) {
+    const dbError = error as DynamoDBError
+    if (dbError.name === 'ResourceInUseException') {
+      console.log('Suppliers table already exists')
+    } else {
+      console.error('Error creating suppliers table:', dbError.message)
+    }
+  }
 
-    // Create criteria weights table
+  // Create criteria weights table
+  try {
     const weightsTableParams = {
       TableName: "criteriaweights",
       KeySchema: [
@@ -64,16 +73,16 @@ async function createTables() {
 
     await client.send(new CreateTableCommand(weightsTableParams))
     console.log("Created criteria weights table")
-
   } catch (error) {
     const dbError = error as DynamoDBError
-    if (dbError.code === 'ResourceInUseException') {
-      console.log('Tables already exist')
+    if (dbError.name === 'ResourceInUseException') {
+      console.log('Criteria weights table already exists')
     } else {
-      console.error('Error creating tables:', dbError.message)
-      throw error
+      console.error('Error creating criteria weights table:', dbError.message)
     }
   }
+
+  console.log("Table creation process completed")
 }
 
 createTables() 
