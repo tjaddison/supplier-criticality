@@ -43,7 +43,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
           // Get user information using the access token
           const user = await getUserInfo(tokens.access_token);
-          console.log('Authenticated user:', user);
           // Create session with user data and access token
           await createSession(user as unknown as Record<string, unknown>, tokens.access_token);
 

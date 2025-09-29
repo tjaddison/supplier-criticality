@@ -20,10 +20,10 @@ async function verifySession(request: NextRequest) {
 }
 
 // Define route access rules
-const routeRules: Record<string, string> = {
-  '/dashboard/settings': 'free',
-  '/dashboard/suppliers': 'pro', // Example: Suppliers page requires pro tier
-  '/dashboard/admin': 'admin', // Example: Admin pages require admin role
+const routeRules: Record<string, string[]> = {
+  '/dashboard/settings': ['free', 'tier-1', 'tier-2', 'tier-3', 'tier-4', 'admin'],
+  '/dashboard/suppliers': ['free', 'tier-1', 'tier-2', 'tier-3', 'tier-4'],
+  '/dashboard/admin': ['admin'],
 };
 
 export async function middleware(request: NextRequest) {
@@ -46,15 +46,10 @@ export async function middleware(request: NextRequest) {
   // Check role-based access for specific routes
   for (const route in routeRules) {
     if (pathname.startsWith(route)) {
-      const requiredRole = routeRules[route];
+      const allowedRoles = routeRules[route];
       const userRole = (session.role as string) || 'free';
-
-      // Simple role hierarchy check
-      const roleHierarchy = ['free', 'pro', 'enterprise', 'admin'];
-      const userRoleIndex = roleHierarchy.indexOf(userRole);
-      const requiredRoleIndex = roleHierarchy.indexOf(requiredRole);
-
-      if (userRoleIndex < requiredRoleIndex) {
+      // Check if user role is in the list of allowed roles
+      if (!allowedRoles.includes(userRole)) {
         // Redirect to unauthorized page
         const unauthorizedUrl = new URL('/unauthorized', request.url);
         return NextResponse.redirect(unauthorizedUrl);

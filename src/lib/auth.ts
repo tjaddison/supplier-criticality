@@ -1,7 +1,7 @@
 import { getSession, SessionPayload } from './session';
 import { redirect } from 'next/navigation';
 
-export type UserRole = 'free' | 'pro' | 'enterprise' | 'admin';
+export type UserRole = 'free' | 'tier-1' | 'tier-2' | 'tier-3' | 'tier-4' | 'admin';
 
 export interface RequireAuthOptions {
   requiredRole?: UserRole;
@@ -9,7 +9,7 @@ export interface RequireAuthOptions {
 }
 
 // Role hierarchy - higher index means higher privilege
-const ROLE_HIERARCHY: UserRole[] = ['free', 'pro', 'enterprise', 'admin'];
+const ROLE_HIERARCHY: UserRole[] = ['free', 'tier-1', 'tier-2', 'tier-3', 'tier-4', 'admin'];
 
 export function hasRequiredRole(userRole: string, requiredRole: UserRole): boolean {
   const userRoleIndex = ROLE_HIERARCHY.indexOf(userRole as UserRole);
@@ -28,7 +28,6 @@ export async function requireAuth(options: RequireAuthOptions = {}): Promise<Ses
   }
 
   const userRole = session.role || 'free';
-
   if (!hasRequiredRole(userRole, requiredRole)) {
     redirect('/unauthorized');
   }
