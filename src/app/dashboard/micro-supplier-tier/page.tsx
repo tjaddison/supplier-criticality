@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react"
 import MicroSupplierTierClient from "@/app/dashboard/micro-supplier-tier/client"
-import { getUserSuppliers } from "@/lib/dynamodb"
 import { useAuth } from "@/hooks/useAuth"
 import { Supplier } from "@/types/supplier"
 
@@ -20,9 +19,14 @@ export default function MicroSupplierTierPage() {
         return
       }
 
-      const data = await getUserSuppliers(userId)
-      if (data) {
-        setSuppliers(data)
+      const response = await fetch('/api/suppliers')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      if (result.suppliers) {
+        setSuppliers(result.suppliers)
       }
     } catch (error) {
       console.error('Error loading suppliers:', error)
