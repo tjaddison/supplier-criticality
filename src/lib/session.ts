@@ -43,7 +43,8 @@ export async function createSession(user: Record<string, unknown>, accessToken: 
     email: user.email as string,
     name: user.name as string,
     picture: user.picture as string,
-    role: (user.app_metadata as Record<string, unknown>)?.role as string || 'free',
+    role: user["https://procuresci.com/user_role"] as string || 'free',
+    //role: (user.app_metadata as Record<string, unknown>)?.role as string || 'free',
     subscription: (user.app_metadata as Record<string, unknown>)?.subscription_tier as string || 'free',
     exp: Math.floor(expiresAt.getTime() / 1000),
   };
