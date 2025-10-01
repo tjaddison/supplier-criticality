@@ -41,7 +41,7 @@ export default function MacroSupplierTierPage() {
   const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState('free')
   const [maxSuppliers, setMaxSuppliers] = useState(5)
-  const { user, loading: authLoading, login, getUserId } = useAuth()
+  const { user, loading: authLoading, login } = useAuth()
   const dataLoadedRef = useRef(false)
 
   const loadData = useCallback(async () => {
@@ -50,7 +50,7 @@ export default function MacroSupplierTierPage() {
     dataLoadedRef.current = true
 
     try {
-      const userId = getUserId()
+      const userId = user?.sub
       if (!userId) return
 
       // Get user role and set limits
@@ -66,7 +66,7 @@ export default function MacroSupplierTierPage() {
       })
       if (!response.ok) {
         if (response.status === 401) {
-          window.location.href = '/api/auth/login'
+          window.location.href = '/auth/login'
           return
         }
         throw new Error('Failed to fetch criteria weights')
@@ -102,7 +102,7 @@ export default function MacroSupplierTierPage() {
     } finally {
       setLoading(false)
     }
-  }, [getUserId, user])
+  }, [user])
 
   useEffect(() => {
     if (!authLoading) {
@@ -117,7 +117,7 @@ export default function MacroSupplierTierPage() {
 
   const handleWeightsChange = async (newWeights: WeightCriteria): Promise<void> => {
     try {
-      const userId = getUserId()
+      const userId = user?.sub
       if (!userId) throw new Error('User not authenticated')
 
       const response = await fetch('/api/criteria-weights', {
@@ -130,7 +130,7 @@ export default function MacroSupplierTierPage() {
       })
       if (!response.ok) {
         if (response.status === 401) {
-          window.location.href = '/api/auth/login'
+          window.location.href = '/auth/login'
           return
         }
         throw new Error('Failed to update criteria weights')
@@ -214,10 +214,10 @@ export default function MacroSupplierTierPage() {
           </TabsList>
 
           <TabsContent value="suppliers" className="flex-1 overflow-auto">
-            {getUserId() && (
+            {user?.sub && (
               <SupplierList
                 weights={weights}
-                userId={getUserId()!}
+                userId={user.sub}
                 refreshTrigger={refreshTrigger}
                 onView={handleViewSupplier}
               />

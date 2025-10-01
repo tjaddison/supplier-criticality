@@ -6,8 +6,16 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // VERBOSE_LOG_START - Remove this entire logging block later
+  console.log('[AUTH_FLOW] DashboardLayout: Starting authentication check');
+  // VERBOSE_LOG_END
+
   // Check authentication and get real user data from session
   const session = await requireAuth();
+
+  // VERBOSE_LOG_START - Remove this entire logging block later
+  console.log('[AUTH_FLOW] DashboardLayout: Auth check passed, user:', session.email);
+  // VERBOSE_LOG_END
 
   const user = {
     id: session.sub,

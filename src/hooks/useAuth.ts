@@ -6,16 +6,9 @@ export function useAuth() {
   const { user, error, isLoading } = useUser()
 
   return {
-    user: user ? {
-      id: user.sub || '',
-      email: user.email || '',
-      name: user.name || '',
-      picture: user.picture || '',
-      role: user.app_metadata?.role || user.app_metadata?.subscription_tier || 'free',
-      subscription: user.app_metadata?.subscription_tier
-    } : null,
+    user,
     loading: isLoading,
-    error: error?.message || null,
+    error,
     login: () => window.location.href = '/auth/login',
     logout: () => window.location.href = '/auth/logout',
     getUserId: () => user?.sub || null,

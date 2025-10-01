@@ -35,7 +35,7 @@ export function UploadHistory({ refreshTrigger }: UploadHistoryProps) {
       })
 
       if (!response.ok && response.status === 401) {
-        window.location.href = '/api/auth/login'
+        window.location.href = '/auth/login'
         return
       }
 

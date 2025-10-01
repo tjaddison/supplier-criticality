@@ -1,22 +1,36 @@
-"use client"
-
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
-  ArrowRight, 
-  Zap, 
-  DollarSign, 
-  TrendingUp, 
-  Trophy, 
-  Building2, 
+  ArrowRight,
+  Zap,
+  DollarSign,
+  TrendingUp,
+  Trophy,
+  Building2,
   Briefcase
 } from 'lucide-react'
 import Image from 'next/image'
+import { checkAuth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 // Define logo colors based on the image
 const logoTextColor = "#2D2D2D"; // Dark brown/black from the text
 
-export default function Home() {
+export default async function Home() {
+  // Check if user is already logged in
+  const session = await checkAuth();
+
+  // VERBOSE_LOG_START - Remove this entire logging block later
+  console.log('[AUTH_FLOW] Home page - Session check:', !!session);
+  if (session) {
+    console.log('[AUTH_FLOW] Home page - User logged in, redirecting to dashboard');
+  }
+  // VERBOSE_LOG_END
+
+  if (session) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="flex flex-col min-h-screen font-sans bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
       {/* Navigation */}
@@ -120,9 +134,9 @@ export default function Home() {
             <Link href="/about" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">About</Link>
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
-            <Link href="/api/auth/login">
+            <a href="/auth/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
-            </Link>
+            </a>
           </nav>
         </div>
       </header>
@@ -147,7 +161,7 @@ export default function Home() {
           </div>
           <div className="container relative z-10 px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-[1fr_500px] lg:gap-20 xl:grid-cols-[1fr_550px] items-center">
-              <div className="flex flex-col justify-center space-y-8 animate-fadein">
+              <div className="flex flex-col justify-center space-y-8 animate-fade-in">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-tight text-white drop-shadow-2xl">
                   <span className="block">Procurement</span>
                   <span className="block">intelligence that <span className="text-[#B6EFF0]">sparks action</span></span>
@@ -165,7 +179,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="relative w-full max-w-[600px] overflow-hidden rounded-3xl border-4 border-[#B6EFF0] bg-white/80 shadow-2xl animate-fadein-slow">
+                <div className="relative w-full max-w-[600px] overflow-hidden rounded-3xl border-4 border-[#B6EFF0] bg-white/80 shadow-2xl animate-fade-in-slow">
                   {/* Dashboard Preview Image */}
                   <Image 
                     src="/images/dashboard-preview.png" 
@@ -358,18 +372,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      <style jsx global>{`
-        @keyframes fadein {
-          from { opacity: 0; transform: translateY(40px);}
-          to { opacity: 1; transform: none;}
-        }
-        .animate-fadein {
-          animation: fadein 1.2s cubic-bezier(.4,0,.2,1) both;
-        }
-        .animate-fadein-slow {
-          animation: fadein 2s cubic-bezier(.4,0,.2,1) both;
-        }
-      `}</style>
     </div>
   )
 } 

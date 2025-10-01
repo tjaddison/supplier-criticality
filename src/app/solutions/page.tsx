@@ -107,9 +107,9 @@ export default function SolutionsPage() {
             <Link href="/about" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">About</Link>
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
-            <Link href="/api/auth/login">
+            <a href="/auth/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
-            </Link>
+            </a>
           </nav>
         </div>
       </header>

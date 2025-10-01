@@ -105,9 +105,9 @@ export default function LoginPage() {
             <Link href="/pricing" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Pricing</Link>
             <Link href="/contact" className="text-[#194866] transition-colors hover:text-[#3CDBDD]">Contact</Link>
             {/* Login Button */}
-            <Link href="/api/auth/login">
+            <a href="/auth/login">
               <Button className="bg-[#194866] text-white shadow-xl hover:bg-[#3CDBDD] transition-all font-bold">Login</Button>
-            </Link>
+            </a>
           </nav>
         </div>
       </header>
@@ -120,12 +120,12 @@ export default function LoginPage() {
             <CardDescription className="text-[#194866]/80">Access your ProcureSci dashboard.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Link href="/api/auth/login" className="flex w-full">
+            <a href="/auth/login" className="flex w-full">
               <Button className={`w-full h-12 text-lg font-bold bg-[${accentColor}] text-white shadow-lg hover:bg-[#FF6A33] transition-all`}>
                 Sign in with Auth0
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </Link>
+            </a>
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -136,7 +136,7 @@ export default function LoginPage() {
               </div>
             </div>
             
-            <Link href="/api/auth/login?connection=google-oauth2" className="flex w-full">
+            <a href="/auth/login?connection=google-oauth2" className="flex w-full">
               <Button variant="outline" className="w-full h-12 text-lg font-semibold border-[#194866]/30 hover:bg-[#f0f9fa] transition-all">
                 <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -146,7 +146,7 @@ export default function LoginPage() {
                 </svg>
                 Continue with Google
               </Button>
-            </Link>
+            </a>
           </CardContent>
           <CardFooter className="flex justify-center text-sm">
              <p className="text-[#194866]/70">
