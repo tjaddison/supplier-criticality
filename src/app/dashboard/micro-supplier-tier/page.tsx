@@ -9,11 +9,11 @@ export default function MicroSupplierTierPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { user, loading: authLoading, login, getUserId } = useAuth()
+  const { user, loading: authLoading, login } = useAuth()
 
   const loadSuppliers = useCallback(async () => {
     try {
-      const userId = getUserId()
+      const userId = user?.sub
       if (!userId) {
         setLoading(false)
         return
@@ -34,7 +34,7 @@ export default function MicroSupplierTierPage() {
     } finally {
       setLoading(false)
     }
-  }, [getUserId])
+  }, [user])
 
   useEffect(() => {
     if (!authLoading) {

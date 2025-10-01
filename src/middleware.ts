@@ -1,72 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-
-const secretKey = process.env.AUTH0_SECRET || process.env.JWT_SECRET;
-const key = new TextEncoder().encode(secretKey);
-
-async function verifySession(request: NextRequest) {
-  const session = request.cookies.get('session')?.value;
-
-  if (!session) return null;
-
-  try {
-    const { payload } = await jwtVerify(session, key, {
-      algorithms: ['HS256'],
-    });
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
-// Define route access rules
-const routeRules: Record<string, string[]> = {
-  '/dashboard/settings': ['free', 'tier-1', 'tier-2', 'tier-3', 'tier-4', 'admin'],
-  '/dashboard/suppliers': ['free', 'tier-1', 'tier-2', 'tier-3', 'tier-4'],
-  '/dashboard/admin': ['admin'],
-};
+import type { NextRequest } from 'next/server';
+import { auth0 } from './lib/auth0';
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  // VERBOSE_LOG_START - Remove this entire logging block later
+  console.log('[AUTH_FLOW] Middleware called for:', request.nextUrl.pathname);
+  console.log('[AUTH_FLOW] Method:', request.method);
+  console.log('[AUTH_FLOW] URL:', request.url);
+  console.log('[AUTH_FLOW] Search params:', request.nextUrl.searchParams.toString());
+  console.log('[AUTH_FLOW] Has returnTo?:', request.nextUrl.searchParams.get('returnTo'));
+  console.log('[AUTH_FLOW] Cookies:', request.cookies.getAll().map(c => c.name));
+  // VERBOSE_LOG_END
 
-  // Only protect dashboard routes
-  if (!pathname.startsWith('/dashboard')) {
-    return NextResponse.next();
+  // Let Auth0 handle everything
+  const response = await auth0.middleware(request);
+
+  // VERBOSE_LOG_START - Remove this entire logging block later
+  console.log('[AUTH_FLOW] Response status:', response.status);
+  console.log('[AUTH_FLOW] Response headers:', Object.fromEntries(response.headers.entries()));
+  if (response.headers.get('location')) {
+    console.log('[AUTH_FLOW] Redirecting to:', response.headers.get('location'));
   }
-
-  // Check if user has valid session
-  const session = await verifySession(request);
-
-  if (!session) {
-    // Redirect to login if no valid session
-    const loginUrl = new URL('/api/auth/login', request.url);
-    return NextResponse.redirect(loginUrl);
+  if (response.headers.get('set-cookie')) {
+    console.log('[AUTH_FLOW] Setting cookies');
   }
+  // VERBOSE_LOG_END
 
-  // Check role-based access for specific routes
-  for (const route in routeRules) {
-    if (pathname.startsWith(route)) {
-      const allowedRoles = routeRules[route];
-      const userRole = (session.role as string) || 'free';
-      // Check if user role is in the list of allowed roles
-      if (!allowedRoles.includes(userRole)) {
-        // Redirect to unauthorized page
-        const unauthorizedUrl = new URL('/unauthorized', request.url);
-        return NextResponse.redirect(unauthorizedUrl);
-      }
-    }
-  }
-
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match protected routes that require authentication:
-     * - /dashboard and all sub-routes
-     * - Exclude API routes and static files
-     */
-    '/dashboard/:path*',
-  ],
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)'
+  ]
 };

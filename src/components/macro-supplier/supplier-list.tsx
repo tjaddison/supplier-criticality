@@ -135,7 +135,7 @@ export function SupplierList({
       })
       if (!response.ok) {
         if (response.status === 401) {
-          window.location.href = '/api/auth/login'
+          window.location.href = '/auth/login'
           return
         }
         throw new Error('Failed to fetch suppliers')

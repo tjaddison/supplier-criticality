@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from './session';
+import { auth0 } from './auth0';
 
 export interface AuthenticatedUser {
   id: string;
@@ -17,26 +17,26 @@ export type AuthenticatedAPIHandler = (
 export function createAPIHandler(handler: AuthenticatedAPIHandler) {
   return async (request: NextRequest) => {
     try {
-      // Get session from request
-      const session = await getSession();
+      // Get session from Auth0
+      const session = await auth0.getSession();
 
-      if (!session) {
+      if (!session || !session.user) {
         return NextResponse.json(
           { error: 'Authentication required' },
           { status: 401 }
         );
       }
 
-      // Convert session to user object
+      // Create user object from session
       const user: AuthenticatedUser = {
-        id: session.sub,
-        email: session.email,
-        name: session.name,
-        role: session.role || 'free',
-        subscription: session.subscription || 'free',
+        id: session.user.sub || '',
+        email: session.user.email || '',
+        name: session.user.name || '',
+        role: session.user.role || 'free',
+        subscription: session.user.subscription || 'free'
       };
 
-      // Call the authenticated handler
+      // Call the actual handler with the authenticated user
       return await handler(request, user);
     } catch (error) {
       console.error('API authentication error:', error);

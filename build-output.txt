@@ -1,0 +1,133 @@
+
+> supplier-criticality@0.1.0 build
+> next build
+
+   ▲ Next.js 15.3.2
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 1000ms
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/26) ...
+Auth error: Error: Dynamic server usage: Route /dashboard/users couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/users couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Auth error: Error: Dynamic server usage: Route /dashboard/contacts couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/contacts couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Auth error: Error: Dynamic server usage: Route /dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Auth error: Error: Dynamic server usage: Route /dashboard/settings couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/settings couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (6/26) 
+   Generating static pages (12/26) 
+Auth error: Error: Dynamic server usage: Route /dashboard/suppliers couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/suppliers couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (19/26) 
+Auth error: Error: Dynamic server usage: Route /dashboard/macro-supplier-tier couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/macro-supplier-tier couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Auth error: Error: Dynamic server usage: Route /dashboard/micro-supplier-tier couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/chunks/6942.js:1:1274)
+    at d (.next/server/chunks/6942.js:1:1655)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/micro-supplier-tier couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Auth error: Error: Dynamic server usage: Route /dashboard/analytics couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+    at m (.next/server/chunks/80.js:19:10449)
+    at f (.next/server/chunks/6573.js:8:15164)
+    at aN.getSession (.next/server/chunks/6573.js:5:193833)
+    at l (.next/server/app/dashboard/users/page.js:1:3103)
+    at d (.next/server/app/dashboard/users/page.js:1:3484)
+    at stringify (<anonymous>) {
+  description: "Route /dashboard/analytics couldn't be rendered statically because it used `cookies`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+ ✓ Generating static pages (26/26)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                      188 B         105 kB
+├ ƒ /_not-found                            978 B         102 kB
+├ ƒ /about                                 188 B         105 kB
+├ ƒ /api/contact                           154 B         101 kB
+├ ƒ /api/criteria-weights                  154 B         101 kB
+├ ƒ /api/suppliers                         154 B         101 kB
+├ ƒ /api/suppliers/upload                  154 B         101 kB
+├ ƒ /api/suppliers/upload-history          154 B         101 kB
+├ ƒ /contact                               188 B         105 kB
+├ ƒ /dashboard                             154 B         101 kB
+├ ƒ /dashboard/analytics                   338 B         101 kB
+├ ƒ /dashboard/contacts                  2.88 kB         165 kB
+├ ƒ /dashboard/macro-supplier-tier       28.1 kB         223 kB
+├ ƒ /dashboard/micro-supplier-tier       7.71 kB         147 kB
+├ ƒ /dashboard/settings                  7.68 kB         120 kB
+├ ƒ /dashboard/suppliers                   538 B         102 kB
+├ ƒ /dashboard/users                       335 B         101 kB
+├ ƒ /login                                 188 B         105 kB
+├ ƒ /pricing                               188 B         105 kB
+├ ƒ /privacy                               188 B         105 kB
+├ ƒ /solutions                           5.09 kB         118 kB
+├ ƒ /terms                               4.88 kB         118 kB
+└ ƒ /unauthorized                          188 B         105 kB
++ First Load JS shared by all             101 kB
+  ├ chunks/4bd1b696-7ab52a38e77442f0.js  53.2 kB
+  ├ chunks/684-c2b34779558a6fb7.js         46 kB
+  └ other shared chunks (total)          1.92 kB
+
+
+ƒ Middleware                             73.9 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+

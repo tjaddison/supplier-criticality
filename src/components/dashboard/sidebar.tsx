@@ -88,7 +88,7 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </Button>
-            </Link> */}
+            </a> */}
           </nav>
 
           {/* User Info & Logout Section */}
@@ -98,12 +98,12 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
                 {user.email}
               </div>
             )}
-            <Link href="/api/auth/logout" onClick={() => setSidebarOpen(false)}>
+            <a href="/auth/logout" onClick={() => setSidebarOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </div>

@@ -85,7 +85,7 @@ export function CSVUpload({ onUploadComplete, userRole = 'free', maxSuppliers = 
         document.body.removeChild(a)
       } else {
         if (response.status === 401) {
-          window.location.href = '/api/auth/login'
+          window.location.href = '/auth/login'
           return
         }
         console.error('Failed to download template')
@@ -125,7 +125,7 @@ export function CSVUpload({ onUploadComplete, userRole = 'free', maxSuppliers = 
 
       if (!response.ok && response.status === 401) {
         clearInterval(progressInterval)
-        window.location.href = '/api/auth/login'
+        window.location.href = '/auth/login'
         return
       }
 
