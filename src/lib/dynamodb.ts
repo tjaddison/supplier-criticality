@@ -521,18 +521,18 @@ export async function getUserUploadHistory(userId: string, limit = 50) {
 // Function to get user role from Auth0 metadata
 export function getUserRole(user: { [key: string]: unknown }): string {
   // Extract role from Auth0 user metadata
-  const role = user.role as string || 'free'
+  const role = user['https://procuresci.com/user_role'] as string
 
   // Convert to string for processing
   const roleStr = String(role)
- 
+
   // Normalize role names
   if (roleStr.includes('tier-1') || roleStr === 'tier1') return 'tier-1'
   if (roleStr.includes('tier-2') || roleStr === 'tier2') return 'tier-2'
   if (roleStr.includes('tier-3') || roleStr === 'tier3') return 'tier-3'
   if (roleStr.includes('tier-4') || roleStr === 'tier4') return 'tier-4'
 
-  return 'free'
+  return roleStr
 }
 
 // Bulk replace suppliers for a user

@@ -5,8 +5,8 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   name: string;
-  role: string;
-  subscription: string;
+  role?: string; // Make optional since it might not be present
+  subscription?: string; // Make optional since it might not be present
 }
 
 export type AuthenticatedAPIHandler = (
@@ -19,7 +19,7 @@ export function createAPIHandler(handler: AuthenticatedAPIHandler) {
     try {
       // Get session from Auth0
       const session = await auth0.getSession();
-
+      
       if (!session || !session.user) {
         return NextResponse.json(
           { error: 'Authentication required' },
@@ -27,13 +27,21 @@ export function createAPIHandler(handler: AuthenticatedAPIHandler) {
         );
       }
 
+      // Validate required fields
+      if (!session.user.sub || !session.user.email || !session.user.name) {
+        return NextResponse.json(
+          { error: 'Invalid session data' },
+          { status: 401 }
+        );
+      }
+
       // Create user object from session
       const user: AuthenticatedUser = {
-        id: session.user.sub || '',
-        email: session.user.email || '',
-        name: session.user.name || '',
-        role: session.user.role || 'free',
-        subscription: session.user.subscription || 'free'
+        id: session.user.sub,
+        email: session.user.email,
+        name: session.user.name,
+        role: session.user.role,
+        subscription: session.user.subscription
       };
 
       // Call the actual handler with the authenticated user
