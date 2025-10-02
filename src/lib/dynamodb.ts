@@ -521,7 +521,7 @@ export async function getUserUploadHistory(userId: string, limit = 50) {
 // Function to get user role from Auth0 metadata
 export function getUserRole(user: { [key: string]: unknown }): string {
   // Extract role from Auth0 user metadata
-  const role = user['https://procuresci.com/user_role'] as string
+  const role = user.role as string
 
   // Convert to string for processing
   const roleStr = String(role)

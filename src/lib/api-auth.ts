@@ -40,7 +40,7 @@ export function createAPIHandler(handler: AuthenticatedAPIHandler) {
         id: session.user.sub,
         email: session.user.email,
         name: session.user.name,
-        role: session.user.role,
+        role: session.user['https://procuresci.com/user_role'],
         subscription: session.user.subscription
       };
 
