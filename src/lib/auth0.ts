@@ -11,20 +11,23 @@ export const auth0 = new Auth0Client({
   // - AUTH0_CLIENT_SECRET
   
   async beforeSessionSaved(session, idToken) {
-    // Check if idToken is valid (not null/undefined) and is an object
-    if (!idToken || typeof idToken !== 'object') {
-      return session;
-    }
-
-    // Type assertion to access claims
-    const claims = idToken as Record<string, unknown>;
+    console.log('[AUTH_FLOW] Session user object:', JSON.stringify(session.user, null, 2));
+    console.log('[AUTH_FLOW] idToken:', idToken);
     
+    // The claims are ALREADY in session.user!
+    // Read the custom claims directly from session.user
+    const role = (session.user[`${CLAIMS_NAMESPACE}user_role`] as string) || 'free';
+    const subscription = (session.user[`${CLAIMS_NAMESPACE}subscription`] as string) || 'free';
+    
+    console.log('[AUTH_FLOW] Extracted role:', role);
+    console.log('[AUTH_FLOW] Extracted subscription:', subscription);
+
     return {
       ...session,
       user: {
         ...session.user,
-        role: claims[`${CLAIMS_NAMESPACE}user_role`] as string | undefined,
-        subscription: claims[`${CLAIMS_NAMESPACE}subscription`] as string | undefined,
+        role,
+        subscription,
       },
     };
   },
