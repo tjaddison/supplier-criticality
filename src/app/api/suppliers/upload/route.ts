@@ -103,7 +103,7 @@ export const POST = createAPIHandler(async (request: NextRequest, user) => {
   const userId = user.id
 
   try {
-    const userRole = user.role
+    const userRole = user.role || 'free'
     const maxSuppliers = ROLE_LIMITS[userRole] || ROLE_LIMITS.free
 
     // Parse form data

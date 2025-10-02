@@ -36,7 +36,8 @@ export async function requireAuth(options: RequireAuthOptions = {}): Promise<Use
 
   try {
     const session = await auth0.getSession();
-
+    console.log('Session:', session);
+    console.log('Session user:', session?.user);
     // VERBOSE_LOG_START - Remove this entire logging block later
     console.log('[AUTH_FLOW] Session exists?:', !!session);
     if (session?.user) {
@@ -55,7 +56,7 @@ export async function requireAuth(options: RequireAuthOptions = {}): Promise<Use
       redirect(redirectTo);
     }
 
-    const userRole = session.user.role as UserRole || 'free';
+    const userRole = session.user.role as UserRole;
 
     // Check role if required
     if (requiredRole && !hasRequiredRole(userRole, requiredRole)) {
@@ -121,7 +122,7 @@ export async function checkAuth(): Promise<UserSession | null> {
       email: session.user.email || '',
       name: session.user.name || '',
       picture: session.user.picture,
-      role: session.user.role as UserRole || 'free',
+      role: session.user.role as UserRole,
       subscription: session.user.subscription,
     };
   } catch {

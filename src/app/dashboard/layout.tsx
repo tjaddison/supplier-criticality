@@ -21,9 +21,9 @@ export default async function DashboardLayout({
     id: session.sub,
     email: session.email,
     name: session.name,
-    picture: session.picture || '',
-    role: session.role || 'free',
-    subscription: session.subscription || 'free'
+    picture: session.picture,
+    role: session.role,
+    subscription: session.subscription
   };
 
   return (
