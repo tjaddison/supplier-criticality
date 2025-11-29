@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
+import { sendContactFormEmail } from '@/lib/email';
 
 // Initialize DynamoDB clients
 const client = new DynamoDBClient({
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
     // Save to DynamoDB
     await docClient.send(
       new PutCommand({
-        TableName: process.env.CONTACTS_TABLE_NAME || 'ProcureSciContacts',
+        TableName: process.env.CONTACTS_TABLE_NAME || 'procuresci-contacts',
         Item: {
           id,
           name,
@@ -42,8 +43,22 @@ export async function POST(request: Request) {
       })
     );
 
+    // Send email notification (non-blocking - don't fail if email fails)
+    try {
+      await sendContactFormEmail({
+        name,
+        email,
+        company,
+        timestamp,
+      });
+    } catch (emailError) {
+      // Log email error but don't fail the request
+      console.error('Failed to send contact form email notification:', emailError);
+      // Contact is still saved to database, so we don't throw
+    }
+
     return NextResponse.json(
-      { message: 'Contact information received successfully!' }, 
+      { message: 'Contact information received successfully!' },
       { status: 200 }
     );
 

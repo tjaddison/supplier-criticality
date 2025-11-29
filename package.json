@@ -14,6 +14,7 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.10.0",
     "@aws-sdk/client-dynamodb": "^3.749.0",
+    "@aws-sdk/client-ses": "^3.940.0",
     "@aws-sdk/lib-dynamodb": "^3.749.0",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-avatar": "^1.1.3",
