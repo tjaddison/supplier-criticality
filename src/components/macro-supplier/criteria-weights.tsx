@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
-import { AlertCircle, Info } from "lucide-react"
+import { AlertCircle, Info, ChevronDown, ChevronUp, SlidersIcon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
@@ -26,6 +26,7 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
   const [localWeights, setLocalWeights] = useState(weights)
   const [isEditing, setIsEditing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   // Calculate total percentage
   const totalPercentage = Object.values(localWeights).reduce((sum, value) => sum + value, 0)
@@ -97,23 +98,53 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="border-[#194866]/20 shadow-sm">
+      <CardHeader className="pb-3 bg-gradient-to-r from-[#f0f9fa] to-white cursor-pointer" onClick={() => !isEditing && setIsCollapsed(!isCollapsed)}>
         <div className="flex items-center justify-between">
-          <CardTitle>Criteria Weights</CardTitle>
+          <div className="flex items-center gap-2">
+            <SlidersIcon className="h-5 w-5 text-[#194866]" />
+            <CardTitle className="text-[#194866]">Criticality Criteria Weights</CardTitle>
+            <Popover>
+              <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <button type="button" className="rounded-full bg-[#3CDBDD]/20 p-1 hover:bg-[#3CDBDD]/30 transition-colors">
+                  <Info className="h-4 w-4 text-[#194866]" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                Adjust these weights to customize how supplier criticality is calculated. Total must equal 100%.
+              </PopoverContent>
+            </Popover>
+          </div>
           <div className="flex items-center gap-2">
             {!isEditing ? (
-              <Button onClick={() => setIsEditing(true)}>Edit Weights</Button>
+              <>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsEditing(true)
+                    setIsCollapsed(false)
+                  }}
+                  className="bg-[#194866] hover:bg-[#3CDBDD] text-white"
+                >
+                  Edit Weights
+                </Button>
+                <button onClick={(e) => {
+                  e.stopPropagation()
+                  setIsCollapsed(!isCollapsed)
+                }}>
+                  {isCollapsed ? <ChevronDown className="h-5 w-5 text-[#194866]" /> : <ChevronUp className="h-5 w-5 text-[#194866]" />}
+                </button>
+              </>
             ) : (
               <>
-                <Button variant="outline" onClick={handleCancel}>Cancel</Button>
-                <Button onClick={handleSave} disabled={!isValid}>Save Changes</Button>
+                <Button variant="outline" onClick={handleCancel} className="border-[#194866] text-[#194866] hover:bg-[#194866] hover:text-white">Cancel</Button>
+                <Button onClick={handleSave} disabled={!isValid} className="bg-[#3CDBDD] hover:bg-[#194866] text-white">Save Changes</Button>
               </>
             )}
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      {!isCollapsed && <CardContent>
         {error && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
@@ -186,14 +217,14 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
               )
             })}
           </div>
-          <div className="mt-6 p-3 bg-muted rounded-md flex justify-between items-center">
-            <span className="font-medium">Total:</span>
-            <span className={`font-bold ${isValid ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+          <div className="mt-6 p-3 bg-gradient-to-r from-[#E5F9FA] to-white rounded-md flex justify-between items-center border border-[#3CDBDD]/30">
+            <span className="font-medium text-[#194866]">Total:</span>
+            <span className={`font-bold ${isValid ? 'text-[#3CDBDD]' : 'text-[#FF7D4D]'}`}>
               {totalPercentage}%
             </span>
           </div>
         </div>
-      </CardContent>
+      </CardContent>}
     </Card>
   )
 } 

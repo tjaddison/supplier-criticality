@@ -9,7 +9,6 @@ import { UploadHistory } from "@/components/csv-upload/upload-history"
 import { Supplier } from "@/types/supplier"
 import { getUserRole } from "@/lib/dynamodb"
 import { ROLE_LIMITS } from "@/types/upload-audit"
-import { InfoIcon, SlidersIcon } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -185,32 +184,40 @@ export default function MacroSupplierTierPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
+      <div className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white p-6 md:p-8 shadow-lg">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Supplier Management</h1>
-        <p className="text-blue-100 text-sm md:text-base max-w-3xl mb-4">
+        <p className="text-white/90 text-sm md:text-base max-w-3xl">
           Manage your supplier data, upload CSV files, analyze criticality, and track upload history.
         </p>
       </div>
 
       {/* Criteria Weights Panel */}
-      <div className="bg-white dark:bg-gray-800 border-b shadow-sm p-4 md:p-6">
-        <div className="flex items-center gap-2 mb-4 text-[#194866]">
-          <SlidersIcon className="h-5 w-5" />
-          <h2 className="text-lg md:text-xl font-semibold">Criticality Criteria Weights</h2>
-          <div className="rounded-full bg-blue-100 p-1" title="Adjust these weights to customize how supplier criticality is calculated">
-            <InfoIcon className="h-4 w-4 text-blue-700" />
-          </div>
-        </div>
+      <div className="bg-gradient-to-r from-[#f0f9fa] to-white border-b border-[#194866]/10 shadow-sm p-4 md:p-6">
         <CriteriaWeights weights={weights} onWeightsChange={handleWeightsChange} />
       </div>
 
       {/* Tabbed Content Panel */}
-      <div className="flex-1 overflow-auto p-4 md:p-6 bg-gray-50">
+      <div className="flex-1 overflow-auto p-4 md:p-6 bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
         <Tabs defaultValue="suppliers" className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
-            <TabsTrigger value="upload">CSV Upload</TabsTrigger>
-            <TabsTrigger value="history">Upload History</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-6 bg-white border border-[#194866]/20 p-1">
+            <TabsTrigger
+              value="suppliers"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#194866] data-[state=active]:to-[#3CDBDD] data-[state=active]:text-white"
+            >
+              Suppliers
+            </TabsTrigger>
+            <TabsTrigger
+              value="upload"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#194866] data-[state=active]:to-[#3CDBDD] data-[state=active]:text-white"
+            >
+              CSV Upload
+            </TabsTrigger>
+            <TabsTrigger
+              value="history"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#194866] data-[state=active]:to-[#3CDBDD] data-[state=active]:text-white"
+            >
+              Upload History
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="suppliers" className="flex-1 overflow-auto">
