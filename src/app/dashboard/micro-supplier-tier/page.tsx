@@ -50,7 +50,7 @@ export default function MicroSupplierTierPage() {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-lg text-[#194866] flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3b82f6] mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3CDBDD] mb-4"></div>
           Loading supplier data...
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function MicroSupplierTierPage() {
           <p className="text-gray-600 mb-6">Please log in to access the comparative criticality assessment.</p>
           <button
             onClick={login}
-            className="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white rounded-lg hover:from-[#0f2942] hover:to-[#194866] transition-colors"
           >
             Log In
           </button>
@@ -77,11 +77,11 @@ export default function MicroSupplierTierPage() {
   if (error) {
     return (
       <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
-        <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
+        <div className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white p-6 md:p-8 shadow-lg">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
+        <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
           <div className="text-center p-8 bg-white rounded-lg shadow-md border border-red-100 max-w-md">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,15 +105,15 @@ export default function MicroSupplierTierPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] md:h-screen">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0f2942] to-[#194866] text-white p-6 md:p-8">
+      <div className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white p-6 md:p-8 shadow-lg">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Comparative Criticality Assessment</h1>
-        <p className="text-blue-100 text-sm md:text-base max-w-3xl">
+        <p className="text-white/90 text-sm md:text-base max-w-3xl">
           Compare current supplier criticality against target scenarios. Analyze spend allocation, contract availability, and risk factors to evaluate supplier criticality changes.
         </p>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-auto bg-gray-50">
+      <div className="flex-1 overflow-auto bg-gradient-to-br from-[#f0f9fa] via-white to-[#f0f9fa]">
         <div className="container mx-auto px-4 py-6 max-w-7xl">
           <MicroSupplierTierClient initialSuppliers={suppliers} />
         </div>

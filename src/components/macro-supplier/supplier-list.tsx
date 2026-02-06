@@ -37,7 +37,7 @@ interface SupplierListProps {
   refreshTrigger?: number
 }
 
-type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend'
+type SortField = 'name' | 'category' | 'subcategory' | 'expirationDate' | 'contractNumber' | 'threeYearSpend' | 'criticalityScore'
 type SortDirection = 'asc' | 'desc'
 
 export function SupplierList({
@@ -64,9 +64,7 @@ export function SupplierList({
   const [filters, setFilters] = useState<SearchFilters>({
     category: "",
     subcategory: "",
-    minSpend: 0,
-    maxSpend: 0,
-    riskLevel: ""
+    segmentation: ""
   })
 
   const startIndex = (currentPage - 1) * pageSize
@@ -112,16 +110,13 @@ export function SupplierList({
       // Subcategory filter
       if (filters.subcategory && supplier.subcategory !== filters.subcategory) return false
 
-      // Spend range filter
-      if (filters.minSpend > 0 && supplier.threeYearSpend < filters.minSpend) return false
-      if (filters.maxSpend > 0 && supplier.threeYearSpend > filters.maxSpend) return false
-
-      // Risk level filter (based on criticality score)
-      if (filters.riskLevel) {
+      // Segmentation filter (based on criticality score)
+      if (filters.segmentation) {
         const score = supplier.criticalityScore || 0
-        if (filters.riskLevel === "High" && score < 75) return false
-        if (filters.riskLevel === "Medium" && (score < 50 || score >= 75)) return false
-        if (filters.riskLevel === "Low" && score >= 50) return false
+        if (filters.segmentation === "Critical" && score <= 90) return false
+        if (filters.segmentation === "Strategic" && (score <= 40 || score > 90)) return false
+        if (filters.segmentation === "Acquisitional" && (score <= 20 || score > 40)) return false
+        if (filters.segmentation === "Transactional" && score > 20) return false
       }
 
       return true
@@ -148,6 +143,10 @@ export function SupplierList({
           const aSpend = a.threeYearSpend || 0
           const bSpend = b.threeYearSpend || 0
           return direction * (aSpend - bSpend)
+        case 'criticalityScore':
+          const aScore = a.criticalityScore || 0
+          const bScore = b.criticalityScore || 0
+          return direction * (aScore - bScore)
         default:
           return 0
       }
@@ -402,7 +401,7 @@ export function SupplierList({
     <div className="space-y-6">
       {/* Criticality Overview - moved to top */}
       <SupplierCriticalityOverview
-        suppliers={suppliers.map(s => ({
+        suppliers={filteredSuppliers.map(s => ({
           id: s.id,
           name: s.name,
           criticalityScore: s.criticalityScore || 0
@@ -480,12 +479,18 @@ export function SupplierList({
                 >
                   3-yr Avg Spend <SortIndicator field="threeYearSpend" />
                 </TableHead>
+                <TableHead
+                  className="cursor-pointer text-[#194866] font-semibold hover:text-[#3CDBDD]"
+                  onClick={() => handleSort('criticalityScore')}
+                >
+                  Criticality <SortIndicator field="criticalityScore" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedSuppliers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-[#194866]/70">
+                  <TableCell colSpan={7} className="text-center py-12 text-[#194866]/70">
                     No suppliers found matching your criteria.
                   </TableCell>
                 </TableRow>
@@ -502,6 +507,16 @@ export function SupplierList({
                     <TableCell className="text-[#194866]/80">{supplier.expirationDate}</TableCell>
                     <TableCell className="text-[#194866]/80">{supplier.contractNumber}</TableCell>
                     <TableCell className="text-[#194866] font-semibold">${supplier.threeYearSpend.toLocaleString()}</TableCell>
+                    <TableCell className="text-[#194866] font-semibold">
+                      <span className={`px-2 py-1 rounded-full text-sm ${
+                        (supplier.criticalityScore || 0) > 90 ? 'bg-red-100 text-red-700' :
+                        (supplier.criticalityScore || 0) > 40 ? 'bg-orange-100 text-orange-700' :
+                        (supplier.criticalityScore || 0) > 20 ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                        {(supplier.criticalityScore || 0).toFixed(1)}
+                      </span>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
