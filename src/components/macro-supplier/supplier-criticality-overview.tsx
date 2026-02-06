@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { AlertTriangle, TrendingUp } from "lucide-react"
+import { TrendingUp } from "lucide-react"
 
 interface SupplierCriticalityOverviewProps {
   suppliers: Array<{
@@ -32,9 +32,6 @@ export function SupplierCriticalityOverview({ suppliers }: SupplierCriticalityOv
     return sum / suppliers.length
   }, [suppliers])
 
-  const highRiskCount = useMemo(() => {
-    return suppliers.filter(s => s.criticalityScore >= 75).length
-  }, [suppliers])
 
   const maxScore = useMemo(() => {
     return Math.max(...sortedSuppliers.map(s => s.criticalityScore), 100)
@@ -65,21 +62,10 @@ export function SupplierCriticalityOverview({ suppliers }: SupplierCriticalityOv
         </CardHeader>
         <CardContent className="pt-6">
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-[#E5F9FA] to-white p-4 rounded-lg border border-[#3CDBDD]/30">
+          <div className="mb-6">
+            <div className="bg-gradient-to-br from-[#E5F9FA] to-white p-4 rounded-lg border border-[#3CDBDD]/30 max-w-xs">
               <div className="text-sm text-[#194866]/70 font-medium">Average Score</div>
               <div className="text-3xl font-bold text-[#194866]">{averageScore.toFixed(1)}</div>
-            </div>
-            <div className="bg-gradient-to-br from-[#FFE5DC] to-white p-4 rounded-lg border border-[#FF7D4D]/30">
-              <div className="text-sm text-[#194866]/70 font-medium flex items-center gap-1">
-                <AlertTriangle className="h-4 w-4 text-[#FF7D4D]" />
-                High Risk (≥75)
-              </div>
-              <div className="text-3xl font-bold text-[#FF7D4D]">{highRiskCount}</div>
-            </div>
-            <div className="bg-gradient-to-br from-[#E5F9FA] to-white p-4 rounded-lg border border-[#194866]/30">
-              <div className="text-sm text-[#194866]/70 font-medium">Top Critical</div>
-              <div className="text-3xl font-bold text-[#194866]">{top10Suppliers.length}</div>
             </div>
           </div>
 

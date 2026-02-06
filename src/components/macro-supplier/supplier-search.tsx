@@ -16,9 +16,7 @@ interface SupplierSearchProps {
 export interface SearchFilters {
   category: string
   subcategory: string
-  minSpend: number
-  maxSpend: number
-  riskLevel: string
+  segmentation: string
 }
 
 export function SupplierSearch({
@@ -32,9 +30,7 @@ export function SupplierSearch({
   const [filters, setFilters] = useState<SearchFilters>({
     category: "",
     subcategory: "",
-    minSpend: 0,
-    maxSpend: 0,
-    riskLevel: ""
+    segmentation: ""
   })
 
   const handleSearchChange = (value: string) => {
@@ -53,17 +49,13 @@ export function SupplierSearch({
     setFilters({
       category: "",
       subcategory: "",
-      minSpend: 0,
-      maxSpend: 0,
-      riskLevel: ""
+      segmentation: ""
     })
     onSearch("")
     onFilterChange({
       category: "",
       subcategory: "",
-      minSpend: 0,
-      maxSpend: 0,
-      riskLevel: ""
+      segmentation: ""
     })
   }
 
@@ -129,10 +121,10 @@ export function SupplierSearch({
               </button>
             </Badge>
           )}
-          {filters.riskLevel && (
+          {filters.segmentation && (
             <Badge variant="secondary" className="bg-[#3CDBDD]/20 text-[#194866]">
-              Risk: {filters.riskLevel}
-              <button onClick={() => handleFilterChange("riskLevel", "")} className="ml-1">
+              Segmentation: {filters.segmentation}
+              <button onClick={() => handleFilterChange("segmentation", "")} className="ml-1">
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -150,7 +142,7 @@ export function SupplierSearch({
 
       {/* Advanced Filters */}
       {showAdvanced && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-[#194866]/10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-[#194866]/10">
           <div className="space-y-2">
             <label className="text-sm font-medium text-[#194866]">Category</label>
             <select
@@ -180,36 +172,17 @@ export function SupplierSearch({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#194866]">Spend Range</label>
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                placeholder="Min"
-                value={filters.minSpend || ""}
-                onChange={(e) => handleFilterChange("minSpend", Number(e.target.value))}
-                className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={filters.maxSpend || ""}
-                onChange={(e) => handleFilterChange("maxSpend", Number(e.target.value))}
-                className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[#194866]">Risk Level</label>
+            <label className="text-sm font-medium text-[#194866]">Segmentation</label>
             <select
-              value={filters.riskLevel}
-              onChange={(e) => handleFilterChange("riskLevel", e.target.value)}
+              value={filters.segmentation}
+              onChange={(e) => handleFilterChange("segmentation", e.target.value)}
               className="w-full px-3 py-2 border border-[#194866]/20 rounded-md focus:border-[#3CDBDD] focus:ring-[#3CDBDD] text-sm"
             >
-              <option value="">All Risk Levels</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option value="">All Segments</option>
+              <option value="Critical">Critical</option>
+              <option value="Strategic">Strategic</option>
+              <option value="Acquisitional">Acquisitional</option>
+              <option value="Transactional">Transactional</option>
             </select>
           </div>
         </div>

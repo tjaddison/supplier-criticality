@@ -534,20 +534,18 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
   }
 
   return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-2xl font-bold">Comparative Criticality Assessment</h1>
-      
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="col-span-1">
-          <CardHeader>
+        <Card className="col-span-1 border-[#194866]/20 shadow-md">
+          <CardHeader className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white rounded-t-lg">
             <CardTitle>Current State Analysis</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="supplier-select">Select a Supplier</Label>
+                <Label htmlFor="supplier-select" className="text-[#194866] font-medium">Select a Supplier</Label>
                 <Select onValueChange={handleSupplierChange}>
-                  <SelectTrigger id="supplier-select">
+                  <SelectTrigger id="supplier-select" className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                     <SelectValue placeholder="Select a supplier" />
                   </SelectTrigger>
                   <SelectContent>
@@ -564,59 +562,59 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                 <div className="space-y-4 pt-4">
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         What is the supplier spend allocation in relation to either the total subcategory or category?
                       </Label>
-                      <p className="font-medium">{calculatedValues.spendAllocation} ({calculatedValues.subcategoryPercentage.toFixed(2)}%)</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.spendAllocation} ({calculatedValues.subcategoryPercentage.toFixed(2)}%)</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         What is the 3 year average spend?
                       </Label>
-                      <p className="font-medium">{calculatedValues.spendCategory} (${selectedSupplier.threeYearSpend.toLocaleString()})</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.spendCategory} (${selectedSupplier.threeYearSpend.toLocaleString()})</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         What is the number of available contracts in the subcategory? (One, Few (2-5), Many (6+))?
                       </Label>
-                      <p className="font-medium">{calculatedValues.subcategorySize} ({calculatedValues.subcategoryCount})</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.subcategorySize} ({calculatedValues.subcategoryCount})</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         What is the anticipated complexity to replacing the supplier if necessary?
                       </Label>
-                      <p className="font-medium">{calculatedValues.easeOfReplacement}</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.easeOfReplacement}</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         How heavily utilized is the supplier(s) across the customer base?
                       </Label>
-                      <p className="font-medium">{calculatedValues.utilization}</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.utilization}</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm text-gray-500">
+                      <Label className="text-sm text-[#194866]/70">
                         What is the associated risk level for this supplier/subcategory?
                       </Label>
-                      <p className="font-medium">{calculatedValues.risk}</p>
+                      <p className="font-medium text-[#194866]">{calculatedValues.risk}</p>
                     </div>
-                    
-                    <div className="space-y-1 pt-2 border-t">
-                      <Label className="text-sm font-bold">
+
+                    <div className="space-y-1 pt-2 border-t border-[#194866]/10">
+                      <Label className="text-sm font-bold text-[#194866]">
                         Weighted Total Score
                       </Label>
-                      <p className="font-bold text-xl">{calculatedValues.criticalityScore.toFixed(1)}</p>
+                      <p className="font-bold text-xl text-[#194866]">{calculatedValues.criticalityScore.toFixed(1)}</p>
                     </div>
-                    
+
                     <div className="space-y-1">
-                      <Label className="text-sm font-bold">
+                      <Label className="text-sm font-bold text-[#194866]">
                         Current Relationship
                       </Label>
-                      <p className="font-bold text-xl">{calculatedValues.relationshipType}</p>
+                      <p className="font-bold text-xl text-[#3CDBDD]">{calculatedValues.relationshipType}</p>
                     </div>
                   </div>
                 </div>
@@ -625,15 +623,15 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
           </CardContent>
         </Card>
         
-        <Card className="col-span-1">
-          <CardHeader>
+        <Card className="col-span-1 border-[#194866]/20 shadow-md">
+          <CardHeader className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white rounded-t-lg">
             <CardTitle>Target State Analysis</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {/* Spend Allocation */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the anticipated supplier spend allocation moving forward if awarded an agreement in relation to either the total subcategory or category?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -642,7 +640,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('spendAllocation', 'selected', value)}
                       value={targetState.spendAllocation.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select allocation" />
                       </SelectTrigger>
                       <SelectContent>
@@ -655,11 +653,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.spendAllocation.weight}
                       onChange={(e) => handleTargetStateChange('spendAllocation', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -667,7 +666,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Average Spend */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the expected 3 year average spend?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -676,7 +675,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('averageSpend', 'selected', value)}
                       value={targetState.averageSpend.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select spend" />
                       </SelectTrigger>
                       <SelectContent>
@@ -689,11 +688,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.averageSpend.weight}
                       onChange={(e) => handleTargetStateChange('averageSpend', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -701,7 +701,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Contracts */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the optimal number of available contracts in this subcategory? (one, few (2-5), many (6+))?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -710,7 +710,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('contracts', 'selected', value)}
                       value={targetState.contracts.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select number" />
                       </SelectTrigger>
                       <SelectContent>
@@ -723,11 +723,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.contracts.weight}
                       onChange={(e) => handleTargetStateChange('contracts', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -735,7 +736,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Complexity */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the anticipated complexity to replacing the supplier if necessary in the future?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -744,7 +745,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('complexity', 'selected', value)}
                       value={targetState.complexity.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select complexity" />
                       </SelectTrigger>
                       <SelectContent>
@@ -757,11 +758,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.complexity.weight}
                       onChange={(e) => handleTargetStateChange('complexity', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -769,7 +771,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Utilization */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the anticipated utilization across the customer base?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -778,7 +780,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('utilization', 'selected', value)}
                       value={targetState.utilization.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select utilization" />
                       </SelectTrigger>
                       <SelectContent>
@@ -791,11 +793,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.utilization.weight}
                       onChange={(e) => handleTargetStateChange('utilization', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -803,7 +806,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Risk */}
               <div className="space-y-2">
-                <Label className="text-sm">
+                <Label className="text-sm text-[#194866]/70">
                   What is the associated risk level for this supplier/subcategory in the future?
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -812,7 +815,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                       onValueChange={(value) => handleTargetStateChange('risk', 'selected', value)}
                       value={targetState.risk.selected}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
                         <SelectValue placeholder="Select risk" />
                       </SelectTrigger>
                       <SelectContent>
@@ -825,11 +828,12 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
                     </Select>
                   </div>
                   <div className="col-span-1">
-                    <Input 
-                      type="number" 
-                      placeholder="Weight %" 
+                    <Input
+                      type="number"
+                      placeholder="Weight %"
                       value={targetState.risk.weight}
                       onChange={(e) => handleTargetStateChange('risk', 'weight', e.target.value)}
+                      className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]"
                     />
                   </div>
                 </div>
@@ -837,19 +841,19 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
               
               {/* Results */}
               {targetScore && (
-                <div className="pt-4 border-t space-y-4">
+                <div className="pt-4 border-t border-[#194866]/10 space-y-4">
                   <div className="space-y-1">
-                    <Label className="text-sm font-bold">
+                    <Label className="text-sm font-bold text-[#194866]">
                       Target Weighted Total Score
                     </Label>
-                    <p className="font-bold text-xl">{targetScore.totalScore.toFixed(1)}</p>
+                    <p className="font-bold text-xl text-[#194866]">{targetScore.totalScore.toFixed(1)}</p>
                   </div>
-                  
+
                   <div className="space-y-1">
-                    <Label className="text-sm font-bold">
+                    <Label className="text-sm font-bold text-[#194866]">
                       Target Relationship
                     </Label>
-                    <p className="font-bold text-xl">{targetScore.relationship}</p>
+                    <p className="font-bold text-xl text-[#3CDBDD]">{targetScore.relationship}</p>
                   </div>
                 </div>
               )}
@@ -858,18 +862,18 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
         </Card>
       </div>
       
-      <Card>
-        <CardHeader>
+      <Card className="border-[#194866]/20 shadow-md">
+        <CardHeader className="bg-gradient-to-r from-[#194866] to-[#3CDBDD] text-white rounded-t-lg">
           <CardTitle>Comparative Analysis</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {calculatedValues && targetScore ? (
-            <SupplierGaugeChart 
-              currentScore={calculatedValues.criticalityScore} 
-              targetScore={targetScore.totalScore} 
+            <SupplierGaugeChart
+              currentScore={calculatedValues.criticalityScore}
+              targetScore={targetScore.totalScore}
             />
           ) : (
-            <p className="text-gray-500">Select a supplier and fill out the target state form to see the comparative analysis.</p>
+            <p className="text-[#194866]/70">Select a supplier and fill out the target state form to see the comparative analysis.</p>
           )}
         </CardContent>
       </Card>
