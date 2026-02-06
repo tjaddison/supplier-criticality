@@ -4,10 +4,7 @@ import {
   ArrowRight,
   Zap,
   DollarSign,
-  TrendingUp,
-  Trophy,
-  Building2,
-  Briefcase
+  TrendingUp
 } from 'lucide-react'
 import Image from 'next/image'
 import { checkAuth } from '@/lib/auth'
