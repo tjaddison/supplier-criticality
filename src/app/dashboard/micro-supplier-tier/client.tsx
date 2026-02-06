@@ -308,7 +308,7 @@ function SupplierGaugeChart({
           textAnchor="middle"
           dominantBaseline="middle" // Center vertically as well
         >
-          Current State
+          Target State
         </text>
         {/* "Target State" label follows the black needle (currentScore) */}
         <text
@@ -320,7 +320,7 @@ function SupplierGaugeChart({
           textAnchor="middle"
           dominantBaseline="middle" // Center vertically as well
         >
-          Target State
+          Current State
         </text>
 
         {/* Needles - Drawn last */}

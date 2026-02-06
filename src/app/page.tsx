@@ -194,22 +194,10 @@ export default async function Home() {
               </div>
             </div>
           </div>
-          {/* SVG Wave Divider */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-            <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#f0f9fa" fillOpacity="1" d="M0,32L48,37.3C96,43,192,53,288,69.3C384,85,480,107,576,101.3C672,96,768,64,864,53.3C960,43,1056,53,1152,69.3C1248,85,1344,107,1392,117.3L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
-            </svg>
-          </div>
+
         </section>
 
-        {/* Featured In / Trusted By */}
-        <section className="w-full py-8 bg-gradient-to-r from-[#E5F9FA] via-white to-white border-b">
-          <div className="container flex flex-wrap items-center justify-center gap-8">
-            <span className="text-lg font-bold text-[#194866] flex items-center gap-2"><Building2 className="h-6 w-6" /> Trusted by Fortune 500</span>
-            <span className="text-lg font-bold text-[#194866] flex items-center gap-2"><Briefcase className="h-6 w-6" /> Used by Top Procurement Teams</span>
-            <span className="text-lg font-bold text-[#194866] flex items-center gap-2"><Trophy className="h-6 w-6" /> Industry Award Winner</span>
-          </div>
-        </section>
+
 
         {/* NEW: Industry Headwinds Section */}
         <section className="w-full py-16 md:py-20 bg-gradient-to-br from-[#f0f9fa] to-white">

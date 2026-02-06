@@ -173,7 +173,7 @@ export function SupplierModal({
                     </p>
                   </div>
                   <div className="bg-muted/50 p-4 rounded-lg">
-                    <Label>Subcategory Size</Label>
+                    <Label>Size of Market</Label>
                     <div className="mt-1 text-2xl font-semibold">
                       {supplier.subcategorySize === "many" ? "Many (6 or more)" :
                        supplier.subcategorySize === "few" ? "Few (2-5)" :

@@ -156,7 +156,7 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
             {Object.entries(localWeights).map(([key, value]) => {
               const field = key as keyof typeof weights
               const label = {
-                spendPercentage: "Subcategory Size",
+                spendPercentage: "Size of Market",
                 threeYearAverage: "Spend",
                 marketSize: "Size of Contract Pool",
                 replacementComplexity: "Ease of Replacement",
@@ -165,7 +165,7 @@ export function CriteriaWeights({ weights, onWeightsChange }: CriteriaWeightsPro
               }[field]
 
               const definition = {
-                spendPercentage: "The relative spend of one supplier in comparison to all awarded suppliers for the same good/service.",
+                spendPercentage: "Number of suppliers within the industry.",
                 threeYearAverage: "The total spend with each supplier.",
                 marketSize: "The count of contracted suppliers that offer the same good and/or services.",
                 replacementComplexity: "The difficulty of transitioning from one supplier to a new one.",
