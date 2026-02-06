@@ -543,6 +543,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
           <CardContent>
             <div className="space-y-6">
               <div className="space-y-2">
+                <br />
                 <Label htmlFor="supplier-select" className="text-[#194866] font-medium">Select a Supplier</Label>
                 <Select onValueChange={handleSupplierChange}>
                   <SelectTrigger id="supplier-select" className="border-[#194866]/20 focus:border-[#3CDBDD] focus:ring-[#3CDBDD]">
@@ -631,6 +632,7 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
             <div className="space-y-6">
               {/* Spend Allocation */}
               <div className="space-y-2">
+                <br/>
                 <Label className="text-sm text-[#194866]/70">
                   What is the anticipated supplier spend allocation moving forward if awarded an agreement in relation to either the total subcategory or category?
                 </Label>
@@ -868,10 +870,55 @@ export default function MicroSupplierTierClient({ initialSuppliers }: MicroSuppl
         </CardHeader>
         <CardContent className="pt-6">
           {calculatedValues && targetScore ? (
-            <SupplierGaugeChart
-              currentScore={calculatedValues.criticalityScore}
-              targetScore={targetScore.totalScore}
-            />
+            <>
+              <SupplierGaugeChart
+                currentScore={calculatedValues.criticalityScore}
+                targetScore={targetScore.totalScore}
+              />
+
+              {/* Legend */}
+              <div className="mt-6 pt-6 border-t border-[#194866]/10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Needle Legend */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#194866] mb-3 uppercase tracking-wide">Indicators</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-black rounded-full"></div>
+                        <span className="text-sm text-[#194866]">Current State</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-1 bg-[#84CC16] rounded-full"></div>
+                        <span className="text-sm text-[#194866]">Target State</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Segment Legend */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#194866] mb-3 uppercase tracking-wide">Relationship Segments</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: 'rgb(203, 213, 225)' }}></div>
+                        <span className="text-sm text-[#194866]">Transactional (0-20)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: 'rgb(148, 163, 184)' }}></div>
+                        <span className="text-sm text-[#194866]">Acquisitional (21-40)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: 'rgb(71, 85, 105)' }}></div>
+                        <span className="text-sm text-[#194866]">Strategic (41-90)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded" style={{ backgroundColor: 'rgb(51, 65, 85)' }}></div>
+                        <span className="text-sm text-[#194866]">Critical (91-100)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           ) : (
             <p className="text-[#194866]/70">Select a supplier and fill out the target state form to see the comparative analysis.</p>
           )}
