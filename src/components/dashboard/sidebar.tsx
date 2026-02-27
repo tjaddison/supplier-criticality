@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   LogOut,
   Menu,
+  ShieldCheck,
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,10 +32,12 @@ interface DashboardSidebarProps {
   user: {
     email?: string;
     name?: string;
+    role?: string;
   };
+  demoTier?: string | null;
 }
 
-export default function DashboardSidebar({ user }: DashboardSidebarProps) {
+export default function DashboardSidebar({ user, demoTier }: DashboardSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -69,6 +72,18 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
             <ProcureSciLogo />
           </div>
 
+          {/* Demo Mode Banner */}
+          {demoTier && (
+            <div className="mb-3 px-3 py-2 rounded-md bg-purple-900/50 border border-purple-500/40 text-xs text-purple-200">
+              <span className="font-semibold text-purple-300">Demo Mode</span>
+              <br />
+              Viewing as{' '}
+              <span className="font-bold text-white">
+                {demoTier === 'free' ? 'Free' : demoTier.replace('tier-', 'Tier ')}
+              </span>
+            </div>
+          )}
+
           {/* Navigation Section */}
           <nav className="space-y-2 flex-1 overflow-y-auto">
             {navigationItems.map((item) => (
@@ -82,13 +97,14 @@ export default function DashboardSidebar({ user }: DashboardSidebarProps) {
                 </Button>
               </Link>
             ))}
-            {/* Settings feature will be implemented in a future release */}
-            {/* <Link href="/dashboard/settings" onClick={() => setSidebarOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Button>
-            </a> */}
+            {user.role === 'admin' && (
+              <Link href="/dashboard/admin" onClick={() => setSidebarOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-purple-300 hover:text-purple-100 hover:bg-purple-900/30">
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Admin
+                </Button>
+              </Link>
+            )}
           </nav>
 
           {/* User Info & Logout Section */}
